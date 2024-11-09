@@ -35,6 +35,7 @@ defmodule ExArk.MixProject do
       {:typedstruct, "~> 0.5"},
       {:ecto, "~> 3.12.4"},
       # Testing and Development Tools
+      {:union_typespec, "~> 0.0.4", runtime: false},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false}
     ]

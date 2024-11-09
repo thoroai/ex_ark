@@ -3,13 +3,8 @@ defmodule ExArk.Serdes.BitstreamHeader do
   Bitstream header
   """
   use ExArk.Serdes.Deserializable
-  use TypedStruct
 
   alias ExArk.Serdes.InputStream, as: Stream
-
-  typedstruct do
-    field :has_more_sections, bool()
-  end
 
   #
   # +----------------+----------------+------------------+------------------+
@@ -30,8 +25,8 @@ defmodule ExArk.Serdes.BitstreamHeader do
       ) do
     {:ok,
      %Result{
-       stream: %{stream | bytes: rest, offset: offset + 1},
-       reified: %__MODULE__{has_more_sections: sections != 0}
+       stream: %{stream | bytes: rest, offset: offset + 1, has_more_sections: sections != 0},
+       reified: nil
      }}
   end
 

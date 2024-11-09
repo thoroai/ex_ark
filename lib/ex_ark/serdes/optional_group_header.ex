@@ -10,7 +10,6 @@ defmodule ExArk.Serdes.OptionalGroupHeader do
   alias ExArk.Serdes.InputStream, as: Stream
 
   typedstruct do
-    field :has_more_sections, bool()
     field :identifier, integer()
     field :group_size, integer()
   end
@@ -31,7 +30,7 @@ defmodule ExArk.Serdes.OptionalGroupHeader do
           offset: offset
         } = stream
       ) do
-    stream = %{stream | bytes: rest, offset: offset + 1}
+    stream = %{stream | bytes: rest, offset: offset + 1, has_more_sections: sections != 0}
 
     with {:ok, %Result{stream: stream, reified: identifier}} <- Uint8.read(stream),
          {:ok, %Result{stream: stream, reified: group_size}} <- Uint32.read(stream) do
@@ -39,14 +38,13 @@ defmodule ExArk.Serdes.OptionalGroupHeader do
        %Result{
          stream: stream,
          reified: %__MODULE__{
-           has_more_sections: sections != 0,
            identifier: identifier,
            group_size: group_size
          }
        }}
     else
       _ ->
-        {:error, :bad_opt_group_header}
+        {:error, :bad_optional_group_header}
     end
   end
 
