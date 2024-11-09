@@ -1,0 +1,185 @@
+{
+  "schemas": [
+    {
+      "name": "BelongsTo",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "foreign_key",
+          "type": "string"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/config.rbuf",
+        "line_number": 8
+      }
+    },
+    {
+      "name": "FieldExtraction",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "path",
+          "type": "string"
+        },
+        {
+          "name": "type",
+          "type": "string"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/config.rbuf",
+        "line_number": 19
+      }
+    },
+    {
+      "name": "ObjectMapperConfig",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "synthetic",
+          "type": "bool"
+        },
+        {
+          "name": "type",
+          "type": "string"
+        },
+        {
+          "name": "primary_key",
+          "type": "string"
+        },
+        {
+          "name": "belongs_to",
+          "type": "arraylist",
+          "ctr_value_type": {
+            "type": "object",
+            "object_type": "crl::knight::BelongsTo"
+          }
+        }
+      ],
+      "groups": [
+        {
+          "identifier": 0,
+          "fields": [
+            {
+              "name": "extract",
+              "type": "arraylist",
+              "ctr_value_type": {
+                "type": "object",
+                "object_type": "crl::knight::FieldExtraction"
+              }
+            }
+          ]
+        }
+      ],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/config.rbuf",
+        "line_number": 32
+      }
+    },
+    {
+      "name": "SynchronizationConfiguration",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "enabled",
+          "type": "bool"
+        },
+        {
+          "name": "force_detach",
+          "type": "bool"
+        },
+        {
+          "name": "bucket",
+          "type": "string"
+        },
+        {
+          "name": "partition_key_prefix",
+          "type": "string"
+        },
+        {
+          "name": "partition",
+          "type": "guid"
+        },
+        {
+          "name": "map_updates_enabled",
+          "type": "bool"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/config.rbuf",
+        "line_number": 76
+      }
+    },
+    {
+      "name": "SynchronizationStageConfig",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "directory",
+          "type": "string"
+        },
+        {
+          "name": "object_mapper_configs",
+          "type": "arraylist",
+          "ctr_value_type": {
+            "type": "object",
+            "object_type": "crl::knight::ObjectMapperConfig"
+          }
+        },
+        {
+          "name": "bucket",
+          "type": "string"
+        },
+        {
+          "name": "partition_key_prefix",
+          "type": "string"
+        },
+        {
+          "name": "migrate_local_bucket_from",
+          "type": "string"
+        },
+        {
+          "name": "max_local_stale_entries",
+          "type": "uint32"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/config.rbuf",
+        "line_number": 98
+      }
+    },
+    {
+      "name": "SynchronizationStageConfigCacheMetadata",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "path",
+          "type": "string"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/config.rbuf",
+        "line_number": 70
+      }
+    }
+  ],
+  "enums": []
+}

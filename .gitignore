@@ -1,0 +1,48 @@
+# Ignore build artifacts
+/_build/
+
+# Ignore test coverage reports
+/cover/
+
+# Ignore dependencies directory
+/deps/
+
+# Ignore generated documentation
+/doc/
+
+# Ignore .fetch files in case you like to edit your project deps locally
+/.fetch
+
+# Ignore Erlang crash dumps
+erl_crash.dump
+
+# Ignore Elixir archive files
+*.ez
+
+# Ignore compiled beam files
+*.beam
+
+# Ignore configuration secrets
+/config/*.secret.exs
+
+# Ignore Lexical internal files
+.lexical/
+
+# Ignore ElixirLS internal files
+.elixir_ls/
+
+# Ignore direnv environment file
+.envrc
+
+# Ignore Node.js dependencies
+/assets/node_modules/
+
+# Ignore all files in the static assets directory
+/priv/static/assets/*
+
+# Ignore Jetbrains Environment
+.idea
+
+# Ignore PLT for dialyzer
+/priv/plts/*.plt
+/priv/plts/*.plt.hash

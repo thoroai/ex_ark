@@ -1,0 +1,228 @@
+{
+  "schemas": [
+    {
+      "name": "LogScannerConfigure",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "enabled",
+          "type": "bool"
+        },
+        {
+          "name": "partition",
+          "type": "guid"
+        },
+        {
+          "name": "epoch",
+          "type": "uint64"
+        },
+        {
+          "name": "generation",
+          "type": "uint64"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/scanner.rbuf",
+        "line_number": 11
+      }
+    },
+    {
+      "name": "LogScannerConfigured",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "code",
+          "type": "uint32"
+        },
+        {
+          "name": "partition",
+          "type": "guid"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/scanner.rbuf",
+        "line_number": 32
+      }
+    },
+    {
+      "name": "LogScannerEvent",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "event",
+          "type": "variant",
+          "variant_types": [
+            [
+              1,
+              "crl::knight::PartitionLogEntryObjectCreated"
+            ],
+            [
+              2,
+              "crl::knight::PartitionLogEntryObjectUpdated"
+            ],
+            [
+              3,
+              "crl::knight::PartitionLogEntryObjectDeleted"
+            ]
+          ]
+        },
+        {
+          "name": "version",
+          "type": "uint64"
+        },
+        {
+          "name": "generation",
+          "type": "uint64"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/scanner.rbuf",
+        "line_number": 103
+      }
+    },
+    {
+      "name": "LogScannerRequest",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "id",
+          "type": "guid"
+        },
+        {
+          "name": "request",
+          "type": "variant",
+          "variant_types": [
+            [
+              1,
+              "crl::knight::LogScannerConfigure"
+            ]
+          ]
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/scanner.rbuf",
+        "line_number": 41
+      }
+    },
+    {
+      "name": "LogScannerResponse",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "id",
+          "type": "guid"
+        },
+        {
+          "name": "response",
+          "type": "variant",
+          "variant_types": [
+            [
+              1,
+              "crl::knight::LogScannerConfigured"
+            ]
+          ]
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/scanner.rbuf",
+        "line_number": 51
+      }
+    },
+    {
+      "name": "PartitionLogEntryObjectCreated",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "id",
+          "type": "guid"
+        },
+        {
+          "name": "path",
+          "type": "string"
+        },
+        {
+          "name": "digest",
+          "type": "string"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/scanner.rbuf",
+        "line_number": 61
+      }
+    },
+    {
+      "name": "PartitionLogEntryObjectDeleted",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "id",
+          "type": "guid"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/scanner.rbuf",
+        "line_number": 93
+      }
+    },
+    {
+      "name": "PartitionLogEntryObjectUpdated",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "id",
+          "type": "guid"
+        },
+        {
+          "name": "path",
+          "type": "string"
+        },
+        {
+          "name": "digest",
+          "type": "string"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/scanner.rbuf",
+        "line_number": 77
+      }
+    }
+  ],
+  "enums": [
+    {
+      "name": "LogScannerError",
+      "object_namespace": "crl::knight",
+      "enum_class": "uint32",
+      "enum_type": "value",
+      "values": {
+        "EpochChanged": 3,
+        "GenerationChanged": 2,
+        "Success": 0,
+        "Unknown": 1
+      },
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/scanner.rbuf",
+        "line_number": 3
+      }
+    }
+  ]
+}

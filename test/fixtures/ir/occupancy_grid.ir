@@ -1,0 +1,41 @@
+{
+  "schemas": [
+    {
+      "name": "ArkGrid",
+      "object_namespace": "thoro::map",
+      "fields": [
+        {
+          "name": "type",
+          "type": "enum",
+          "object_type": "thoro::map::OccupancyGridType"
+        },
+        {
+          "name": "data",
+          "type": "byte_buffer"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/libraries/RasterizableMap/occupancy_grid.rbuf",
+        "line_number": 10
+      }
+    }
+  ],
+  "enums": [
+    {
+      "name": "OccupancyGridType",
+      "object_namespace": "thoro::map",
+      "enum_class": "int32",
+      "enum_type": "value",
+      "values": {
+        "CARTOGRAPHER_PROBABILITY_GRID": 1,
+        "CARTOGRAPHER_TSDF": 2,
+        "UNKNOWN": 0
+      },
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/libraries/RasterizableMap/occupancy_grid.rbuf",
+        "line_number": 3
+      }
+    }
+  ]
+}

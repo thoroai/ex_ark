@@ -1,0 +1,561 @@
+{
+  "schemas": [
+    {
+      "name": "Header",
+      "object_namespace": "ark",
+      "fields": [
+        {
+          "name": "stamp",
+          "type": "steady_time_point"
+        },
+        {
+          "name": "frame_id",
+          "type": "string"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "ark/geometry/messages.rbuf",
+        "line_number": 3
+      }
+    },
+    {
+      "name": "JointState",
+      "object_namespace": "ark",
+      "fields": [
+        {
+          "name": "stamp",
+          "type": "steady_time_point"
+        },
+        {
+          "name": "joint_position_from_name",
+          "type": "dictionary",
+          "ctr_key_type": {
+            "type": "string"
+          },
+          "ctr_value_type": {
+            "type": "double"
+          }
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "ark/geometry/messages.rbuf",
+        "line_number": 131
+      }
+    },
+    {
+      "name": "PushTransformMessage3dStamped",
+      "object_namespace": "ark",
+      "fields": [
+        {
+          "name": "transform_message",
+          "type": "object",
+          "object_type": "ark::TransformMessage3dStamped"
+        },
+        {
+          "name": "is_static",
+          "type": "bool"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "ark/geometry/messages.rbuf",
+        "line_number": 115
+      }
+    },
+    {
+      "name": "Quaterniond",
+      "object_namespace": "ark",
+      "fields": [
+        {
+          "name": "x",
+          "type": "double"
+        },
+        {
+          "name": "y",
+          "type": "double"
+        },
+        {
+          "name": "z",
+          "type": "double"
+        },
+        {
+          "name": "w",
+          "type": "double"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "ark/geometry/messages.rbuf",
+        "line_number": 51
+      }
+    },
+    {
+      "name": "Quaternionf",
+      "object_namespace": "ark",
+      "fields": [
+        {
+          "name": "x",
+          "type": "float"
+        },
+        {
+          "name": "y",
+          "type": "float"
+        },
+        {
+          "name": "z",
+          "type": "float"
+        },
+        {
+          "name": "w",
+          "type": "float"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "ark/geometry/messages.rbuf",
+        "line_number": 43
+      }
+    },
+    {
+      "name": "TransformMessage2d",
+      "object_namespace": "ark",
+      "fields": [
+        {
+          "name": "translation",
+          "type": "object",
+          "object_type": "ark::Vector2d"
+        },
+        {
+          "name": "rotation",
+          "type": "double"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "ark/geometry/messages.rbuf",
+        "line_number": 65
+      }
+    },
+    {
+      "name": "TransformMessage2dStamped",
+      "object_namespace": "ark",
+      "fields": [
+        {
+          "name": "header",
+          "type": "object",
+          "object_type": "ark::Header"
+        },
+        {
+          "name": "source_frame_id",
+          "type": "string"
+        },
+        {
+          "name": "transform",
+          "type": "object",
+          "object_type": "ark::TransformMessage2d"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "ark/geometry/messages.rbuf",
+        "line_number": 79
+      }
+    },
+    {
+      "name": "TransformMessage2f",
+      "object_namespace": "ark",
+      "fields": [
+        {
+          "name": "translation",
+          "type": "object",
+          "object_type": "ark::Vector2f"
+        },
+        {
+          "name": "rotation",
+          "type": "float"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "ark/geometry/messages.rbuf",
+        "line_number": 59
+      }
+    },
+    {
+      "name": "TransformMessage2fStamped",
+      "object_namespace": "ark",
+      "fields": [
+        {
+          "name": "header",
+          "type": "object",
+          "object_type": "ark::Header"
+        },
+        {
+          "name": "source_frame_id",
+          "type": "string"
+        },
+        {
+          "name": "transform",
+          "type": "object",
+          "object_type": "ark::TransformMessage2f"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "ark/geometry/messages.rbuf",
+        "line_number": 71
+      }
+    },
+    {
+      "name": "TransformMessage3d",
+      "object_namespace": "ark",
+      "fields": [
+        {
+          "name": "translation",
+          "type": "object",
+          "object_type": "ark::Vector3d"
+        },
+        {
+          "name": "rotation",
+          "type": "object",
+          "object_type": "ark::Quaterniond"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "ark/geometry/messages.rbuf",
+        "line_number": 93
+      }
+    },
+    {
+      "name": "TransformMessage3dStamped",
+      "object_namespace": "ark",
+      "fields": [
+        {
+          "name": "header",
+          "type": "object",
+          "object_type": "ark::Header"
+        },
+        {
+          "name": "source_frame_id",
+          "type": "string"
+        },
+        {
+          "name": "transform",
+          "type": "object",
+          "object_type": "ark::TransformMessage3d"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "ark/geometry/messages.rbuf",
+        "line_number": 107
+      }
+    },
+    {
+      "name": "TransformMessage3f",
+      "object_namespace": "ark",
+      "fields": [
+        {
+          "name": "translation",
+          "type": "object",
+          "object_type": "ark::Vector3f"
+        },
+        {
+          "name": "rotation",
+          "type": "object",
+          "object_type": "ark::Quaternionf"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "ark/geometry/messages.rbuf",
+        "line_number": 87
+      }
+    },
+    {
+      "name": "TransformMessage3fStamped",
+      "object_namespace": "ark",
+      "fields": [
+        {
+          "name": "header",
+          "type": "object",
+          "object_type": "ark::Header"
+        },
+        {
+          "name": "source_frame_id",
+          "type": "string"
+        },
+        {
+          "name": "transform",
+          "type": "object",
+          "object_type": "ark::TransformMessage3f"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "ark/geometry/messages.rbuf",
+        "line_number": 99
+      }
+    },
+    {
+      "name": "TransformMessages3dStamped",
+      "object_namespace": "ark",
+      "fields": [
+        {
+          "name": "transforms",
+          "type": "arraylist",
+          "ctr_value_type": {
+            "type": "object",
+            "object_type": "ark::TransformMessage3dStamped"
+          }
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "ark/geometry/messages.rbuf",
+        "line_number": 126
+      }
+    },
+    {
+      "name": "TransformMessages3fStamped",
+      "object_namespace": "ark",
+      "fields": [
+        {
+          "name": "transforms",
+          "type": "arraylist",
+          "ctr_value_type": {
+            "type": "object",
+            "object_type": "ark::TransformMessage3fStamped"
+          }
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "ark/geometry/messages.rbuf",
+        "line_number": 121
+      }
+    },
+    {
+      "name": "Vector2d",
+      "object_namespace": "ark",
+      "fields": [
+        {
+          "name": "x",
+          "type": "double"
+        },
+        {
+          "name": "y",
+          "type": "double"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "ark/geometry/messages.rbuf",
+        "line_number": 23
+      }
+    },
+    {
+      "name": "Vector2f",
+      "object_namespace": "ark",
+      "fields": [
+        {
+          "name": "x",
+          "type": "float"
+        },
+        {
+          "name": "y",
+          "type": "float"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "ark/geometry/messages.rbuf",
+        "line_number": 17
+      }
+    },
+    {
+      "name": "Vector2i",
+      "object_namespace": "ark",
+      "fields": [
+        {
+          "name": "x",
+          "type": "int32"
+        },
+        {
+          "name": "y",
+          "type": "int32"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "ark/geometry/messages.rbuf",
+        "line_number": 11
+      }
+    },
+    {
+      "name": "Vector3d",
+      "object_namespace": "ark",
+      "fields": [
+        {
+          "name": "x",
+          "type": "double"
+        },
+        {
+          "name": "y",
+          "type": "double"
+        },
+        {
+          "name": "z",
+          "type": "double"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "ark/geometry/messages.rbuf",
+        "line_number": 36
+      }
+    },
+    {
+      "name": "Vector3f",
+      "object_namespace": "ark",
+      "fields": [
+        {
+          "name": "x",
+          "type": "float"
+        },
+        {
+          "name": "y",
+          "type": "float"
+        },
+        {
+          "name": "z",
+          "type": "float"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "ark/geometry/messages.rbuf",
+        "line_number": 29
+      }
+    },
+    {
+      "name": "ArkMap2DLayerInfo",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "layer_name",
+          "type": "string"
+        },
+        {
+          "name": "reference_frame",
+          "type": "string"
+        },
+        {
+          "name": "default_tile_map_size",
+          "type": "object",
+          "object_type": "ark::Vector2d"
+        },
+        {
+          "name": "default_grid_resolution",
+          "type": "object",
+          "object_type": "ark::Vector2d"
+        },
+        {
+          "name": "default_uninitialized_value",
+          "type": "arraylist",
+          "ctr_value_type": {
+            "type": "double"
+          }
+        },
+        {
+          "name": "default_cell_type",
+          "type": "int32"
+        },
+        {
+          "name": "default_tile_cell_count",
+          "type": "object",
+          "object_type": "ark::Vector2i"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/libraries/Map/messages.rbuf",
+        "line_number": 4
+      }
+    },
+    {
+      "name": "MapMsgData",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "metadata",
+          "type": "object",
+          "object_type": "crl::knight::TwoDOccupancyMapMetaData"
+        },
+        {
+          "name": "occupancy",
+          "type": "arraylist",
+          "ctr_value_type": {
+            "type": "int8"
+          }
+        },
+        {
+          "name": "layer_name",
+          "type": "string"
+        },
+        {
+          "name": "reference_frame",
+          "type": "string"
+        },
+        {
+          "name": "timestamp",
+          "type": "double"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/libraries/Map/messages.rbuf",
+        "line_number": 36
+      }
+    },
+    {
+      "name": "TwoDOccupancyMapMetaData",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "SizeX",
+          "type": "uint64"
+        },
+        {
+          "name": "SizeY",
+          "type": "uint64"
+        },
+        {
+          "name": "GridSizeX",
+          "type": "double"
+        },
+        {
+          "name": "GridSizeY",
+          "type": "double"
+        },
+        {
+          "name": "OriginX",
+          "type": "double"
+        },
+        {
+          "name": "OriginY",
+          "type": "double"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/libraries/Map/messages.rbuf",
+        "line_number": 16
+      }
+    }
+  ],
+  "enums": []
+}

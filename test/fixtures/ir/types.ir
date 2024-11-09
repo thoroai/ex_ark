@@ -1,0 +1,123 @@
+{
+  "schemas": [
+    {
+      "name": "PlanPointMetadata",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "point_status",
+          "type": "enum",
+          "object_type": "crl::knight::PlanPointStatusEnum"
+        },
+        {
+          "name": "status_angle",
+          "type": "double"
+        },
+        {
+          "name": "point_direction",
+          "type": "enum",
+          "object_type": "crl::knight::PlanPointDirection"
+        }
+      ],
+      "groups": [
+        {
+          "identifier": 0,
+          "fields": [
+            {
+              "name": "point_controls_metadata",
+              "type": "arraylist",
+              "ctr_value_type": {
+                "type": "enum",
+                "object_type": "crl::knight::PlanPointControlsMetadata"
+              }
+            }
+          ]
+        }
+      ],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/libraries/Plan/types.rbuf",
+        "line_number": 52
+      }
+    }
+  ],
+  "enums": [
+    {
+      "name": "ArkPlanTypeEnum",
+      "object_namespace": "crl::knight",
+      "enum_class": "int32",
+      "enum_type": "value",
+      "values": {
+        "COPYCAT": 0,
+        "FILLIN": 1,
+        "OPERATIONAL_AREA": 2
+      },
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/libraries/Plan/types.rbuf",
+        "line_number": 7
+      }
+    },
+    {
+      "name": "PlanPointControlsMetadata",
+      "object_namespace": "crl::knight",
+      "enum_class": "int32",
+      "enum_type": "value",
+      "values": {
+        "SAFETY_TRIP_HIGH_SPEED": 2,
+        "SAFETY_TRIP_LOW_SPEED": 0,
+        "SAFETY_TRIP_MEDIUM_SPEED": 1,
+        "SAFETY_TRIP_STOP": 3
+      },
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/libraries/Plan/types.rbuf",
+        "line_number": 37
+      }
+    },
+    {
+      "name": "PlanPointDirection",
+      "object_namespace": "crl::knight",
+      "enum_class": "int32",
+      "enum_type": "value",
+      "values": {
+        "Backward": 1,
+        "Forward": 0
+      },
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/libraries/Plan/types.rbuf",
+        "line_number": 31
+      }
+    },
+    {
+      "name": "PlanPointStatusEnum",
+      "object_namespace": "crl::knight",
+      "enum_class": "uint8",
+      "enum_type": "value",
+      "values": {
+        "END": 6,
+        "ENDING": 5,
+        "FOLLOW": 4,
+        "GETTOSTART": 1,
+        "NONE": 0,
+        "START": 2,
+        "STARTING": 3
+      },
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/libraries/Plan/types.rbuf",
+        "line_number": 14
+      }
+    },
+    {
+      "name": "PlanStyleEnum",
+      "object_namespace": "crl::knight",
+      "enum_class": "int8",
+      "enum_type": "value",
+      "values": {
+        "LEGACY_PLAN": 1,
+        "STATIC_PLAN": 0
+      },
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/libraries/Plan/types.rbuf",
+        "line_number": 25
+      }
+    }
+  ]
+}

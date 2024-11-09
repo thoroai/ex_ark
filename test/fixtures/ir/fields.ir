@@ -1,0 +1,216 @@
+{
+  "schemas": [
+    {
+      "name": "ArkBoolType",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "value",
+          "type": "bool"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/fields.rbuf",
+        "line_number": 10
+      }
+    },
+    {
+      "name": "ArkGuidType",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "value",
+          "type": "guid"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/fields.rbuf",
+        "line_number": 8
+      }
+    },
+    {
+      "name": "ArkInt16Type",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "value",
+          "type": "int16"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/fields.rbuf",
+        "line_number": 16
+      }
+    },
+    {
+      "name": "ArkInt32Type",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "value",
+          "type": "int32"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/fields.rbuf",
+        "line_number": 17
+      }
+    },
+    {
+      "name": "ArkInt64Type",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "value",
+          "type": "int64"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/fields.rbuf",
+        "line_number": 18
+      }
+    },
+    {
+      "name": "ArkInt8Type",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "value",
+          "type": "int8"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/fields.rbuf",
+        "line_number": 15
+      }
+    },
+    {
+      "name": "ArkStringType",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "value",
+          "type": "string"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/fields.rbuf",
+        "line_number": 9
+      }
+    },
+    {
+      "name": "ArkUInt16Type",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "value",
+          "type": "uint16"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/fields.rbuf",
+        "line_number": 12
+      }
+    },
+    {
+      "name": "ArkUInt32Type",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "value",
+          "type": "uint32"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/fields.rbuf",
+        "line_number": 13
+      }
+    },
+    {
+      "name": "ArkUInt8Type",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "value",
+          "type": "uint8"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/fields.rbuf",
+        "line_number": 11
+      }
+    },
+    {
+      "name": "ExtractedField",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "field",
+          "type": "variant",
+          "variant_types": [
+            [
+              1,
+              "crl::knight::ArkGuidType"
+            ],
+            [
+              2,
+              "crl::knight::ArkStringType"
+            ],
+            [
+              3,
+              "crl::knight::ArkBoolType"
+            ],
+            [
+              4,
+              "crl::knight::ArkUInt8Type"
+            ],
+            [
+              5,
+              "crl::knight::ArkUInt16Type"
+            ],
+            [
+              6,
+              "crl::knight::ArkUInt32Type"
+            ],
+            [
+              8,
+              "crl::knight::ArkInt8Type"
+            ],
+            [
+              9,
+              "crl::knight::ArkInt16Type"
+            ],
+            [
+              10,
+              "crl::knight::ArkInt32Type"
+            ],
+            [
+              11,
+              "crl::knight::ArkInt64Type"
+            ]
+          ]
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/fields.rbuf",
+        "line_number": 20
+      }
+    }
+  ],
+  "enums": []
+}

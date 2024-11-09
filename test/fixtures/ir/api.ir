@@ -1,0 +1,1632 @@
+{
+  "schemas": [
+    {
+      "name": "AcceptedTransaction",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "previous_id",
+          "type": "guid"
+        },
+        {
+          "name": "transaction",
+          "type": "object",
+          "object_type": "crl::knight::ApiTransactionRequest"
+        },
+        {
+          "name": "version",
+          "type": "uint64"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/api.rbuf",
+        "line_number": 192
+      }
+    },
+    {
+      "name": "ApiCreateSynchronizedObject",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "id",
+          "type": "guid"
+        },
+        {
+          "name": "parent_id",
+          "type": "guid"
+        },
+        {
+          "name": "remote_path",
+          "type": "string"
+        },
+        {
+          "name": "digest",
+          "type": "string"
+        }
+      ],
+      "groups": [
+        {
+          "identifier": 0,
+          "fields": [
+            {
+              "name": "fields",
+              "type": "arraylist",
+              "ctr_value_type": {
+                "type": "object",
+                "object_type": "crl::knight::ExtractedField"
+              }
+            }
+          ]
+        }
+      ],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/api.rbuf",
+        "line_number": 57
+      }
+    },
+    {
+      "name": "ApiDeleteSynchronizedObject",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "id",
+          "type": "guid"
+        },
+        {
+          "name": "last_digest",
+          "type": "string"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/api.rbuf",
+        "line_number": 119
+      }
+    },
+    {
+      "name": "ApiLogEntryEvent",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "event",
+          "type": "variant",
+          "variant_types": [
+            [
+              1,
+              "crl::knight::ApiLogEntryObjectCreated"
+            ],
+            [
+              2,
+              "crl::knight::ApiLogEntryObjectUpdated"
+            ],
+            [
+              3,
+              "crl::knight::ApiLogEntryObjectDeleted"
+            ]
+          ]
+        },
+        {
+          "name": "version",
+          "type": "uint64"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/api.rbuf",
+        "line_number": 252
+      }
+    },
+    {
+      "name": "ApiLogEntryObjectCreated",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "id",
+          "type": "guid"
+        },
+        {
+          "name": "parent_id",
+          "type": "guid"
+        },
+        {
+          "name": "remote_path",
+          "type": "string"
+        },
+        {
+          "name": "digest",
+          "type": "string"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/api.rbuf",
+        "line_number": 204
+      }
+    },
+    {
+      "name": "ApiLogEntryObjectDeleted",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "id",
+          "type": "guid"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/api.rbuf",
+        "line_number": 242
+      }
+    },
+    {
+      "name": "ApiLogEntryObjectUpdated",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "id",
+          "type": "guid"
+        },
+        {
+          "name": "parent_id",
+          "type": "guid"
+        },
+        {
+          "name": "remote_path",
+          "type": "string"
+        },
+        {
+          "name": "digest",
+          "type": "string"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/api.rbuf",
+        "line_number": 223
+      }
+    },
+    {
+      "name": "ApiPartitionChangeNotifyEvent",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "id",
+          "type": "guid",
+          "attributes": {
+            "removed": true
+          }
+        }
+      ],
+      "groups": [
+        {
+          "identifier": 0,
+          "fields": [
+            {
+              "name": "summary",
+              "type": "object",
+              "object_type": "crl::knight::PartitionSummary"
+            }
+          ]
+        }
+      ],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/api.rbuf",
+        "line_number": 42
+      }
+    },
+    {
+      "name": "ApiPartitionChangeNotifyRequest",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "id",
+          "type": "guid"
+        }
+      ],
+      "groups": [
+        {
+          "identifier": 0,
+          "fields": [
+            {
+              "name": "subscribe",
+              "type": "bool"
+            }
+          ]
+        }
+      ],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/api.rbuf",
+        "line_number": 6
+      }
+    },
+    {
+      "name": "ApiPartitionChangeNotifyResponse",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "code",
+          "type": "int32"
+        },
+        {
+          "name": "id",
+          "type": "guid"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/api.rbuf",
+        "line_number": 18
+      }
+    },
+    {
+      "name": "ApiScanRequest",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "id",
+          "type": "guid"
+        },
+        {
+          "name": "epoch",
+          "type": "uint64"
+        },
+        {
+          "name": "generation",
+          "type": "uint64"
+        },
+        {
+          "name": "cursor",
+          "type": "uint64"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/api.rbuf",
+        "line_number": 177
+      }
+    },
+    {
+      "name": "ApiScanResponse",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "code",
+          "type": "uint32"
+        },
+        {
+          "name": "summary",
+          "type": "object",
+          "object_type": "crl::knight::PartitionSummary"
+        },
+        {
+          "name": "cursor",
+          "type": "uint64"
+        },
+        {
+          "name": "accepted",
+          "type": "arraylist",
+          "ctr_value_type": {
+            "type": "object",
+            "object_type": "crl::knight::ApiLogEntryEvent"
+          }
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/api.rbuf",
+        "line_number": 265
+      }
+    },
+    {
+      "name": "ApiTransactionCommand",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "command",
+          "type": "variant",
+          "variant_types": [
+            [
+              1,
+              "crl::knight::ApiCreateSynchronizedObject"
+            ],
+            [
+              2,
+              "crl::knight::ApiUpdateSynchronizedObject"
+            ],
+            [
+              3,
+              "crl::knight::ApiDeleteSynchronizedObject"
+            ]
+          ]
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/api.rbuf",
+        "line_number": 133
+      }
+    },
+    {
+      "name": "ApiTransactionRequest",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "id",
+          "type": "guid"
+        },
+        {
+          "name": "__deprecated_commands",
+          "type": "arraylist",
+          "attributes": {
+            "removed": true
+          },
+          "ctr_value_type": {
+            "type": "object",
+            "object_type": "crl::knight::TransactionCommand"
+          }
+        }
+      ],
+      "groups": [
+        {
+          "identifier": 0,
+          "fields": [
+            {
+              "name": "commands",
+              "type": "arraylist",
+              "ctr_value_type": {
+                "type": "object",
+                "object_type": "crl::knight::ApiTransactionCommand"
+              }
+            },
+            {
+              "name": "partition_id",
+              "type": "guid"
+            },
+            {
+              "name": "epoch",
+              "type": "uint64"
+            },
+            {
+              "name": "generation",
+              "type": "uint64",
+              "attributes": {
+                "removed": true
+              }
+            }
+          ]
+        }
+      ],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/api.rbuf",
+        "line_number": 142
+      }
+    },
+    {
+      "name": "ApiTransactionResponse",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "code",
+          "type": "uint32"
+        },
+        {
+          "name": "id",
+          "type": "guid"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/api.rbuf",
+        "line_number": 168
+      }
+    },
+    {
+      "name": "ApiUpdateSynchronizedObject",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "id",
+          "type": "guid"
+        },
+        {
+          "name": "remote_path",
+          "type": "string"
+        },
+        {
+          "name": "digest",
+          "type": "string"
+        },
+        {
+          "name": "last_digest",
+          "type": "string"
+        }
+      ],
+      "groups": [
+        {
+          "identifier": 0,
+          "fields": [
+            {
+              "name": "fields",
+              "type": "arraylist",
+              "ctr_value_type": {
+                "type": "object",
+                "object_type": "crl::knight::ExtractedField"
+              }
+            }
+          ]
+        }
+      ],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/api.rbuf",
+        "line_number": 88
+      }
+    },
+    {
+      "name": "ArkBoolType",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "value",
+          "type": "bool"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "src/robot/stages/SynchronizationStage/fields.rbuf",
+        "line_number": 10
+      }
+    },
+    {
+      "name": "ArkGuidType",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "value",
+          "type": "guid"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "src/robot/stages/SynchronizationStage/fields.rbuf",
+        "line_number": 8
+      }
+    },
+    {
+      "name": "ArkInt16Type",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "value",
+          "type": "int16"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "src/robot/stages/SynchronizationStage/fields.rbuf",
+        "line_number": 16
+      }
+    },
+    {
+      "name": "ArkInt32Type",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "value",
+          "type": "int32"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "src/robot/stages/SynchronizationStage/fields.rbuf",
+        "line_number": 17
+      }
+    },
+    {
+      "name": "ArkInt64Type",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "value",
+          "type": "int64"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "src/robot/stages/SynchronizationStage/fields.rbuf",
+        "line_number": 18
+      }
+    },
+    {
+      "name": "ArkInt8Type",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "value",
+          "type": "int8"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "src/robot/stages/SynchronizationStage/fields.rbuf",
+        "line_number": 15
+      }
+    },
+    {
+      "name": "ArkStringType",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "value",
+          "type": "string"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "src/robot/stages/SynchronizationStage/fields.rbuf",
+        "line_number": 9
+      }
+    },
+    {
+      "name": "ArkUInt16Type",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "value",
+          "type": "uint16"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "src/robot/stages/SynchronizationStage/fields.rbuf",
+        "line_number": 12
+      }
+    },
+    {
+      "name": "ArkUInt32Type",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "value",
+          "type": "uint32"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "src/robot/stages/SynchronizationStage/fields.rbuf",
+        "line_number": 13
+      }
+    },
+    {
+      "name": "ArkUInt8Type",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "value",
+          "type": "uint8"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "src/robot/stages/SynchronizationStage/fields.rbuf",
+        "line_number": 11
+      }
+    },
+    {
+      "name": "ExtractedField",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "field",
+          "type": "variant",
+          "variant_types": [
+            [
+              1,
+              "crl::knight::ArkGuidType"
+            ],
+            [
+              2,
+              "crl::knight::ArkStringType"
+            ],
+            [
+              3,
+              "crl::knight::ArkBoolType"
+            ],
+            [
+              4,
+              "crl::knight::ArkUInt8Type"
+            ],
+            [
+              5,
+              "crl::knight::ArkUInt16Type"
+            ],
+            [
+              6,
+              "crl::knight::ArkUInt32Type"
+            ],
+            [
+              8,
+              "crl::knight::ArkInt8Type"
+            ],
+            [
+              9,
+              "crl::knight::ArkInt16Type"
+            ],
+            [
+              10,
+              "crl::knight::ArkInt32Type"
+            ],
+            [
+              11,
+              "crl::knight::ArkInt64Type"
+            ]
+          ]
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "src/robot/stages/SynchronizationStage/fields.rbuf",
+        "line_number": 20
+      }
+    },
+    {
+      "name": "PartitionSummary",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "id",
+          "type": "guid"
+        },
+        {
+          "name": "epoch",
+          "type": "uint64"
+        },
+        {
+          "name": "generation",
+          "type": "uint64"
+        },
+        {
+          "name": "next_version",
+          "type": "uint64"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/api.rbuf",
+        "line_number": 27
+      }
+    },
+    {
+      "name": "StoredTransaction",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "previous_id",
+          "type": "guid"
+        },
+        {
+          "name": "transaction",
+          "type": "object",
+          "object_type": "crl::knight::Transaction"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "src/robot/stages/SynchronizationStage/transactions.rbuf",
+        "line_number": 243
+      }
+    },
+    {
+      "name": "SynchronizationApiRequest",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "sender",
+          "type": "string"
+        },
+        {
+          "name": "id",
+          "type": "guid"
+        },
+        {
+          "name": "timeout",
+          "type": "duration"
+        },
+        {
+          "name": "request",
+          "type": "variant",
+          "variant_types": [
+            [
+              1,
+              "crl::knight::ApiTransactionRequest"
+            ],
+            [
+              3,
+              "crl::knight::ApiPartitionChangeNotifyRequest"
+            ],
+            [
+              4,
+              "crl::knight::ApiScanRequest"
+            ]
+          ]
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/api.rbuf",
+        "line_number": 281
+      }
+    },
+    {
+      "name": "SynchronizationApiResponse",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "status",
+          "type": "enum",
+          "object_type": "crl::knight::SynchronizationApiStatus"
+        },
+        {
+          "name": "id",
+          "type": "guid"
+        },
+        {
+          "name": "response",
+          "type": "variant",
+          "variant_types": [
+            [
+              1,
+              "crl::knight::ApiTransactionResponse"
+            ],
+            [
+              3,
+              "crl::knight::ApiPartitionChangeNotifyResponse"
+            ],
+            [
+              4,
+              "crl::knight::ApiScanResponse"
+            ]
+          ]
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/api.rbuf",
+        "line_number": 316
+      }
+    },
+    {
+      "name": "Transaction",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "id",
+          "type": "guid"
+        },
+        {
+          "name": "mode",
+          "type": "enum",
+          "attributes": {
+            "removed": true
+          },
+          "object_type": "crl::knight::ConsistencyMode"
+        },
+        {
+          "name": "commands",
+          "type": "arraylist",
+          "ctr_value_type": {
+            "type": "object",
+            "object_type": "crl::knight::TransactionCommand"
+          }
+        }
+      ],
+      "groups": [
+        {
+          "identifier": 0,
+          "fields": [
+            {
+              "name": "partition",
+              "type": "guid"
+            }
+          ]
+        },
+        {
+          "identifier": 1,
+          "fields": [
+            {
+              "name": "bucket",
+              "type": "string"
+            },
+            {
+              "name": "bucket_prefix",
+              "type": "string"
+            },
+            {
+              "name": "epoch",
+              "type": "uint64"
+            },
+            {
+              "name": "generation",
+              "type": "uint64"
+            }
+          ]
+        }
+      ],
+      "source_location": {
+        "filename": "src/robot/stages/SynchronizationStage/transactions.rbuf",
+        "line_number": 158
+      }
+    },
+    {
+      "name": "TransactionCommand",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "command",
+          "type": "variant",
+          "variant_types": [
+            [
+              1,
+              "crl::knight::TransactionCreateObject"
+            ],
+            [
+              2,
+              "crl::knight::TransactionUpdateObject"
+            ],
+            [
+              3,
+              "crl::knight::TransactionDeleteObject"
+            ]
+          ]
+        },
+        {
+          "name": "chain",
+          "type": "arraylist",
+          "attributes": {
+            "removed": true
+          },
+          "ctr_value_type": {
+            "type": "object",
+            "object_type": "crl::knight::TransactionNode"
+          }
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "src/robot/stages/SynchronizationStage/transactions.rbuf",
+        "line_number": 147
+      }
+    },
+    {
+      "name": "TransactionCreateObject",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "id",
+          "type": "guid"
+        },
+        {
+          "name": "parent_id",
+          "type": "guid"
+        },
+        {
+          "name": "path",
+          "type": "string"
+        },
+        {
+          "name": "digest",
+          "type": "string"
+        }
+      ],
+      "groups": [
+        {
+          "identifier": 0,
+          "fields": [
+            {
+              "name": "fields",
+              "type": "arraylist",
+              "ctr_value_type": {
+                "type": "object",
+                "object_type": "crl::knight::ExtractedField"
+              }
+            }
+          ]
+        }
+      ],
+      "source_location": {
+        "filename": "src/robot/stages/SynchronizationStage/transactions.rbuf",
+        "line_number": 45
+      }
+    },
+    {
+      "name": "TransactionDeleteObject",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "id",
+          "type": "guid"
+        },
+        {
+          "name": "parent_id",
+          "type": "guid",
+          "attributes": {
+            "removed": true
+          }
+        },
+        {
+          "name": "last_path",
+          "type": "string",
+          "attributes": {
+            "removed": true
+          }
+        },
+        {
+          "name": "last_digest",
+          "type": "string"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "src/robot/stages/SynchronizationStage/transactions.rbuf",
+        "line_number": 114
+      }
+    },
+    {
+      "name": "TransactionEvent",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "event",
+          "type": "variant",
+          "variant_types": [
+            [
+              1,
+              "crl::knight::TransactionObjectCreated"
+            ],
+            [
+              2,
+              "crl::knight::TransactionObjectUpdated"
+            ],
+            [
+              3,
+              "crl::knight::TransactionObjectDeleted"
+            ],
+            [
+              4,
+              "crl::knight::TransactionObjectCreateFailed"
+            ],
+            [
+              5,
+              "crl::knight::TransactionObjectUpdateFailed"
+            ],
+            [
+              6,
+              "crl::knight::TransactionObjectDeleteFailed"
+            ],
+            [
+              8,
+              "crl::knight::TransactionObjectCreateQueued"
+            ],
+            [
+              9,
+              "crl::knight::TransactionObjectUpdateQueued"
+            ],
+            [
+              10,
+              "crl::knight::TransactionObjectDeleteQueued"
+            ]
+          ]
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "src/robot/stages/SynchronizationStage/transactions.rbuf",
+        "line_number": 432
+      }
+    },
+    {
+      "name": "TransactionEvents",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "id",
+          "type": "guid"
+        },
+        {
+          "name": "mode",
+          "type": "enum",
+          "attributes": {
+            "removed": true
+          },
+          "object_type": "crl::knight::ConsistencyMode"
+        },
+        {
+          "name": "status",
+          "type": "enum",
+          "object_type": "crl::knight::TransactionStatus"
+        },
+        {
+          "name": "events",
+          "type": "arraylist",
+          "ctr_value_type": {
+            "type": "object",
+            "object_type": "crl::knight::TransactionEvent"
+          }
+        }
+      ],
+      "groups": [
+        {
+          "identifier": 0,
+          "fields": [
+            {
+              "name": "generation",
+              "type": "uint64"
+            }
+          ]
+        }
+      ],
+      "source_location": {
+        "filename": "src/robot/stages/SynchronizationStage/transactions.rbuf",
+        "line_number": 448
+      }
+    },
+    {
+      "name": "TransactionManagerConfigure",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "enabled",
+          "type": "bool"
+        },
+        {
+          "name": "force_detach",
+          "type": "bool"
+        },
+        {
+          "name": "partition",
+          "type": "guid"
+        }
+      ],
+      "groups": [
+        {
+          "identifier": 0,
+          "fields": [
+            {
+              "name": "generation",
+              "type": "uint64"
+            }
+          ]
+        }
+      ],
+      "source_location": {
+        "filename": "src/robot/stages/SynchronizationStage/transactions.rbuf",
+        "line_number": 193
+      }
+    },
+    {
+      "name": "TransactionManagerConfigured",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "code",
+          "type": "uint32"
+        },
+        {
+          "name": "partition",
+          "type": "guid"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "src/robot/stages/SynchronizationStage/transactions.rbuf",
+        "line_number": 214
+      }
+    },
+    {
+      "name": "TransactionManagerRequest",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "id",
+          "type": "guid"
+        },
+        {
+          "name": "request",
+          "type": "variant",
+          "variant_types": [
+            [
+              1,
+              "crl::knight::TransactionManagerConfigure"
+            ]
+          ]
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "src/robot/stages/SynchronizationStage/transactions.rbuf",
+        "line_number": 223
+      }
+    },
+    {
+      "name": "TransactionManagerResponse",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "id",
+          "type": "guid"
+        },
+        {
+          "name": "response",
+          "type": "variant",
+          "variant_types": [
+            [
+              1,
+              "crl::knight::TransactionManagerConfigured"
+            ]
+          ]
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "src/robot/stages/SynchronizationStage/transactions.rbuf",
+        "line_number": 233
+      }
+    },
+    {
+      "name": "TransactionNode",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "id",
+          "type": "guid"
+        },
+        {
+          "name": "digest",
+          "type": "string"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "src/robot/stages/SynchronizationStage/transactions.rbuf",
+        "line_number": 138
+      }
+    },
+    {
+      "name": "TransactionObjectCreateFailed",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "id",
+          "type": "guid"
+        },
+        {
+          "name": "parent_id",
+          "type": "guid",
+          "attributes": {
+            "removed": true
+          }
+        },
+        {
+          "name": "path",
+          "type": "string",
+          "attributes": {
+            "removed": true
+          }
+        },
+        {
+          "name": "digest",
+          "type": "string",
+          "attributes": {
+            "removed": true
+          }
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "src/robot/stages/SynchronizationStage/transactions.rbuf",
+        "line_number": 365
+      }
+    },
+    {
+      "name": "TransactionObjectCreateQueued",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "id",
+          "type": "guid"
+        },
+        {
+          "name": "parent_id",
+          "type": "guid"
+        },
+        {
+          "name": "path",
+          "type": "string"
+        },
+        {
+          "name": "digest",
+          "type": "string"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "src/robot/stages/SynchronizationStage/transactions.rbuf",
+        "line_number": 314
+      }
+    },
+    {
+      "name": "TransactionObjectCreated",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "id",
+          "type": "guid"
+        },
+        {
+          "name": "parent_id",
+          "type": "guid"
+        },
+        {
+          "name": "path",
+          "type": "string",
+          "attributes": {
+            "removed": true
+          }
+        },
+        {
+          "name": "digest",
+          "type": "string"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "src/robot/stages/SynchronizationStage/transactions.rbuf",
+        "line_number": 259
+      }
+    },
+    {
+      "name": "TransactionObjectDeleteFailed",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "id",
+          "type": "guid"
+        },
+        {
+          "name": "parent_id",
+          "type": "guid",
+          "attributes": {
+            "removed": true
+          }
+        },
+        {
+          "name": "path",
+          "type": "string",
+          "attributes": {
+            "removed": true
+          }
+        },
+        {
+          "name": "digest",
+          "type": "string"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "src/robot/stages/SynchronizationStage/transactions.rbuf",
+        "line_number": 411
+      }
+    },
+    {
+      "name": "TransactionObjectDeleteQueued",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "id",
+          "type": "guid"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "src/robot/stages/SynchronizationStage/transactions.rbuf",
+        "line_number": 349
+      }
+    },
+    {
+      "name": "TransactionObjectDeleted",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "id",
+          "type": "guid"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "src/robot/stages/SynchronizationStage/transactions.rbuf",
+        "line_number": 297
+      }
+    },
+    {
+      "name": "TransactionObjectUpdateFailed",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "id",
+          "type": "guid"
+        },
+        {
+          "name": "parent_id",
+          "type": "guid",
+          "attributes": {
+            "removed": true
+          }
+        },
+        {
+          "name": "path",
+          "type": "string",
+          "attributes": {
+            "removed": true
+          }
+        },
+        {
+          "name": "digest",
+          "type": "string"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "src/robot/stages/SynchronizationStage/transactions.rbuf",
+        "line_number": 388
+      }
+    },
+    {
+      "name": "TransactionObjectUpdateQueued",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "id",
+          "type": "guid"
+        },
+        {
+          "name": "path",
+          "type": "string"
+        },
+        {
+          "name": "digest",
+          "type": "string"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "src/robot/stages/SynchronizationStage/transactions.rbuf",
+        "line_number": 333
+      }
+    },
+    {
+      "name": "TransactionObjectUpdated",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "id",
+          "type": "guid"
+        },
+        {
+          "name": "parent_id",
+          "type": "guid",
+          "attributes": {
+            "removed": true
+          }
+        },
+        {
+          "name": "path",
+          "type": "string",
+          "attributes": {
+            "removed": true
+          }
+        },
+        {
+          "name": "digest",
+          "type": "string"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "src/robot/stages/SynchronizationStage/transactions.rbuf",
+        "line_number": 278
+      }
+    },
+    {
+      "name": "TransactionUpdateObject",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "id",
+          "type": "guid"
+        },
+        {
+          "name": "parent_id",
+          "type": "guid",
+          "attributes": {
+            "removed": true
+          }
+        },
+        {
+          "name": "last_path",
+          "type": "string",
+          "attributes": {
+            "removed": true
+          }
+        },
+        {
+          "name": "path",
+          "type": "string"
+        },
+        {
+          "name": "last_digest",
+          "type": "string"
+        },
+        {
+          "name": "digest",
+          "type": "string"
+        }
+      ],
+      "groups": [
+        {
+          "identifier": 0,
+          "fields": [
+            {
+              "name": "fields",
+              "type": "arraylist",
+              "ctr_value_type": {
+                "type": "object",
+                "object_type": "crl::knight::ExtractedField"
+              }
+            }
+          ]
+        }
+      ],
+      "source_location": {
+        "filename": "src/robot/stages/SynchronizationStage/transactions.rbuf",
+        "line_number": 76
+      }
+    }
+  ],
+  "enums": [
+    {
+      "name": "ConsistencyMode",
+      "object_namespace": "crl::knight",
+      "enum_class": "int32",
+      "enum_type": "value",
+      "values": {
+        "Eventual": 0,
+        "Synchronous": 1
+      },
+      "source_location": {
+        "filename": "src/robot/stages/SynchronizationStage/transactions.rbuf",
+        "line_number": 16
+      }
+    },
+    {
+      "name": "SynchronizationApiStatus",
+      "object_namespace": "crl::knight",
+      "enum_class": "int32",
+      "enum_type": "value",
+      "values": {
+        "Errored": 2,
+        "Success": 0,
+        "TimeOut": 1
+      },
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/api.rbuf",
+        "line_number": 304
+      }
+    },
+    {
+      "name": "TransactionError",
+      "object_namespace": "crl::knight",
+      "enum_class": "uint32",
+      "enum_type": "value",
+      "values": {
+        "AlreadyApplied": 2,
+        "Success": 0,
+        "Unknown": 1
+      },
+      "source_location": {
+        "filename": "src/robot/stages/SynchronizationStage/transactions.rbuf",
+        "line_number": 9
+      }
+    },
+    {
+      "name": "TransactionStatus",
+      "object_namespace": "crl::knight",
+      "enum_class": "int32",
+      "enum_type": "value",
+      "values": {
+        "Failed": 2,
+        "Pending": 1,
+        "Succeeded": 0
+      },
+      "source_location": {
+        "filename": "src/robot/stages/SynchronizationStage/transactions.rbuf",
+        "line_number": 28
+      }
+    }
+  ]
+}
