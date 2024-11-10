@@ -8,21 +8,21 @@ defmodule ExArk.Types.Arraylist do
   alias ExArk.Serdes.InputStream.Result
 
   #
-  # +-----------+--------+--------+-----+--------+
-  # | Count (N) | Type 1 | Type 2 | ... | Type N |
-  # +-----------+--------+--------+-----+--------+
+  # +----------+--------+--------+-----+--------+
+  # | Size (N) | Type 1 | Type 2 | ... | Type N |
+  # +----------+--------+--------+-----+--------+
   #
 
   @spec read(InputStream.t(), Field.t(), Registry.t()) :: {:ok, InputStream.Result.t()} | InputStream.failure()
   def read(
-        %InputStream{bytes: <<count::little-unsigned-integer-size(32), rest::binary>>, offset: offset} = stream,
+        %InputStream{bytes: <<size::little-unsigned-integer-size(32), rest::binary>>, offset: offset} = stream,
         %Field{} = field,
         %Registry{} = registry
       ) do
     stream = %{stream | bytes: rest, offset: offset + 4}
 
     {stream, items} =
-      Enum.reduce(1..count, {stream, []}, fn _i, {stream, items} ->
+      Enum.reduce(1..size, {stream, []}, fn _i, {stream, items} ->
         {:ok, %Result{stream: stream, reified: item}} = InputStream.read(stream, field.ctr_value_type, registry)
         {stream, [item] ++ items}
       end)

@@ -7,6 +7,7 @@ defmodule ExArk.Ir.Field do
   import UnionTypespec, only: [union_type: 1]
 
   alias ExArk.Ir.ContainerField
+  alias ExArk.Ir.Variant
   alias ExArk.Utilities
 
   union_type attribute_type :: [:removed, :packed_timespec, :optional, :constant]
@@ -18,6 +19,7 @@ defmodule ExArk.Ir.Field do
     field :array_size, integer()
     field :ctr_value_type, ContainerField.t()
     field :ctr_key_type, ContainerField.t()
+    field :variant_types, [Variant.t()]
     field :attributes, [attribute_type]
   end
 
@@ -39,6 +41,10 @@ defmodule ExArk.Ir.Field do
         do: ContainerField.from_json(json.ctr_key_type),
         else: nil
 
+    variant_types =
+      if Map.has_key?(json, :variant_types),
+        do: Enum.map(json.variant_types, fn variant -> Variant.from_json(variant) end)
+
     struct(__MODULE__, %{
       name: json.name,
       type: json.type,
@@ -46,6 +52,7 @@ defmodule ExArk.Ir.Field do
       array_size: Map.get(json, :array_size),
       ctr_value_type: ctr_value_type,
       ctr_key_type: ctr_key_type,
+      variant_types: variant_types,
       attributes: attributes
     })
   end

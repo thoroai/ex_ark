@@ -7,20 +7,30 @@ defmodule ExArk.Types.Dictionary do
   alias ExArk.Registry
   alias ExArk.Serdes.InputStream
   alias ExArk.Serdes.InputStream.Result
-  alias ExArk.Types
+
+  #
+  # +----------+-------+---------+-------+---------+-----+-------+---------+
+  # | Size (N) | Key 1 | Value 1 | Key 2 | Value 2 | ... | Key N | Value N |
+  # +----------+-------+---------+-------+---------+-----+-------+---------+
+  #
 
   @spec read(InputStream.t(), Field.t(), Registry.t()) :: {:ok, InputStream.Result.t()} | InputStream.failure()
-  def read(%InputStream{} = stream, %Field{ctr_key_type: key_type} = field, %Registry{} = registry)
-      when Types.is_primitive?(key_type) do
-    size = registry[field.array_size]
+  def read(
+        %InputStream{bytes: <<size::little-unsigned-integer-size(32), rest::binary>>, offset: offset} = stream,
+        %Field{} = field,
+        %Registry{} = registry
+      ) do
+    stream = %{stream | bytes: rest, offset: offset + 4}
 
     {stream, items} =
       Enum.reduce(1..size, {stream, []}, fn _i, {stream, items} ->
-        {:ok, %Result{stream: stream, reified: item}} = InputStream.read(stream, field.ctr_value_type, registry)
-        {stream, [item] ++ items}
+        with {:ok, %Result{stream: stream, reified: key}} <- InputStream.read(stream, field.ctr_key_type, registry),
+             {:ok, %Result{stream: stream, reified: value}} <- InputStream.read(stream, field.ctr_value_type, registry) do
+          {stream, [{key, value}] ++ items}
+        end
       end)
 
-    {:ok, %Result{stream: stream, reified: Enum.reverse(items)}}
+    {:ok, %Result{stream: stream, reified: Map.new(Enum.reverse(items))}}
   end
 
   def read(%InputStream{} = _stream, %Field{} = _field, %Registry{} = _registry), do: {:error, :bad_stream}
