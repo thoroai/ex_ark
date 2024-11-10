@@ -13,6 +13,7 @@ defmodule ExArk.Ir.Field do
   typedstruct enforce: true do
     field :name, String.t()
     field :type, String.t()
+    field :object_type, String.t(), enforce: false
     field :attributes, [attribute_type], enforce: false
   end
 
@@ -24,6 +25,11 @@ defmodule ExArk.Ir.Field do
       |> Map.keys()
       |> Enum.map(&Utilities.ensure_existing_atom(&1))
 
-    struct(__MODULE__, %{name: json.name, type: json.type, attributes: attributes})
+    struct(__MODULE__, %{
+      name: json.name,
+      type: json.type,
+      attributes: attributes,
+      object_type: Map.get(json, :object_type)
+    })
   end
 end
