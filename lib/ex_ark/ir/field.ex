@@ -4,14 +4,26 @@ defmodule ExArk.Ir.Field do
   """
 
   use TypedStruct
+  import UnionTypespec, only: [union_type: 1]
+
+  alias ExArk.Utilities
+
+  union_type attribute_type :: [:removed, :packed_timespec, :optional, :constant]
 
   typedstruct do
     field :name, String.t()
     field :type, String.t()
+    field :attributes, [attribute_type]
   end
 
   @spec from_json(term()) :: t()
   def from_json(json) do
-    struct(__MODULE__, %{name: json.name, type: json.type})
+    attributes =
+      json
+      |> Map.get(:attributes, %{})
+      |> Map.keys()
+      |> Enum.map(&Utilities.ensure_existing_atom(&1))
+
+    struct(__MODULE__, %{name: json.name, type: json.type, attributes: attributes})
   end
 end

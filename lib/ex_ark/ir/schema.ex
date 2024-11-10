@@ -4,10 +4,14 @@ defmodule ExArk.Ir.Schema do
   """
 
   use TypedStruct
+  import UnionTypespec, only: [union_type: 1]
 
   alias ExArk.Ir.Group
   alias ExArk.Ir.Field
   alias ExArk.Ir.SourceLocation
+  alias ExArk.Utilities
+
+  union_type attribute_type :: [:final]
 
   typedstruct do
     field :name, String.t()
@@ -15,6 +19,7 @@ defmodule ExArk.Ir.Schema do
     field :fields, [Field.t()]
     field :groups, [Group.t()]
     field :source_location, SourceLocation.t()
+    field :attributes, [attribute_type]
   end
 
   @spec from_json(term()) :: t()
@@ -29,12 +34,19 @@ defmodule ExArk.Ir.Schema do
         Group.from_json(group_json)
       end
 
+    attributes =
+      json
+      |> Map.get(:attributes, %{})
+      |> Map.keys()
+      |> Enum.map(&Utilities.ensure_existing_atom(&1))
+
     struct(__MODULE__, %{
       fields: fields,
       groups: groups,
       name: json.name,
       object_namespace: json.object_namespace,
-      source_location: SourceLocation.from_json(json.source_location)
+      source_location: SourceLocation.from_json(json.source_location),
+      attributes: attributes
     })
   end
 end
