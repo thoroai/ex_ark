@@ -1,102 +1,126 @@
-defmodule ExArk.Types.Uint8 do
-  use ExArk.Serdes.Deserializable
+defmodule ExArk.Types.Primitives do
+  @moduledoc """
+  Module for handling primitive types
+  """
 
-  @impl Deserializable
-  def read(%InputStream{bytes: <<v::little-unsigned-integer-size(8), rest::binary>>, offset: offset} = stream) do
+  alias ExArk.Serdes.InputStream
+  alias ExArk.Serdes.InputStream.Result
+  alias ExArk.Types
+
+  @spec read(String.t(), InputStream.t()) :: {:ok, InputStream.Result.t()} | InputStream.failure()
+  def read(typestr, %InputStream{} = stream) when is_binary(typestr), do: read(String.to_existing_atom(typestr), stream)
+
+  @spec read(Types.primitive_type(), InputStream.t()) :: {:ok, InputStream.Result.t()} | InputStream.failure()
+  def read(:uint8, %InputStream{bytes: <<v::little-unsigned-integer-size(8), rest::binary>>, offset: offset} = stream) do
     {:ok, %Result{stream: %{stream | bytes: rest, offset: offset + 1}, reified: v}}
   end
-end
 
-defmodule ExArk.Types.Uint16 do
-  use ExArk.Serdes.Deserializable
-
-  @impl Deserializable
-  def read(%InputStream{bytes: <<v::little-unsigned-integer-size(16), rest::binary>>, offset: offset} = stream) do
+  def read(:uint16, %InputStream{bytes: <<v::little-unsigned-integer-size(16), rest::binary>>, offset: offset} = stream) do
     {:ok, %Result{stream: %{stream | bytes: rest, offset: offset + 2}, reified: v}}
   end
-end
 
-defmodule ExArk.Types.Uint32 do
-  use ExArk.Serdes.Deserializable
-
-  @impl Deserializable
-  def read(%InputStream{bytes: <<v::little-unsigned-integer-size(32), rest::binary>>, offset: offset} = stream) do
+  def read(:uint32, %InputStream{bytes: <<v::little-unsigned-integer-size(32), rest::binary>>, offset: offset} = stream) do
     {:ok, %Result{stream: %{stream | bytes: rest, offset: offset + 4}, reified: v}}
   end
-end
 
-defmodule ExArk.Types.Uint64 do
-  use ExArk.Serdes.Deserializable
-
-  @impl Deserializable
-  def read(%InputStream{bytes: <<v::little-unsigned-integer-size(64), rest::binary>>, offset: offset} = stream) do
+  def read(:uint64, %InputStream{bytes: <<v::little-unsigned-integer-size(64), rest::binary>>, offset: offset} = stream) do
     {:ok, %Result{stream: %{stream | bytes: rest, offset: offset + 8}, reified: v}}
   end
-end
 
-defmodule ExArk.Types.Int8 do
-  use ExArk.Serdes.Deserializable
-
-  @impl Deserializable
-  def read(%InputStream{bytes: <<v::little-signed-integer-size(8), rest::binary>>, offset: offset} = stream) do
+  def read(:int8, %InputStream{bytes: <<v::little-signed-integer-size(8), rest::binary>>, offset: offset} = stream) do
     {:ok, %Result{stream: %{stream | bytes: rest, offset: offset + 1}, reified: v}}
   end
-end
 
-defmodule ExArk.Types.Int16 do
-  use ExArk.Serdes.Deserializable
-
-  @impl Deserializable
-  def read(%InputStream{bytes: <<v::little-signed-integer-size(16), rest::binary>>, offset: offset} = stream) do
+  def read(:int16, %InputStream{bytes: <<v::little-signed-integer-size(16), rest::binary>>, offset: offset} = stream) do
     {:ok, %Result{stream: %{stream | bytes: rest, offset: offset + 2}, reified: v}}
   end
-end
 
-defmodule ExArk.Types.Int32 do
-  use ExArk.Serdes.Deserializable
-
-  @impl Deserializable
-  def read(%InputStream{bytes: <<v::little-signed-integer-size(32), rest::binary>>, offset: offset} = stream) do
+  def read(:int32, %InputStream{bytes: <<v::little-signed-integer-size(32), rest::binary>>, offset: offset} = stream) do
     {:ok, %Result{stream: %{stream | bytes: rest, offset: offset + 4}, reified: v}}
   end
-end
 
-defmodule ExArk.Types.Int64 do
-  use ExArk.Serdes.Deserializable
-
-  @impl Deserializable
-  def read(%InputStream{bytes: <<v::little-signed-integer-size(64), rest::binary>>, offset: offset} = stream) do
+  def read(:int64, %InputStream{bytes: <<v::little-signed-integer-size(64), rest::binary>>, offset: offset} = stream) do
     {:ok, %Result{stream: %{stream | bytes: rest, offset: offset + 8}, reified: v}}
   end
-end
 
-defmodule ExArk.Types.Float do
-  use ExArk.Serdes.Deserializable
-
-  @impl Deserializable
-  def read(%InputStream{bytes: <<v::little-float-size(32), rest::binary>>, offset: offset} = stream) do
+  def read(:float, %InputStream{bytes: <<v::little-float-size(32), rest::binary>>, offset: offset} = stream) do
     {:ok, %Result{stream: %{stream | bytes: rest, offset: offset + 4}, reified: v}}
   end
-end
 
-defmodule ExArk.Types.Double do
-  use ExArk.Serdes.Deserializable
-
-  @impl Deserializable
-  def read(%InputStream{bytes: <<v::little-float-size(64), rest::binary>>, offset: offset} = stream) do
+  def read(:double, %InputStream{bytes: <<v::little-float-size(64), rest::binary>>, offset: offset} = stream) do
     {:ok, %Result{stream: %{stream | bytes: rest, offset: offset + 8}, reified: v}}
   end
-end
 
-defmodule ExArk.Types.Bool do
-  use ExArk.Serdes.Deserializable
-
-  @impl Deserializable
-  def read(%InputStream{bytes: <<0::size(8), rest::binary>>, offset: offset} = stream) do
+  def read(:bool, %InputStream{bytes: <<0::size(8), rest::binary>>, offset: offset} = stream) do
     {:ok, %Result{stream: %{stream | bytes: rest, offset: offset + 1}, reified: false}}
   end
 
-  def read(%InputStream{bytes: <<_::size(8), rest::binary>>, offset: offset} = stream) do
+  def read(:bool, %InputStream{bytes: <<_::size(8), rest::binary>>, offset: offset} = stream) do
     {:ok, %Result{stream: %{stream | bytes: rest, offset: offset + 1}, reified: true}}
+  end
+
+  #
+  # +-------------------------------+---------------------+
+  # | Length (N) in bytes (32 bits) | Binary (N * 8 bits) |
+  # +-------------------------------+---------------------+
+  #
+
+  def read(
+        :byte_buffer,
+        %InputStream{
+          bytes: <<len::little-unsigned-integer-size(32), bb::bytes-size(len), rest::binary>>,
+          offset: offset
+        } = stream
+      ) do
+    {:ok, %Result{stream: %{stream | bytes: rest, offset: offset + 4 + len}, reified: bb}}
+  end
+
+  def read(:duration, %InputStream{bytes: <<v::little-signed-integer-size(64), rest::binary>>, offset: offset} = stream) do
+    {:ok, %Result{stream: %{stream | bytes: rest, offset: offset + 8}, reified: v}}
+  end
+
+  def read(
+        :guid,
+        %InputStream{bytes: <<hi::binary-size(8), lo::binary-size(8), rest::binary>>, offset: offset} = stream
+      ) do
+    hi = hi |> :binary.decode_unsigned(:little) |> :binary.encode_unsigned(:big)
+    lo = lo |> :binary.decode_unsigned(:little) |> :binary.encode_unsigned(:big)
+
+    {:ok,
+     %Result{
+       stream: %{stream | bytes: rest, offset: offset + 8},
+       reified: Ecto.UUID.load(hi <> lo)
+     }}
+  rescue
+    ArgumentError ->
+      {:error, :bad_guid}
+  end
+
+  def read(
+        :steady_time_point,
+        %InputStream{bytes: <<v::little-signed-integer-size(64), rest::binary>>, offset: offset} = stream
+      ) do
+    {:ok, %Result{stream: %{stream | bytes: rest, offset: offset + 8}, reified: v}}
+  end
+
+  def read(
+        :system_time_point,
+        %InputStream{bytes: <<v::little-signed-integer-size(64), rest::binary>>, offset: offset} = stream
+      ) do
+    {:ok, %Result{stream: %{stream | bytes: rest, offset: offset + 8}, reified: v}}
+  end
+
+  #
+  # +-------------------------------+---------------------+
+  # | Length (N) in bytes (32 bits) | Binary (N * 8 bits) |
+  # +-------------------------------+---------------------+
+  #
+
+  def read(
+        :string,
+        %InputStream{bytes: <<len::little-unsigned-integer-size(32), s::bytes-size(len), rest::binary>>, offset: offset} =
+          stream
+      ) do
+    {:ok, %Result{stream: %{stream | bytes: rest, offset: offset + 4 + len}, reified: s}}
   end
 end

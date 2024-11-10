@@ -1,5 +1,11 @@
 defmodule ExArk.Types.Arraylist do
-  use ExArk.Serdes.Deserializable
+  @moduledoc """
+  Module for handling array lists
+  """
+  alias ExArk.Ir.Field
+  alias ExArk.Registry
+  alias ExArk.Serdes.InputStream
+  alias ExArk.Serdes.InputStream.Result
 
   #
   # +-----------+--------+--------+-----+--------+
@@ -7,16 +13,17 @@ defmodule ExArk.Types.Arraylist do
   # +-----------+--------+--------+-----+--------+
   #
 
-  @impl Deserializable
+  @spec read(InputStream.t(), Field.t(), Registry.t()) :: {:ok, InputStream.Result.t()} | InputStream.failure()
   def read(
-        %InputStream{bytes: <<len::little-unsigned-integer-size(32), rest::binary>>, offset: offset} = stream,
-        registry
+        %InputStream{bytes: <<count::little-unsigned-integer-size(32), rest::binary>>, offset: offset} = stream,
+        %Field{} = field,
+        %Registry{} = registry
       ) do
-    stream = %{stream | bytes: rest, offset: offset + 4 + len}
+    stream = %{stream | bytes: rest, offset: offset + 4}
 
     {stream, items} =
-      Enum.reduce(1..len, {stream, []}, fn _i, {stream, items} ->
-        {:ok, %Result{stream: stream, reified: item}} = read(stream, registry)
+      Enum.reduce(1..count, {stream, []}, fn _i, {stream, items} ->
+        {:ok, %Result{stream: stream, reified: item}} = InputStream.read(stream, field.ctr_value_type, registry)
         {stream, [item] ++ items}
       end)
 

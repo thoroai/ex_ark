@@ -2,11 +2,11 @@ defmodule ExArk.Serdes.OptionalGroupHeader do
   @moduledoc """
   Optional group header
   """
-  use ExArk.Serdes.Deserializable
   use TypedStruct
 
-  alias ExArk.Types.Uint8
-  alias ExArk.Types.Uint32
+  alias ExArk.Serdes.InputStream
+  alias ExArk.Serdes.InputStream.Result
+  alias ExArk.Types.Primitives
 
   typedstruct do
     field :identifier, integer()
@@ -23,14 +23,13 @@ defmodule ExArk.Serdes.OptionalGroupHeader do
   @version 0x1
   @groups 0x0
 
-  @impl Deserializable
   def read(
         %InputStream{bytes: <<@magic::4, @groups::1, sections::1, @version::2, rest::binary>>, offset: offset} = stream
       ) do
     stream = %{stream | bytes: rest, offset: offset + 1, has_more_sections: sections != 0}
 
-    with {:ok, %Result{stream: stream, reified: identifier}} <- Uint8.read(stream),
-         {:ok, %Result{stream: stream, reified: group_size}} <- Uint32.read(stream) do
+    with {:ok, %Result{stream: stream, reified: identifier}} <- Primitives.read(:uint8, stream),
+         {:ok, %Result{stream: stream, reified: group_size}} <- Primitives.read(:uint32, stream) do
       {:ok,
        %Result{
          stream: stream,

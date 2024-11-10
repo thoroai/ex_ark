@@ -2,7 +2,9 @@ defmodule ExArk.Serdes.BitstreamHeader do
   @moduledoc """
   Bitstream header
   """
-  use ExArk.Serdes.Deserializable
+
+  alias ExArk.Serdes.InputStream
+  alias ExArk.Serdes.InputStream.Result
 
   #
   # +----------------+----------------+------------------+------------------+
@@ -14,7 +16,6 @@ defmodule ExArk.Serdes.BitstreamHeader do
   @version 0x1
   @groups 0x0
 
-  @impl Deserializable
   def read(
         %InputStream{bytes: <<@magic::4, @groups::1, sections::1, @version::2, rest::binary>>, offset: offset} = stream
       ) do
