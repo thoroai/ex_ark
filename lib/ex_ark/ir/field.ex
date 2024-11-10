@@ -10,10 +10,10 @@ defmodule ExArk.Ir.Field do
 
   union_type attribute_type :: [:removed, :packed_timespec, :optional, :constant]
 
-  typedstruct do
+  typedstruct enforce: true do
     field :name, String.t()
     field :type, String.t()
-    field :attributes, [attribute_type]
+    field :attributes, [attribute_type], enforce: false
   end
 
   @spec from_json(term()) :: t()

@@ -7,7 +7,7 @@ defmodule ExArk.Ir.Group do
 
   alias ExArk.Ir.Field
 
-  typedstruct do
+  typedstruct enforce: true do
     field :identifier, integer()
     field :fields, [Field.t()]
   end

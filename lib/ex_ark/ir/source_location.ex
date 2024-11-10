@@ -5,7 +5,7 @@ defmodule ExArk.Ir.SourceLocation do
 
   use TypedStruct
 
-  typedstruct do
+  typedstruct enforce: true do
     field :filename, String.t()
     field :line_number, integer()
   end

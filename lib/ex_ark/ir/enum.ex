@@ -11,7 +11,7 @@ defmodule ExArk.Ir.ArkEnum do
   union_type enum_classes :: [:uint8, :uint16, :uint32, :uint64, :int8, :int16, :int32, :int64]
   union_type enum_types :: [:value, :bitmask]
 
-  typedstruct do
+  typedstruct enforce: true do
     field :name, String.t()
     field :object_namespace, String.t()
     field :enum_class, String.t()

@@ -13,13 +13,13 @@ defmodule ExArk.Ir.Schema do
 
   union_type attribute_type :: [:final]
 
-  typedstruct do
+  typedstruct enforce: true do
     field :name, String.t()
     field :object_namespace, String.t()
     field :fields, [Field.t()]
     field :groups, [Group.t()]
     field :source_location, SourceLocation.t()
-    field :attributes, [attribute_type]
+    field :attributes, [attribute_type], enforce: false
   end
 
   @spec from_json(term()) :: t()
