@@ -16,7 +16,7 @@ defmodule ExArk.Ir.ArkEnum do
     field :object_namespace, String.t()
     field :enum_class, String.t()
     field :enum_type, enum_types
-    field :enum_values, %{}
+    field :values, %{}
     field :source_location, SourceLocation.t()
   end
 
@@ -27,7 +27,7 @@ defmodule ExArk.Ir.ArkEnum do
       object_namespace: json.object_namespace,
       enum_class: String.to_existing_atom(json.enum_class),
       enum_type: String.to_existing_atom(json.enum_type),
-      enum_values: json.values,
+      values: json.values,
       source_location: json.source_location
     })
   end
