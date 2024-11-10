@@ -150,6 +150,24 @@ defmodule ExArk.Serdes.Deserialization do
       "system_time_point" ->
         ExArk.Types.SystemTimePoint
 
+      "fixed_size_array" ->
+        nil
+
+      "arraylist" ->
+        nil
+
+      "dictionary" ->
+        nil
+
+      "object" ->
+        nil
+
+      "enum" ->
+        nil
+
+      "variant" ->
+        nil
+
       _ ->
         raise RuntimeError, message: "unknown type: #{inspect(typestr)}"
     end
