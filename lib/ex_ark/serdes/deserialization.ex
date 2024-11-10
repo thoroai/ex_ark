@@ -77,20 +77,24 @@ defmodule ExArk.Serdes.Deserialization do
   end
 
   defp deserialize_group(groups, stream) do
-    with {:ok, %Result{stream: stream, reified: header}} <- OptionalGroupHeader.read(stream),
-         {:ok, group} <- get_group(groups, header.identifier) do
-      deserialize_fields(group.fields, stream)
+    case OptionalGroupHeader.read(stream) do
+      {:ok, %Result{stream: stream, reified: header}} ->
+        group = Enum.find(groups, fn group -> group.identifier == header.identifier end)
+
+        if group != nil do
+          deserialize_fields(group.fields, stream)
+        else
+          {:ok, %Result{stream: advance_stream(stream, header)}}
+        end
+
+      error ->
+        error
     end
   end
 
-  defp get_group(groups, identifier) do
-    case Enum.find(groups, fn group -> group.identifier == identifier end) do
-      nil ->
-        {:error, :group_not_found}
-
-      group ->
-        {:ok, group}
-    end
+  defp advance_stream(%InputStream{} = stream, %OptionalGroupHeader{} = header) do
+    <<_drop::binary-size(header.group_size), rest::binary>> = stream.bytes
+    %InputStream{stream | bytes: rest, offset: stream.offset + header.group_size}
   end
 
   defp get_type_module_for(typestr) do
