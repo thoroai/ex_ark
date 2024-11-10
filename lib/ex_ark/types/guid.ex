@@ -2,12 +2,7 @@ defmodule ExArk.Types.Guid do
   use ExArk.Serdes.Deserializable
 
   @impl Deserializable
-  def read(
-        %InputStream{
-          bytes: <<hi::binary-size(8), lo::binary-size(8), rest::binary>>,
-          offset: offset
-        } = stream
-      ) do
+  def read(%InputStream{bytes: <<hi::binary-size(8), lo::binary-size(8), rest::binary>>, offset: offset} = stream) do
     hi = hi |> :binary.decode_unsigned(:little) |> :binary.encode_unsigned(:big)
     lo = lo |> :binary.decode_unsigned(:little) |> :binary.encode_unsigned(:big)
 

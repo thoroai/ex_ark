@@ -9,10 +9,7 @@ defmodule ExArk.Types.String do
 
   @impl Deserializable
   def read(
-        %InputStream{
-          bytes: <<len::little-unsigned-integer-size(32), s::bytes-size(len), rest::binary>>,
-          offset: offset
-        } =
+        %InputStream{bytes: <<len::little-unsigned-integer-size(32), s::bytes-size(len), rest::binary>>, offset: offset} =
           stream
       ) do
     {:ok, %Result{stream: %{stream | bytes: rest, offset: offset + 4 + len}, reified: s}}

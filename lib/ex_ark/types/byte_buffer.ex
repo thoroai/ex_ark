@@ -12,8 +12,7 @@ defmodule ExArk.Types.ByteBuffer do
         %InputStream{
           bytes: <<len::little-unsigned-integer-size(32), bb::bytes-size(len), rest::binary>>,
           offset: offset
-        } =
-          stream
+        } = stream
       ) do
     {:ok, %Result{stream: %{stream | bytes: rest, offset: offset + 4 + len}, reified: bb}}
   end

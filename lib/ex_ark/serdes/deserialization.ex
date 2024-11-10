@@ -3,6 +3,7 @@ defmodule ExArk.Serdes.Deserializable do
   Deserialization behaviour
   """
 
+  alias ExArk.Registry
   alias ExArk.Serdes.InputStream
 
   @type failure :: {:error, any()}
@@ -18,12 +19,20 @@ defmodule ExArk.Serdes.Deserializable do
 
   @callback read(stream :: InputStream.t()) :: {:ok, Result.t()} | failure()
 
+  @callback read(stream :: InputStream.t(), registry :: Registry.t()) ::
+              {:ok, Result.t()} | failure()
+
   defmacro __using__(_) do
     quote do
       @behaviour ExArk.Serdes.Deserializable
       alias ExArk.Serdes.Deserializable
       alias ExArk.Serdes.Deserializable.Result
       alias ExArk.Serdes.InputStream
+
+      def read(stream), do: {:error, :not_implemented}
+      def read(stream, registry), do: read(stream)
+
+      defoverridable read: 1, read: 2
     end
   end
 end
@@ -51,38 +60,40 @@ defmodule ExArk.Serdes.Deserialization do
     end
   end
 
-  defp deserialize(_registry, schema, stream) do
+  defp deserialize(registry, schema, stream) do
     with {:ok, %Result{stream: stream}} <- BitstreamHeader.read(stream),
-         {:ok, %Result{stream: stream}} <- deserialize_fields(schema.fields, stream) do
-      deserialize_groups(schema.groups, stream)
+         {:ok, %Result{stream: stream}} <- deserialize_fields(schema.fields, stream, registry) do
+      deserialize_groups(schema.groups, stream, registry)
     end
   end
 
-  defp deserialize_fields(fields, stream) do
+  defp deserialize_fields(fields, stream, registry) do
     updated_stream =
       Enum.reduce(fields, stream, fn field, stream ->
-        {:ok, %Result{stream: updated_stream}} = get_type_module_for(field.type).read(stream)
+        {:ok, %Result{stream: updated_stream}} =
+          get_type_module_for(field.type).read(stream, registry)
+
         updated_stream
       end)
 
     {:ok, %Result{stream: updated_stream}}
   end
 
-  defp deserialize_groups(_groups, %InputStream{has_more_sections: false} = stream),
+  defp deserialize_groups(_groups, %InputStream{has_more_sections: false} = stream, _registry),
     do: {:ok, %Result{stream: stream}}
 
-  defp deserialize_groups(groups, stream) do
-    deserialize_group(groups, stream)
-    deserialize_groups(groups, stream)
+  defp deserialize_groups(groups, stream, registry) do
+    deserialize_group(groups, stream, registry)
+    deserialize_groups(groups, stream, registry)
   end
 
-  defp deserialize_group(groups, stream) do
+  defp deserialize_group(groups, stream, registry) do
     case OptionalGroupHeader.read(stream) do
       {:ok, %Result{stream: stream, reified: header}} ->
         group = Enum.find(groups, fn group -> group.identifier == header.identifier end)
 
         if group != nil do
-          deserialize_fields(group.fields, stream)
+          deserialize_fields(group.fields, stream, registry)
         else
           {:ok, %Result{stream: advance_stream(stream, header)}}
         end
