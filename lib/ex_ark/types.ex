@@ -44,4 +44,14 @@ defmodule ExArk.Types do
 
   def complex?(type) when is_binary(type), do: complex?(String.to_existing_atom(type))
   def complex?(type), do: !primitive?(type) and !enum?(type)
+
+  def get_complex_module_for_type(type) when type in @complex_types do
+    case type do
+      :array -> ExArk.Types.Array
+      :arraylist -> ExArk.Types.Arraylist
+      :dictionary -> ExArk.Types.Dictionary
+      :object -> ExArk.Types.Object
+      :variant -> ExArk.Types.Variant
+    end
+  end
 end

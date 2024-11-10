@@ -8,13 +8,8 @@ defmodule ExArk.Serdes.InputStream do
   alias ExArk.Ir.ContainerField
   alias ExArk.Ir.Field
   alias ExArk.Registry
-  alias ExArk.Serdes.Deserialization
   alias ExArk.Types
-  alias ExArk.Types.Array
-  alias ExArk.Types.Arraylist
-  alias ExArk.Types.Dictionary
   alias ExArk.Types.Primitives
-  alias ExArk.Types.Variant
 
   @type failure :: {:error, any()}
 
@@ -51,8 +46,7 @@ defmodule ExArk.Serdes.InputStream do
         Primitives.read(type, stream)
 
       type == :object ->
-        schema = registry[container_field.object_type]
-        Deserialization.deserialize(stream, schema, registry)
+        Types.get_complex_module_for_type(type).read(stream, container_field, registry)
 
       true ->
         {:error, :bad_stream}
@@ -70,21 +64,8 @@ defmodule ExArk.Serdes.InputStream do
         type = registry[field.object_type].enum_class
         Primitives.read(type, stream)
 
-      type == :array ->
-        Array.read(stream, field, registry)
-
-      type == :arraylist ->
-        Arraylist.read(stream, field, registry)
-
-      type == :dictionary ->
-        Dictionary.read(stream, field, registry)
-
-      type == :variant ->
-        Variant.read(stream, field, registry)
-
-      type == :object ->
-        schema = registry[field.object_type]
-        Deserialization.deserialize(stream, schema, registry)
+      Types.complex?(type) ->
+        Types.get_complex_module_for_type(type).read(stream, field, registry)
 
       true ->
         {:error, :bad_stream}
