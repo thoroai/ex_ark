@@ -1,0 +1,20 @@
+{
+  "schemas": [
+    {
+      "name": "AnnotationZonesConfiguration",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "AnnotationZoneExpansionDistance",
+          "type": "double"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/libraries/Plan/annotation_zones_config.rbuf",
+        "line_number": 3
+      }
+    }
+  ],
+  "enums": []
+}

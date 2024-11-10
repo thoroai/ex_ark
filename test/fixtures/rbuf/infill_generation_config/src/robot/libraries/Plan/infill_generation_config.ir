@@ -1,0 +1,283 @@
+{
+  "schemas": [
+    {
+      "name": "ExclusionZonesConfiguration",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "OccupiedCellProbability",
+          "type": "double"
+        },
+        {
+          "name": "ExclusionZonePointRadius",
+          "type": "double"
+        },
+        {
+          "name": "ExclusionZoneExpansionDistance",
+          "type": "double"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "src/robot/libraries/Plan/exclusion_zones_config.rbuf",
+        "line_number": 3
+      }
+    },
+    {
+      "name": "InfillPlanGenerationConfiguration",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "OccupiedCellProbability",
+          "type": "double",
+          "attributes": {
+            "removed": true
+          }
+        },
+        {
+          "name": "ExclusionZonePointRadius",
+          "type": "double",
+          "attributes": {
+            "removed": true
+          }
+        },
+        {
+          "name": "ExclusionZoneExpansionDistance",
+          "type": "double",
+          "attributes": {
+            "removed": true
+          }
+        },
+        {
+          "name": "PolygonInterpolatedPointDistance",
+          "type": "double"
+        },
+        {
+          "name": "PolygonMinimumArea",
+          "type": "double"
+        },
+        {
+          "name": "PolygonMinimumPerimeter",
+          "type": "double"
+        },
+        {
+          "name": "PolygonStraighteningFactor",
+          "type": "double"
+        },
+        {
+          "name": "PolygonNumSmoothingLoops",
+          "type": "uint32"
+        },
+        {
+          "name": "IntegerizingScaleFactor",
+          "type": "int32"
+        },
+        {
+          "name": "FlaringBasicMaxCurvature",
+          "type": "double"
+        },
+        {
+          "name": "FlaringSuperMaxCurvature",
+          "type": "double"
+        },
+        {
+          "name": "FlaringBasicMinAngle",
+          "type": "double"
+        },
+        {
+          "name": "FlaringSuperMinAngle",
+          "type": "double"
+        },
+        {
+          "name": "FlaringCircleCurvature",
+          "type": "double"
+        },
+        {
+          "name": "FlaringMinDistanceToExclusions",
+          "type": "double"
+        },
+        {
+          "name": "FlaringMinDistanceToPerimeter",
+          "type": "double"
+        },
+        {
+          "name": "FlaringBasicWindowSize",
+          "type": "uint32"
+        },
+        {
+          "name": "FlaringCroppingTestWindowSize",
+          "type": "uint32"
+        },
+        {
+          "name": "FlaringCroppingTestMaxCurvature",
+          "type": "double"
+        },
+        {
+          "name": "FlaringJumpAheadDistance",
+          "type": "double"
+        },
+        {
+          "name": "FlaringOffsetCautionaryPolygonWeight",
+          "type": "double"
+        },
+        {
+          "name": "FlaringOffsetCautionaryPolygonPhaseoutDistance",
+          "type": "double"
+        },
+        {
+          "name": "CroppingInterpolatedDistance",
+          "type": "double"
+        },
+        {
+          "name": "CroppingMaxCurvature",
+          "type": "double"
+        },
+        {
+          "name": "CroppingMinAngle",
+          "type": "double"
+        },
+        {
+          "name": "CroppingMinPointDistanceFactor",
+          "type": "double"
+        },
+        {
+          "name": "CroppingLastPassMaxCurvature",
+          "type": "double"
+        },
+        {
+          "name": "CroppingInternalPolygonMaxCurvature",
+          "type": "double"
+        },
+        {
+          "name": "CroppingExclusionMaxCurvature",
+          "type": "double"
+        },
+        {
+          "name": "BezierPercentIncrement",
+          "type": "uint32"
+        },
+        {
+          "name": "OrphanDistance",
+          "type": "double"
+        },
+        {
+          "name": "ConnectionGapDistance",
+          "type": "double"
+        },
+        {
+          "name": "ConnectionBlendingDistance",
+          "type": "double"
+        },
+        {
+          "name": "ConnectionBacktrackDistance",
+          "type": "double"
+        },
+        {
+          "name": "ConnectionPerimeterAdvanceDistance",
+          "type": "double"
+        },
+        {
+          "name": "ConnectionWindowDistance",
+          "type": "double"
+        },
+        {
+          "name": "ConnectionInterpolatedDistance",
+          "type": "double"
+        },
+        {
+          "name": "ConnectionNoCostCurvature",
+          "type": "double"
+        },
+        {
+          "name": "ConnectionNoCostAngleDiff",
+          "type": "double"
+        },
+        {
+          "name": "UseSelectiveSmoothing",
+          "type": "bool"
+        },
+        {
+          "name": "SelectiveSmoothingThresholdDistance",
+          "type": "double"
+        },
+        {
+          "name": "FirstOffset",
+          "type": "double"
+        },
+        {
+          "name": "SecondOffsetExcessiveDistanceFactor",
+          "type": "double"
+        },
+        {
+          "name": "GenerateDebugArtifacts",
+          "type": "bool"
+        },
+        {
+          "name": "RunLocalCleanupPlanner",
+          "type": "bool"
+        },
+        {
+          "name": "CleanupScrubpadRadiusDeduction",
+          "type": "double"
+        },
+        {
+          "name": "CleanupMapPixelsPerMeter",
+          "type": "uint32"
+        },
+        {
+          "name": "CleanupParentBoundingFactor",
+          "type": "double"
+        },
+        {
+          "name": "CleanupMaxGapChainAngleDifference",
+          "type": "double"
+        },
+        {
+          "name": "CleanupMaxGapChainDistanceFactor",
+          "type": "double"
+        },
+        {
+          "name": "CleanupMinNumberOfGapsInChain",
+          "type": "uint32"
+        },
+        {
+          "name": "CleanupMinAreaOfGapsInChain",
+          "type": "double"
+        },
+        {
+          "name": "AllowInteriorPolygonSmoothing",
+          "type": "bool"
+        },
+        {
+          "name": "CleaningRadius",
+          "type": "double"
+        },
+        {
+          "name": "SpiralOffset",
+          "type": "double"
+        },
+        {
+          "name": "IncludePerimeter",
+          "type": "bool"
+        }
+      ],
+      "groups": [
+        {
+          "identifier": 0,
+          "fields": [
+            {
+              "name": "exclusion_zones_config",
+              "type": "object",
+              "object_type": "crl::knight::ExclusionZonesConfiguration"
+            }
+          ]
+        }
+      ],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/libraries/Plan/infill_generation_config.rbuf",
+        "line_number": 7
+      }
+    }
+  ],
+  "enums": []
+}

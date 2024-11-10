@@ -1,0 +1,633 @@
+{
+  "schemas": [
+    {
+      "name": "InvaderAttachmentCommandMessage",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "brush_mode",
+          "type": "enum",
+          "object_type": "crl::knight::BrushCommandMode"
+        },
+        {
+          "name": "solution_rate",
+          "type": "enum",
+          "object_type": "crl::knight::SolutionCommandMode"
+        },
+        {
+          "name": "vacuum_level",
+          "type": "enum",
+          "object_type": "crl::knight::VacuumCommandMode"
+        },
+        {
+          "name": "detergent_rate",
+          "type": "enum",
+          "object_type": "crl::knight::DetergentCommandMode"
+        },
+        {
+          "name": "uv_mode",
+          "type": "enum",
+          "object_type": "crl::knight::UVCommandMode"
+        },
+        {
+          "name": "horn",
+          "type": "enum",
+          "object_type": "crl::knight::HornCommandMode"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/sc50/stages/InvaderStage/messages.rbuf",
+        "line_number": 223
+      }
+    },
+    {
+      "name": "InvaderAutomationStatusMessage",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "localized",
+          "type": "bool"
+        },
+        {
+          "name": "on_path",
+          "type": "bool"
+        },
+        {
+          "name": "is_busy",
+          "type": "bool"
+        },
+        {
+          "name": "is_copycat_training",
+          "type": "bool"
+        },
+        {
+          "name": "is_infill_training",
+          "type": "bool"
+        },
+        {
+          "name": "loop_closed",
+          "type": "bool"
+        }
+      ],
+      "groups": [
+        {
+          "identifier": 0,
+          "fields": [
+            {
+              "name": "is_starting",
+              "type": "bool"
+            }
+          ]
+        },
+        {
+          "identifier": 1,
+          "fields": [
+            {
+              "name": "is_infill_plan",
+              "type": "bool"
+            }
+          ]
+        },
+        {
+          "identifier": 2,
+          "fields": [
+            {
+              "name": "allow_autonomy",
+              "type": "bool"
+            },
+            {
+              "name": "execution_failed",
+              "type": "bool"
+            },
+            {
+              "name": "error",
+              "type": "bool"
+            }
+          ]
+        },
+        {
+          "identifier": 3,
+          "fields": [
+            {
+              "name": "training_failed",
+              "type": "bool"
+            }
+          ]
+        }
+      ],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/sc50/stages/InvaderStage/messages.rbuf",
+        "line_number": 163
+      }
+    },
+    {
+      "name": "InvaderAutonomyStartableMessage",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "can_start_autonomy",
+          "type": "bool"
+        }
+      ],
+      "groups": [
+        {
+          "identifier": 0,
+          "fields": [
+            {
+              "name": "has_resume_plan",
+              "type": "bool"
+            },
+            {
+              "name": "can_resume",
+              "type": "bool"
+            }
+          ]
+        }
+      ],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/sc50/stages/InvaderStage/messages.rbuf",
+        "line_number": 248
+      }
+    },
+    {
+      "name": "InvaderControlMessage",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "platform_capture_time_us",
+          "type": "uint32"
+        },
+        {
+          "name": "traction_effort",
+          "type": "double"
+        },
+        {
+          "name": "steering_deg",
+          "type": "double"
+        },
+        {
+          "name": "brush_mode",
+          "type": "enum",
+          "object_type": "crl::knight::BrushCommandMode"
+        },
+        {
+          "name": "solution_rate",
+          "type": "enum",
+          "object_type": "crl::knight::SolutionCommandMode"
+        },
+        {
+          "name": "vacuum_level",
+          "type": "enum",
+          "object_type": "crl::knight::VacuumCommandMode"
+        },
+        {
+          "name": "detergent_rate",
+          "type": "enum",
+          "object_type": "crl::knight::DetergentCommandMode"
+        },
+        {
+          "name": "uv_mode",
+          "type": "enum",
+          "object_type": "crl::knight::UVCommandMode"
+        },
+        {
+          "name": "horn",
+          "type": "enum",
+          "object_type": "crl::knight::HornCommandMode"
+        },
+        {
+          "name": "mode",
+          "type": "enum",
+          "object_type": "crl::knight::ModeCommandMode"
+        },
+        {
+          "name": "diagnostic_value",
+          "type": "uint8"
+        },
+        {
+          "name": "exit_code",
+          "type": "enum",
+          "object_type": "crl::knight::ExitCodeCommandMode"
+        },
+        {
+          "name": "platform_error",
+          "type": "enum",
+          "object_type": "crl::knight::PlatformErrorCommandMode"
+        }
+      ],
+      "groups": [
+        {
+          "identifier": 0,
+          "fields": [
+            {
+              "name": "raw_traction",
+              "type": "int16"
+            },
+            {
+              "name": "raw_steering",
+              "type": "int16"
+            }
+          ]
+        },
+        {
+          "identifier": 1,
+          "fields": [
+            {
+              "name": "exit_reason",
+              "type": "uint16"
+            }
+          ]
+        }
+      ],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/sc50/stages/InvaderStage/messages.rbuf",
+        "line_number": 317
+      }
+    },
+    {
+      "name": "InvaderEmergencyMessage",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "error_code",
+          "type": "uint16"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/sc50/stages/InvaderStage/messages.rbuf",
+        "line_number": 430
+      }
+    },
+    {
+      "name": "InvaderMotionCommandMessage",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "allow_autonomy",
+          "type": "bool",
+          "attributes": {
+            "removed": true
+          }
+        },
+        {
+          "name": "valid",
+          "type": "bool"
+        },
+        {
+          "name": "traction_effort",
+          "type": "double"
+        },
+        {
+          "name": "steering_deg",
+          "type": "double"
+        },
+        {
+          "name": "right_turn_signal",
+          "type": "bool"
+        },
+        {
+          "name": "left_turn_signal",
+          "type": "bool"
+        },
+        {
+          "name": "obstructed",
+          "type": "bool"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/sc50/stages/InvaderStage/messages.rbuf",
+        "line_number": 268
+      }
+    },
+    {
+      "name": "InvaderPlaybackSettingsReaderMessage",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "platform_capture_time_us",
+          "type": "uint32"
+        },
+        {
+          "name": "max_speed_mps",
+          "type": "double"
+        },
+        {
+          "name": "flags",
+          "type": "enum",
+          "object_type": "crl::knight::InvaderPlaybackFlags"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/sc50/stages/InvaderStage/messages.rbuf",
+        "line_number": 415
+      }
+    },
+    {
+      "name": "InvaderStatusReaderMessage",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "platform_capture_time_us",
+          "type": "uint32"
+        },
+        {
+          "name": "speed_knob",
+          "type": "uint8"
+        },
+        {
+          "name": "battery",
+          "type": "uint8"
+        },
+        {
+          "name": "solution",
+          "type": "uint8"
+        },
+        {
+          "name": "invader_digital_inputs",
+          "type": "enum",
+          "object_type": "crl::knight::InvaderDigitalInput"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/sc50/stages/InvaderStage/messages.rbuf",
+        "line_number": 381
+      }
+    },
+    {
+      "name": "InvaderStatusWriterMessage",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "platform_capture_time_us",
+          "type": "uint32"
+        },
+        {
+          "name": "left_encoder_velocity",
+          "type": "int16"
+        },
+        {
+          "name": "right_encoder_velocity",
+          "type": "int16"
+        },
+        {
+          "name": "automation_status",
+          "type": "enum",
+          "object_type": "crl::knight::AutomationStatus"
+        },
+        {
+          "name": "lightbar_status",
+          "type": "enum",
+          "object_type": "crl::knight::LightbarStatus"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/sc50/stages/InvaderStage/messages.rbuf",
+        "line_number": 398
+      }
+    },
+    {
+      "name": "SdoMessage",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "message_buffer",
+          "type": "byte_buffer"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/sc50/stages/InvaderStage/messages.rbuf",
+        "line_number": 439
+      }
+    }
+  ],
+  "enums": [
+    {
+      "name": "AutomationStatus",
+      "object_namespace": "crl::knight",
+      "enum_class": "uint16",
+      "enum_type": "bitmask",
+      "values": {
+        "BOOTING": 1,
+        "BUSY": 256,
+        "CAN_RESUME": 128,
+        "HAS_RESUMABLE": 64,
+        "IS_INFILL_PATH": 32,
+        "LOCALIZED": 4,
+        "LOOP_CLOSED": 512,
+        "ON_PATH": 16,
+        "PATH_STARTABLE": 8,
+        "PERSONNEL": 2,
+        "UNKNOWN": 0
+      },
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/sc50/stages/InvaderStage/messages.rbuf",
+        "line_number": 128
+      }
+    },
+    {
+      "name": "BrushCommandMode",
+      "object_namespace": "crl::knight",
+      "enum_class": "uint8",
+      "enum_type": "value",
+      "values": {
+        "HEAVY": 2,
+        "NORMAL": 1,
+        "OFF": 0
+      },
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/sc50/stages/InvaderStage/messages.rbuf",
+        "line_number": 6
+      }
+    },
+    {
+      "name": "DetergentCommandMode",
+      "object_namespace": "crl::knight",
+      "enum_class": "uint8",
+      "enum_type": "value",
+      "values": {
+        "HIGH": 2,
+        "LOW": 1,
+        "OFF": 0
+      },
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/sc50/stages/InvaderStage/messages.rbuf",
+        "line_number": 37
+      }
+    },
+    {
+      "name": "ExitCodeCommandMode",
+      "object_namespace": "crl::knight",
+      "enum_class": "uint8",
+      "enum_type": "value",
+      "values": {
+        "CODE0": 0,
+        "CODE1": 1,
+        "CODE2": 2,
+        "CODE3": 3,
+        "CODE4": 4,
+        "CODE5": 5,
+        "CODE6": 6,
+        "CODE7": 7
+      },
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/sc50/stages/InvaderStage/messages.rbuf",
+        "line_number": 77
+      }
+    },
+    {
+      "name": "HornCommandMode",
+      "object_namespace": "crl::knight",
+      "enum_class": "uint8",
+      "enum_type": "value",
+      "values": {
+        "OFF": 0,
+        "ON": 1
+      },
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/sc50/stages/InvaderStage/messages.rbuf",
+        "line_number": 56
+      }
+    },
+    {
+      "name": "InvaderDigitalInput",
+      "object_namespace": "crl::knight",
+      "enum_class": "uint8",
+      "enum_type": "bitmask",
+      "values": {
+        "ESTOP": 1,
+        "GO_PEDAL": 4,
+        "NONE": 0,
+        "OPERATOR": 2,
+        "RECOVERYFULL": 32,
+        "RESERVED3": 8,
+        "RESERVED4": 16
+      },
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/sc50/stages/InvaderStage/messages.rbuf",
+        "line_number": 101
+      }
+    },
+    {
+      "name": "InvaderPlaybackFlags",
+      "object_namespace": "crl::knight",
+      "enum_class": "uint8",
+      "enum_type": "bitmask",
+      "values": {
+        "AUTO_RESUME": 4,
+        "AUTO_START": 2,
+        "DROPOFF_DISABLE": 1,
+        "INFINITE_PLAN_CHAIN": 8,
+        "NONE": 0,
+        "ONE_TIME_FILLIN": 16
+      },
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/sc50/stages/InvaderStage/messages.rbuf",
+        "line_number": 115
+      }
+    },
+    {
+      "name": "LightbarStatus",
+      "object_namespace": "crl::knight",
+      "enum_class": "uint8",
+      "enum_type": "bitmask",
+      "values": {
+        "BRAKING": 8,
+        "ERROR": 64,
+        "FOB_ACK": 128,
+        "LEFT_TURN": 1,
+        "NONE": 0,
+        "OBSTRUCTED": 32,
+        "RIGHT_TURN": 2,
+        "SCRUBBING": 16,
+        "STARTING": 4
+      },
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/sc50/stages/InvaderStage/messages.rbuf",
+        "line_number": 146
+      }
+    },
+    {
+      "name": "ModeCommandMode",
+      "object_namespace": "crl::knight",
+      "enum_class": "uint8",
+      "enum_type": "value",
+      "values": {
+        "AUTO": 4,
+        "BOOTING": 0,
+        "COPYCAT": 2,
+        "INFILL": 3,
+        "MANUAL": 1
+      },
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/sc50/stages/InvaderStage/messages.rbuf",
+        "line_number": 65
+      }
+    },
+    {
+      "name": "PlatformErrorCommandMode",
+      "object_namespace": "crl::knight",
+      "enum_class": "uint8",
+      "enum_type": "value",
+      "values": {
+        "ERROR": 0,
+        "OK": 1
+      },
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/sc50/stages/InvaderStage/messages.rbuf",
+        "line_number": 92
+      }
+    },
+    {
+      "name": "SolutionCommandMode",
+      "object_namespace": "crl::knight",
+      "enum_class": "uint8",
+      "enum_type": "value",
+      "values": {
+        "HIGH": 3,
+        "LOW": 1,
+        "MED": 2,
+        "OFF": 0
+      },
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/sc50/stages/InvaderStage/messages.rbuf",
+        "line_number": 16
+      }
+    },
+    {
+      "name": "UVCommandMode",
+      "object_namespace": "crl::knight",
+      "enum_class": "uint8",
+      "enum_type": "value",
+      "values": {
+        "OFF": 0,
+        "ON": 1
+      },
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/sc50/stages/InvaderStage/messages.rbuf",
+        "line_number": 47
+      }
+    },
+    {
+      "name": "VacuumCommandMode",
+      "object_namespace": "crl::knight",
+      "enum_class": "uint8",
+      "enum_type": "value",
+      "values": {
+        "HIGH": 2,
+        "LOW": 1,
+        "OFF": 0
+      },
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/sc50/stages/InvaderStage/messages.rbuf",
+        "line_number": 27
+      }
+    }
+  ]
+}

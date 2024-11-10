@@ -1,0 +1,28 @@
+{
+  "schemas": [
+    {
+      "name": "ExclusionZonesConfiguration",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "OccupiedCellProbability",
+          "type": "double"
+        },
+        {
+          "name": "ExclusionZonePointRadius",
+          "type": "double"
+        },
+        {
+          "name": "ExclusionZoneExpansionDistance",
+          "type": "double"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/libraries/Plan/exclusion_zones_config.rbuf",
+        "line_number": 3
+      }
+    }
+  ],
+  "enums": []
+}

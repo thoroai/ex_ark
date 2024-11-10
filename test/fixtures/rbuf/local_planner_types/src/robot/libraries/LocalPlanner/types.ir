@@ -1,0 +1,84 @@
+{
+  "schemas": [],
+  "enums": [
+    {
+      "name": "Ark_PlanStatus",
+      "object_namespace": "crl::knight",
+      "enum_class": "int32",
+      "enum_type": "value",
+      "values": {
+        "kArkPlanStatusError": 5,
+        "kArkPlanStatusHighCost": 6,
+        "kArkPlanStatusInfeasible": 2,
+        "kArkPlanStatusInputsInvalid": 4,
+        "kArkPlanStatusInvalid": 0,
+        "kArkPlanStatusNeedNewCurve": 3,
+        "kArkPlanStatusSuccess": 1
+      },
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/libraries/LocalPlanner/types.rbuf",
+        "line_number": 25
+      }
+    },
+    {
+      "name": "Ark_TurnSignal",
+      "object_namespace": "crl::knight",
+      "enum_class": "int32",
+      "enum_type": "value",
+      "values": {
+        "kArkTurnSignalLeft": 1,
+        "kArkTurnSignalNone": 0,
+        "kArkTurnSignalRight": 2
+      },
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/libraries/LocalPlanner/types.rbuf",
+        "line_number": 37
+      }
+    },
+    {
+      "name": "ObstacleStatusType",
+      "object_namespace": "crl::knight",
+      "enum_class": "int32",
+      "enum_type": "value",
+      "values": {
+        "kNone": 1,
+        "kOnPath": 2,
+        "kUnknown": 0
+      },
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/libraries/LocalPlanner/types.rbuf",
+        "line_number": 10
+      }
+    },
+    {
+      "name": "Planner",
+      "object_namespace": "crl::knight",
+      "enum_class": "int32",
+      "enum_type": "value",
+      "values": {
+        "MPC": 2,
+        "MSA": 1,
+        "UNKNOWN": 0
+      },
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/libraries/LocalPlanner/types.rbuf",
+        "line_number": 17
+      }
+    },
+    {
+      "name": "PrimitiveBlockedState",
+      "object_namespace": "crl::knight",
+      "enum_class": "int32",
+      "enum_type": "value",
+      "values": {
+        "kBlocked": 2,
+        "kClear": 1,
+        "kUnknown": 0
+      },
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/libraries/LocalPlanner/types.rbuf",
+        "line_number": 3
+      }
+    }
+  ]
+}

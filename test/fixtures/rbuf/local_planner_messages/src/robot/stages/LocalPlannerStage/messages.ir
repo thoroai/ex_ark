@@ -1,0 +1,1030 @@
+{
+  "schemas": [
+    {
+      "name": "Header",
+      "object_namespace": "ark",
+      "fields": [
+        {
+          "name": "stamp",
+          "type": "steady_time_point"
+        },
+        {
+          "name": "frame_id",
+          "type": "string"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "ark/geometry/messages.rbuf",
+        "line_number": 3
+      }
+    },
+    {
+      "name": "JointState",
+      "object_namespace": "ark",
+      "fields": [
+        {
+          "name": "stamp",
+          "type": "steady_time_point"
+        },
+        {
+          "name": "joint_position_from_name",
+          "type": "dictionary",
+          "ctr_key_type": {
+            "type": "string"
+          },
+          "ctr_value_type": {
+            "type": "double"
+          }
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "ark/geometry/messages.rbuf",
+        "line_number": 131
+      }
+    },
+    {
+      "name": "PushTransformMessage3dStamped",
+      "object_namespace": "ark",
+      "fields": [
+        {
+          "name": "transform_message",
+          "type": "object",
+          "object_type": "ark::TransformMessage3dStamped"
+        },
+        {
+          "name": "is_static",
+          "type": "bool"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "ark/geometry/messages.rbuf",
+        "line_number": 115
+      }
+    },
+    {
+      "name": "Quaterniond",
+      "object_namespace": "ark",
+      "fields": [
+        {
+          "name": "x",
+          "type": "double"
+        },
+        {
+          "name": "y",
+          "type": "double"
+        },
+        {
+          "name": "z",
+          "type": "double"
+        },
+        {
+          "name": "w",
+          "type": "double"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "ark/geometry/messages.rbuf",
+        "line_number": 51
+      }
+    },
+    {
+      "name": "Quaternionf",
+      "object_namespace": "ark",
+      "fields": [
+        {
+          "name": "x",
+          "type": "float"
+        },
+        {
+          "name": "y",
+          "type": "float"
+        },
+        {
+          "name": "z",
+          "type": "float"
+        },
+        {
+          "name": "w",
+          "type": "float"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "ark/geometry/messages.rbuf",
+        "line_number": 43
+      }
+    },
+    {
+      "name": "TransformMessage2d",
+      "object_namespace": "ark",
+      "fields": [
+        {
+          "name": "translation",
+          "type": "object",
+          "object_type": "ark::Vector2d"
+        },
+        {
+          "name": "rotation",
+          "type": "double"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "ark/geometry/messages.rbuf",
+        "line_number": 65
+      }
+    },
+    {
+      "name": "TransformMessage2dStamped",
+      "object_namespace": "ark",
+      "fields": [
+        {
+          "name": "header",
+          "type": "object",
+          "object_type": "ark::Header"
+        },
+        {
+          "name": "source_frame_id",
+          "type": "string"
+        },
+        {
+          "name": "transform",
+          "type": "object",
+          "object_type": "ark::TransformMessage2d"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "ark/geometry/messages.rbuf",
+        "line_number": 79
+      }
+    },
+    {
+      "name": "TransformMessage2f",
+      "object_namespace": "ark",
+      "fields": [
+        {
+          "name": "translation",
+          "type": "object",
+          "object_type": "ark::Vector2f"
+        },
+        {
+          "name": "rotation",
+          "type": "float"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "ark/geometry/messages.rbuf",
+        "line_number": 59
+      }
+    },
+    {
+      "name": "TransformMessage2fStamped",
+      "object_namespace": "ark",
+      "fields": [
+        {
+          "name": "header",
+          "type": "object",
+          "object_type": "ark::Header"
+        },
+        {
+          "name": "source_frame_id",
+          "type": "string"
+        },
+        {
+          "name": "transform",
+          "type": "object",
+          "object_type": "ark::TransformMessage2f"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "ark/geometry/messages.rbuf",
+        "line_number": 71
+      }
+    },
+    {
+      "name": "TransformMessage3d",
+      "object_namespace": "ark",
+      "fields": [
+        {
+          "name": "translation",
+          "type": "object",
+          "object_type": "ark::Vector3d"
+        },
+        {
+          "name": "rotation",
+          "type": "object",
+          "object_type": "ark::Quaterniond"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "ark/geometry/messages.rbuf",
+        "line_number": 93
+      }
+    },
+    {
+      "name": "TransformMessage3dStamped",
+      "object_namespace": "ark",
+      "fields": [
+        {
+          "name": "header",
+          "type": "object",
+          "object_type": "ark::Header"
+        },
+        {
+          "name": "source_frame_id",
+          "type": "string"
+        },
+        {
+          "name": "transform",
+          "type": "object",
+          "object_type": "ark::TransformMessage3d"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "ark/geometry/messages.rbuf",
+        "line_number": 107
+      }
+    },
+    {
+      "name": "TransformMessage3f",
+      "object_namespace": "ark",
+      "fields": [
+        {
+          "name": "translation",
+          "type": "object",
+          "object_type": "ark::Vector3f"
+        },
+        {
+          "name": "rotation",
+          "type": "object",
+          "object_type": "ark::Quaternionf"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "ark/geometry/messages.rbuf",
+        "line_number": 87
+      }
+    },
+    {
+      "name": "TransformMessage3fStamped",
+      "object_namespace": "ark",
+      "fields": [
+        {
+          "name": "header",
+          "type": "object",
+          "object_type": "ark::Header"
+        },
+        {
+          "name": "source_frame_id",
+          "type": "string"
+        },
+        {
+          "name": "transform",
+          "type": "object",
+          "object_type": "ark::TransformMessage3f"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "ark/geometry/messages.rbuf",
+        "line_number": 99
+      }
+    },
+    {
+      "name": "TransformMessages3dStamped",
+      "object_namespace": "ark",
+      "fields": [
+        {
+          "name": "transforms",
+          "type": "arraylist",
+          "ctr_value_type": {
+            "type": "object",
+            "object_type": "ark::TransformMessage3dStamped"
+          }
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "ark/geometry/messages.rbuf",
+        "line_number": 126
+      }
+    },
+    {
+      "name": "TransformMessages3fStamped",
+      "object_namespace": "ark",
+      "fields": [
+        {
+          "name": "transforms",
+          "type": "arraylist",
+          "ctr_value_type": {
+            "type": "object",
+            "object_type": "ark::TransformMessage3fStamped"
+          }
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "ark/geometry/messages.rbuf",
+        "line_number": 121
+      }
+    },
+    {
+      "name": "Vector2d",
+      "object_namespace": "ark",
+      "fields": [
+        {
+          "name": "x",
+          "type": "double"
+        },
+        {
+          "name": "y",
+          "type": "double"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "ark/geometry/messages.rbuf",
+        "line_number": 23
+      }
+    },
+    {
+      "name": "Vector2f",
+      "object_namespace": "ark",
+      "fields": [
+        {
+          "name": "x",
+          "type": "float"
+        },
+        {
+          "name": "y",
+          "type": "float"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "ark/geometry/messages.rbuf",
+        "line_number": 17
+      }
+    },
+    {
+      "name": "Vector2i",
+      "object_namespace": "ark",
+      "fields": [
+        {
+          "name": "x",
+          "type": "int32"
+        },
+        {
+          "name": "y",
+          "type": "int32"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "ark/geometry/messages.rbuf",
+        "line_number": 11
+      }
+    },
+    {
+      "name": "Vector3d",
+      "object_namespace": "ark",
+      "fields": [
+        {
+          "name": "x",
+          "type": "double"
+        },
+        {
+          "name": "y",
+          "type": "double"
+        },
+        {
+          "name": "z",
+          "type": "double"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "ark/geometry/messages.rbuf",
+        "line_number": 36
+      }
+    },
+    {
+      "name": "Vector3f",
+      "object_namespace": "ark",
+      "fields": [
+        {
+          "name": "x",
+          "type": "float"
+        },
+        {
+          "name": "y",
+          "type": "float"
+        },
+        {
+          "name": "z",
+          "type": "float"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "ark/geometry/messages.rbuf",
+        "line_number": 29
+      }
+    },
+    {
+      "name": "Ark_CrlCommand",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "status",
+          "type": "enum",
+          "object_type": "crl::knight::Ark_PlanStatus"
+        },
+        {
+          "name": "turn_signal",
+          "type": "enum",
+          "object_type": "crl::knight::Ark_TurnSignal"
+        },
+        {
+          "name": "fw_wheel_angle_deg",
+          "type": "double"
+        },
+        {
+          "name": "fw_traction_mps",
+          "type": "double"
+        },
+        {
+          "name": "planned_states",
+          "type": "arraylist",
+          "ctr_value_type": {
+            "type": "object",
+            "object_type": "crl::knight::Ark_CrlPlannedState"
+          }
+        },
+        {
+          "name": "target_curve",
+          "type": "arraylist",
+          "ctr_value_type": {
+            "type": "object",
+            "object_type": "crl::knight::Ark_CrlPlannedPosition"
+          }
+        }
+      ],
+      "groups": [
+        {
+          "identifier": 0,
+          "fields": [
+            {
+              "name": "clear_trajectories",
+              "type": "bool"
+            }
+          ]
+        },
+        {
+          "identifier": 1,
+          "fields": [
+            {
+              "name": "is_done",
+              "type": "bool"
+            }
+          ]
+        }
+      ],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/LocalPlannerStage/messages.rbuf",
+        "line_number": 150
+      }
+    },
+    {
+      "name": "Ark_CrlPlannedPosition",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "position_x_m_odom",
+          "type": "double"
+        },
+        {
+          "name": "position_y_m_odom",
+          "type": "double"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/LocalPlannerStage/messages.rbuf",
+        "line_number": 143
+      }
+    },
+    {
+      "name": "Ark_CrlPlannedState",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "position_x_m_odom",
+          "type": "double"
+        },
+        {
+          "name": "position_y_m_odom",
+          "type": "double"
+        },
+        {
+          "name": "theta_rad_odom",
+          "type": "double"
+        },
+        {
+          "name": "steering_angle_rad",
+          "type": "double"
+        },
+        {
+          "name": "front_wheel_velocity_mps",
+          "type": "double"
+        },
+        {
+          "name": "time_of_validity_nsec",
+          "type": "int64"
+        }
+      ],
+      "groups": [
+        {
+          "identifier": 0,
+          "fields": [
+            {
+              "name": "angle_to_target_rad",
+              "type": "double"
+            }
+          ]
+        }
+      ],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/LocalPlannerStage/messages.rbuf",
+        "line_number": 124
+      }
+    },
+    {
+      "name": "ClearPlanSegment",
+      "object_namespace": "crl::knight",
+      "fields": [],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/LocalPlannerStage/messages.rbuf",
+        "line_number": 7
+      }
+    },
+    {
+      "name": "DynamicsRbuf",
+      "object_namespace": "crl::knight",
+      "fields": [],
+      "groups": [
+        {
+          "identifier": 0,
+          "fields": [
+            {
+              "name": "traction",
+              "type": "double"
+            },
+            {
+              "name": "wheel_angle",
+              "type": "double"
+            },
+            {
+              "name": "x_vel_mps",
+              "type": "double"
+            },
+            {
+              "name": "y_vel_mps",
+              "type": "double"
+            },
+            {
+              "name": "w_rps",
+              "type": "double"
+            }
+          ]
+        },
+        {
+          "identifier": 1,
+          "fields": [
+            {
+              "name": "x_pos_m",
+              "type": "double"
+            },
+            {
+              "name": "y_pos_m",
+              "type": "double"
+            },
+            {
+              "name": "theta_rad",
+              "type": "double"
+            }
+          ]
+        }
+      ],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/LocalPlannerStage/messages.rbuf",
+        "line_number": 193
+      }
+    },
+    {
+      "name": "LocalPlannerCommand",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "command",
+          "type": "variant",
+          "variant_types": [
+            [
+              1,
+              "crl::knight::ClearPlanSegment"
+            ],
+            [
+              2,
+              "crl::knight::StopAllMotion"
+            ]
+          ]
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/LocalPlannerStage/messages.rbuf",
+        "line_number": 17
+      }
+    },
+    {
+      "name": "LocalPlannerObstacleStatus",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "laser",
+          "type": "enum",
+          "object_type": "crl::knight::ObstacleStatusType"
+        },
+        {
+          "name": "camera",
+          "type": "enum",
+          "object_type": "crl::knight::ObstacleStatusType"
+        },
+        {
+          "name": "proximity_sensor",
+          "type": "enum",
+          "object_type": "crl::knight::ObstacleStatusType"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/LocalPlannerStage/messages.rbuf",
+        "line_number": 38
+      }
+    },
+    {
+      "name": "LocalPlannerPrimitiveStatus",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "camera",
+          "type": "enum",
+          "object_type": "crl::knight::PrimitiveBlockedState"
+        },
+        {
+          "name": "laser",
+          "type": "enum",
+          "object_type": "crl::knight::PrimitiveBlockedState"
+        },
+        {
+          "name": "proximity_sensor",
+          "type": "enum",
+          "object_type": "crl::knight::PrimitiveBlockedState"
+        },
+        {
+          "name": "safe_area",
+          "type": "enum",
+          "object_type": "crl::knight::PrimitiveBlockedState"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/LocalPlannerStage/messages.rbuf",
+        "line_number": 30
+      }
+    },
+    {
+      "name": "LocalPlannerStatus",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "per_sensor_obstacle_status",
+          "type": "object",
+          "object_type": "crl::knight::LocalPlannerObstacleStatus"
+        },
+        {
+          "name": "primitive_status",
+          "type": "object",
+          "attributes": {
+            "removed": true
+          },
+          "object_type": "crl::knight::LocalPlannerPrimitiveStatus"
+        },
+        {
+          "name": "obstacle_on_path",
+          "type": "enum",
+          "object_type": "crl::knight::ObstacleStatusType"
+        },
+        {
+          "name": "valid_primitive",
+          "type": "bool"
+        },
+        {
+          "name": "allow_autonomy",
+          "type": "bool",
+          "attributes": {
+            "removed": true
+          }
+        }
+      ],
+      "groups": [
+        {
+          "identifier": 0,
+          "fields": [
+            {
+              "name": "has_plan_segment",
+              "type": "bool"
+            }
+          ]
+        },
+        {
+          "identifier": 1,
+          "fields": [
+            {
+              "name": "safety_engaged",
+              "type": "bool"
+            },
+            {
+              "name": "operator_present",
+              "type": "bool"
+            }
+          ]
+        },
+        {
+          "identifier": 2,
+          "fields": [
+            {
+              "name": "controlling_planner",
+              "type": "enum",
+              "object_type": "crl::knight::Planner"
+            }
+          ]
+        },
+        {
+          "identifier": 3,
+          "fields": [
+            {
+              "name": "segment_playback_completed",
+              "type": "bool"
+            }
+          ]
+        },
+        {
+          "identifier": 5,
+          "fields": [
+            {
+              "name": "moving_backwards",
+              "type": "bool"
+            }
+          ]
+        },
+        {
+          "identifier": 6,
+          "fields": [
+            {
+              "name": "obstacle_on_planned_trajectory",
+              "type": "enum",
+              "object_type": "crl::knight::ObstacleStatusType"
+            }
+          ]
+        },
+        {
+          "identifier": 7,
+          "fields": [
+            {
+              "name": "plan_horizon_meters",
+              "type": "double"
+            },
+            {
+              "name": "plan_horizon_nanoseconds",
+              "type": "duration"
+            }
+          ]
+        },
+        {
+          "identifier": 8,
+          "fields": [
+            {
+              "name": "cross_track_error_m",
+              "type": "double",
+              "attributes": {
+                "optional": true
+              }
+            },
+            {
+              "name": "heading_error_rad",
+              "type": "double",
+              "attributes": {
+                "optional": true
+              }
+            },
+            {
+              "name": "target_control_point_pose",
+              "type": "object",
+              "attributes": {
+                "optional": true
+              },
+              "object_type": "ark::TransformMessage2d"
+            },
+            {
+              "name": "robot_control_point_pose",
+              "type": "object",
+              "attributes": {
+                "optional": true
+              },
+              "object_type": "ark::TransformMessage2d"
+            }
+          ]
+        },
+        {
+          "identifier": 9,
+          "fields": [
+            {
+              "name": "segment_parent_frame",
+              "type": "string",
+              "attributes": {
+                "optional": true
+              }
+            }
+          ]
+        }
+      ],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/LocalPlannerStage/messages.rbuf",
+        "line_number": 45
+      }
+    },
+    {
+      "name": "OperatorPresence",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "operator_present",
+          "type": "bool"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/LocalPlannerStage/messages.rbuf",
+        "line_number": 175
+      }
+    },
+    {
+      "name": "SetPlaybackAcceleration",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "profile",
+          "type": "enum",
+          "object_type": "crl::knight::AccelerationProfile"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/LocalPlannerStage/messages.rbuf",
+        "line_number": 188
+      }
+    },
+    {
+      "name": "StopAllMotion",
+      "object_namespace": "crl::knight",
+      "fields": [],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/LocalPlannerStage/messages.rbuf",
+        "line_number": 12
+      }
+    },
+    {
+      "name": "TrajectoryEvaluatorStatus",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "valid_primitive",
+          "type": "bool"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/LocalPlannerStage/messages.rbuf",
+        "line_number": 25
+      }
+    }
+  ],
+  "enums": [
+    {
+      "name": "AccelerationProfile",
+      "object_namespace": "crl::knight",
+      "enum_class": "uint8",
+      "enum_type": "value",
+      "values": {
+        "LOW": 1,
+        "NORMAL": 0
+      },
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/LocalPlannerStage/messages.rbuf",
+        "line_number": 183
+      }
+    },
+    {
+      "name": "Ark_PlanStatus",
+      "object_namespace": "crl::knight",
+      "enum_class": "int32",
+      "enum_type": "value",
+      "values": {
+        "kArkPlanStatusError": 5,
+        "kArkPlanStatusHighCost": 6,
+        "kArkPlanStatusInfeasible": 2,
+        "kArkPlanStatusInputsInvalid": 4,
+        "kArkPlanStatusInvalid": 0,
+        "kArkPlanStatusNeedNewCurve": 3,
+        "kArkPlanStatusSuccess": 1
+      },
+      "source_location": {
+        "filename": "src/robot/libraries/LocalPlanner/types.rbuf",
+        "line_number": 25
+      }
+    },
+    {
+      "name": "Ark_TurnSignal",
+      "object_namespace": "crl::knight",
+      "enum_class": "int32",
+      "enum_type": "value",
+      "values": {
+        "kArkTurnSignalLeft": 1,
+        "kArkTurnSignalNone": 0,
+        "kArkTurnSignalRight": 2
+      },
+      "source_location": {
+        "filename": "src/robot/libraries/LocalPlanner/types.rbuf",
+        "line_number": 37
+      }
+    },
+    {
+      "name": "ObstacleStatusType",
+      "object_namespace": "crl::knight",
+      "enum_class": "int32",
+      "enum_type": "value",
+      "values": {
+        "kNone": 1,
+        "kOnPath": 2,
+        "kUnknown": 0
+      },
+      "source_location": {
+        "filename": "src/robot/libraries/LocalPlanner/types.rbuf",
+        "line_number": 10
+      }
+    },
+    {
+      "name": "Planner",
+      "object_namespace": "crl::knight",
+      "enum_class": "int32",
+      "enum_type": "value",
+      "values": {
+        "MPC": 2,
+        "MSA": 1,
+        "UNKNOWN": 0
+      },
+      "source_location": {
+        "filename": "src/robot/libraries/LocalPlanner/types.rbuf",
+        "line_number": 17
+      }
+    },
+    {
+      "name": "PrimitiveBlockedState",
+      "object_namespace": "crl::knight",
+      "enum_class": "int32",
+      "enum_type": "value",
+      "values": {
+        "kBlocked": 2,
+        "kClear": 1,
+        "kUnknown": 0
+      },
+      "source_location": {
+        "filename": "src/robot/libraries/LocalPlanner/types.rbuf",
+        "line_number": 3
+      }
+    }
+  ]
+}

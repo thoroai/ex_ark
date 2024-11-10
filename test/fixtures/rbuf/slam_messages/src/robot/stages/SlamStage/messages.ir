@@ -1,0 +1,156 @@
+{
+  "schemas": [
+    {
+      "name": "HomeZone",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "april_tag_id",
+          "type": "int32"
+        }
+      ],
+      "groups": [
+        {
+          "identifier": 0,
+          "fields": [
+            {
+              "name": "uuid",
+              "type": "guid"
+            }
+          ]
+        },
+        {
+          "identifier": 1,
+          "fields": [
+            {
+              "name": "localized",
+              "type": "bool"
+            }
+          ]
+        }
+      ],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SlamStage/messages.rbuf",
+        "line_number": 50
+      }
+    },
+    {
+      "name": "HomingTagIdList",
+      "object_namespace": "crl::knight",
+      "fields": [],
+      "groups": [
+        {
+          "identifier": 0,
+          "fields": [
+            {
+              "name": "homing_tag_ids",
+              "type": "arraylist",
+              "ctr_value_type": {
+                "type": "uint32"
+              }
+            }
+          ]
+        }
+      ],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SlamStage/messages.rbuf",
+        "line_number": 21
+      }
+    },
+    {
+      "name": "LocalizationRequest",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "type",
+          "type": "enum",
+          "object_type": "crl::knight::LocalizationRequestType"
+        },
+        {
+          "name": "tag_to_delete",
+          "type": "string"
+        }
+      ],
+      "groups": [
+        {
+          "identifier": 1,
+          "fields": [
+            {
+              "name": "tag_id",
+              "type": "int32"
+            }
+          ]
+        }
+      ],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SlamStage/messages.rbuf",
+        "line_number": 29
+      }
+    },
+    {
+      "name": "SlamStatus",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "scan_matcher_score",
+          "type": "double"
+        },
+        {
+          "name": "restart_count",
+          "type": "uint64"
+        },
+        {
+          "name": "is_homing",
+          "type": "bool"
+        }
+      ],
+      "groups": [
+        {
+          "identifier": 0,
+          "fields": [
+            {
+              "name": "is_localized_to_a_tag",
+              "type": "bool"
+            }
+          ]
+        }
+      ],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SlamStage/messages.rbuf",
+        "line_number": 74
+      }
+    }
+  ],
+  "enums": [
+    {
+      "name": "LocalizationRequestType",
+      "object_namespace": "crl::knight",
+      "enum_class": "int32",
+      "enum_type": "value",
+      "values": {
+        "kDeleteAllTags": 6,
+        "kDeleteNextSeenTag": 7,
+        "kDeleteTagByName": 8,
+        "kDeleteTagByTagId": 11,
+        "kGetHomeZone": 10,
+        "kGetHomingTagIdList": 12,
+        "kResetLocalization": 9,
+        "kSetFakeHome": 5,
+        "kSetOneTimeTag": 13,
+        "kStartHoming": 1,
+        "kStartObtainingNewHome": 3,
+        "kStopHoming": 2,
+        "kStopObtainingNewHome": 4,
+        "kUnknown": 0
+      },
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SlamStage/messages.rbuf",
+        "line_number": 3
+      }
+    }
+  ]
+}

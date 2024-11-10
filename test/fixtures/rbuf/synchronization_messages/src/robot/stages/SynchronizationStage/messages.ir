@@ -1,0 +1,390 @@
+{
+  "schemas": [
+    {
+      "name": "CreateObject",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "type",
+          "type": "string"
+        },
+        {
+          "name": "id",
+          "type": "guid"
+        },
+        {
+          "name": "parent_id",
+          "type": "guid"
+        },
+        {
+          "name": "serialized_object",
+          "type": "byte_buffer"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/messages.rbuf",
+        "line_number": 54
+      }
+    },
+    {
+      "name": "DeleteObject",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "type",
+          "type": "string"
+        },
+        {
+          "name": "id",
+          "type": "guid"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/messages.rbuf",
+        "line_number": 92
+      }
+    },
+    {
+      "name": "ObjectCreateFailed",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "type",
+          "type": "string"
+        },
+        {
+          "name": "id",
+          "type": "guid"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/messages.rbuf",
+        "line_number": 162
+      }
+    },
+    {
+      "name": "ObjectCreated",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "type",
+          "type": "string"
+        },
+        {
+          "name": "id",
+          "type": "guid"
+        },
+        {
+          "name": "serialized_object",
+          "type": "byte_buffer"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/messages.rbuf",
+        "line_number": 116
+      }
+    },
+    {
+      "name": "ObjectDeleteFailed",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "type",
+          "type": "string"
+        },
+        {
+          "name": "id",
+          "type": "guid"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/messages.rbuf",
+        "line_number": 182
+      }
+    },
+    {
+      "name": "ObjectDeleted",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "type",
+          "type": "string"
+        },
+        {
+          "name": "id",
+          "type": "guid"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/messages.rbuf",
+        "line_number": 142
+      }
+    },
+    {
+      "name": "ObjectUpdateFailed",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "type",
+          "type": "string"
+        },
+        {
+          "name": "id",
+          "type": "guid"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/messages.rbuf",
+        "line_number": 172
+      }
+    },
+    {
+      "name": "ObjectUpdated",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "type",
+          "type": "string"
+        },
+        {
+          "name": "id",
+          "type": "guid"
+        },
+        {
+          "name": "serialized_object",
+          "type": "byte_buffer"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/messages.rbuf",
+        "line_number": 129
+      }
+    },
+    {
+      "name": "ObjectsUnloaded",
+      "object_namespace": "crl::knight",
+      "fields": [],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/messages.rbuf",
+        "line_number": 152
+      }
+    },
+    {
+      "name": "SynchronizationCommand",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "command",
+          "type": "variant",
+          "variant_types": [
+            [
+              1,
+              "crl::knight::CreateObject"
+            ],
+            [
+              2,
+              "crl::knight::UpdateObject"
+            ],
+            [
+              3,
+              "crl::knight::DeleteObject"
+            ]
+          ]
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/messages.rbuf",
+        "line_number": 102
+      }
+    },
+    {
+      "name": "SynchronizationCommands",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "commands",
+          "type": "arraylist",
+          "ctr_value_type": {
+            "type": "object",
+            "object_type": "crl::knight::SynchronizationCommand"
+          }
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/messages.rbuf",
+        "line_number": 111
+      }
+    },
+    {
+      "name": "SynchronizationEvent",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "event",
+          "type": "variant",
+          "variant_types": [
+            [
+              1,
+              "crl::knight::ObjectCreated"
+            ],
+            [
+              2,
+              "crl::knight::ObjectUpdated"
+            ],
+            [
+              3,
+              "crl::knight::ObjectDeleted"
+            ],
+            [
+              4,
+              "crl::knight::ObjectCreateFailed"
+            ],
+            [
+              5,
+              "crl::knight::ObjectUpdateFailed"
+            ],
+            [
+              6,
+              "crl::knight::ObjectDeleteFailed"
+            ],
+            [
+              7,
+              "crl::knight::ObjectsUnloaded"
+            ]
+          ]
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/messages.rbuf",
+        "line_number": 192
+      }
+    },
+    {
+      "name": "SynchronizationEvents",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "type",
+          "type": "string"
+        },
+        {
+          "name": "events",
+          "type": "arraylist",
+          "ctr_value_type": {
+            "type": "object",
+            "object_type": "crl::knight::SynchronizationEvent"
+          }
+        }
+      ],
+      "groups": [
+        {
+          "identifier": 0,
+          "fields": [
+            {
+              "name": "generation",
+              "type": "uint64"
+            }
+          ]
+        }
+      ],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/messages.rbuf",
+        "line_number": 206
+      }
+    },
+    {
+      "name": "SynchronizationStatus",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "partition",
+          "type": "guid"
+        },
+        {
+          "name": "enabled",
+          "type": "bool"
+        }
+      ],
+      "groups": [
+        {
+          "identifier": 1,
+          "fields": [
+            {
+              "name": "state",
+              "type": "enum",
+              "object_type": "crl::knight::SynchronizationState"
+            }
+          ]
+        },
+        {
+          "identifier": 2,
+          "fields": [
+            {
+              "name": "map_updates_enabled",
+              "type": "bool"
+            }
+          ]
+        }
+      ],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/messages.rbuf",
+        "line_number": 30
+      }
+    },
+    {
+      "name": "UpdateObject",
+      "object_namespace": "crl::knight",
+      "fields": [
+        {
+          "name": "type",
+          "type": "string"
+        },
+        {
+          "name": "id",
+          "type": "guid"
+        },
+        {
+          "name": "serialized_object",
+          "type": "byte_buffer"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/messages.rbuf",
+        "line_number": 75
+      }
+    }
+  ],
+  "enums": [
+    {
+      "name": "SynchronizationState",
+      "object_namespace": "crl::knight",
+      "enum_class": "int32",
+      "enum_type": "value",
+      "values": {
+        "Disabled": 0,
+        "Disabling": 1,
+        "Enabling": 2,
+        "Errored": 5,
+        "Synchronized": 3,
+        "Synchronizing": 4
+      },
+      "source_location": {
+        "filename": "/home/jhosteny/src/tai/knight/src/robot/stages/SynchronizationStage/messages.rbuf",
+        "line_number": 6
+      }
+    }
+  ]
+}
