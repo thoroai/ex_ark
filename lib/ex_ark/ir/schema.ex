@@ -6,8 +6,8 @@ defmodule ExArk.Ir.Schema do
   use TypedStruct
   import UnionTypespec, only: [union_type: 1]
 
-  alias ExArk.Ir.Group
   alias ExArk.Ir.Field
+  alias ExArk.Ir.Group
   alias ExArk.Ir.SourceLocation
   alias ExArk.Utilities
 

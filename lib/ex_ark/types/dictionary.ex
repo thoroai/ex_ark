@@ -2,11 +2,12 @@ defmodule ExArk.Types.Dictionary do
   @moduledoc """
   Module for handling dictionaries
   """
-  require ExArk.Types
   alias ExArk.Ir.Field
   alias ExArk.Registry
   alias ExArk.Serdes.InputStream
   alias ExArk.Serdes.InputStream.Result
+
+  require ExArk.Types
 
   #
   # +----------+-------+---------+-------+---------+-----+-------+---------+

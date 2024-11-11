@@ -118,6 +118,7 @@ defmodule ExArk.Types.Primitives do
 
   def read(
         :string,
+        # credo:disable-for-next-line
         %InputStream{bytes: <<len::little-unsigned-integer-size(32), s::bytes-size(len), rest::binary>>, offset: offset} =
           stream
       ) do

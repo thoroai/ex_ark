@@ -3,8 +3,8 @@ defmodule ExArk do
   Documentation for `ExArk`.
   """
 
-  alias ExArk.Serdes.Deserialization
   alias ExArk.Registry
+  alias ExArk.Serdes.Deserialization
 
   @doc """
   Load schema file(s)

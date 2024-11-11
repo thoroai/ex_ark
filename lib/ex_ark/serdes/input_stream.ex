@@ -8,6 +8,7 @@ defmodule ExArk.Serdes.InputStream do
   alias ExArk.Ir.ContainerField
   alias ExArk.Ir.Field
   alias ExArk.Registry
+  alias ExArk.Serdes.InputStream
   alias ExArk.Types
   alias ExArk.Types.Primitives
 
@@ -16,11 +17,14 @@ defmodule ExArk.Serdes.InputStream do
   @type failure :: {:error, any()}
 
   defmodule Result do
+    @moduledoc """
+    Typed structure for input stream read results
+    """
     use TypedStruct
 
     typedstruct do
       field :reified, any()
-      field :stream, ExArk.Serdes.InputStream.t()
+      field :stream, InputStream.t()
     end
   end
 

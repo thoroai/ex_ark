@@ -1,0 +1,17 @@
+name: Pull Request
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  id-token: write
+  contents: write
+  packages: read
+  pull-requests: write
+
+jobs:
+  build:
+    uses: ./.github/workflows/_build_and_test.yml
+    secrets: inherit

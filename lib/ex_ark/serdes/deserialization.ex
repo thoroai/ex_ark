@@ -3,8 +3,8 @@ defmodule ExArk.Serdes.Deserialization do
   Ark deserialization utilities.
   """
 
-  alias ExArk.Registry
   alias ExArk.Ir.Schema
+  alias ExArk.Registry
   alias ExArk.Serdes.BitstreamHeader
   alias ExArk.Serdes.InputStream
   alias ExArk.Serdes.InputStream.Result
