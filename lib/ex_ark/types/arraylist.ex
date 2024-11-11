@@ -15,6 +15,13 @@ defmodule ExArk.Types.Arraylist do
 
   @spec read(InputStream.t(), Field.t(), Registry.t()) :: {:ok, InputStream.Result.t()} | InputStream.failure()
   def read(
+        %InputStream{bytes: <<0::little-unsigned-integer-size(32), _rest::binary>>} = stream,
+        %Field{} = _field,
+        %Registry{} = _registry
+      ),
+      do: {:ok, %Result{stream: stream}}
+
+  def read(
         %InputStream{bytes: <<size::little-unsigned-integer-size(32), rest::binary>>, offset: offset} = stream,
         %Field{} = field,
         %Registry{} = registry

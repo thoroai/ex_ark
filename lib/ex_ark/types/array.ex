@@ -8,9 +8,10 @@ defmodule ExArk.Types.Array do
   alias ExArk.Serdes.InputStream.Result
 
   @spec read(InputStream.t(), Field.t(), Registry.t()) :: {:ok, InputStream.Result.t()} | InputStream.failure()
-  def read(%InputStream{} = stream, %Field{} = field, %Registry{} = registry) do
-    size = registry[field.array_size]
+  def read(%InputStream{} = stream, %Field{array_size: 0} = _field, %Registry{} = _registry),
+    do: {:ok, %Result{stream: stream}}
 
+  def read(%InputStream{} = stream, %Field{array_size: size} = field, %Registry{} = registry) do
     {stream, items} =
       Enum.reduce(1..size, {stream, []}, fn _i, {stream, items} ->
         {:ok, %Result{stream: stream, reified: item}} = InputStream.read(stream, field.ctr_value_type, registry)

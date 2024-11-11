@@ -27,10 +27,13 @@ defmodule ExArk.Types do
   @complex_types [:array, :arraylist, :dictionary, :object, :variant]
   @all_types @primitive_types ++ @enum_types ++ @complex_types
 
+  @enum_styles [:value, :bitmask]
+
   union_type primitive_type :: @primitive_types
   union_type enum_type :: @enum_types
   union_type complex_type :: @complex_types
   union_type types :: @all_types
+  union_type enum_style :: @enum_styles
 
   defguard is_primitive?(type) when type in @primitive_types
 

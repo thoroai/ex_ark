@@ -29,7 +29,7 @@ defmodule ExArk.Types.Variant do
 
     if result != nil do
       type = elem(result, 1)
-      schema = registry[type]
+      schema = registry.schemas[type]
       Deserialization.deserialize(stream, schema, registry)
     else
       {:ok, %Result{stream: InputStream.advance(stream, length)}}

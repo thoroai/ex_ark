@@ -11,6 +11,8 @@ defmodule ExArk.Serdes.InputStream do
   alias ExArk.Types
   alias ExArk.Types.Primitives
 
+  require Logger
+
   @type failure :: {:error, any()}
 
   defmodule Result do
@@ -42,7 +44,7 @@ defmodule ExArk.Serdes.InputStream do
         Primitives.read(type, stream)
 
       Types.enum?(type) ->
-        type = registry[container_field.object_type].enum_class
+        type = registry.enums[container_field.object_type].enum_class
         Primitives.read(type, stream)
 
       type == :object ->
@@ -58,13 +60,29 @@ defmodule ExArk.Serdes.InputStream do
 
     cond do
       Types.primitive?(type) ->
-        Primitives.read(type, stream)
+        case Primitives.read(type, stream) do
+          {:ok, %Result{reified: value}} = result ->
+            Logger.debug("Deserialized primitive '#{field.name}': #{inspect(value)}")
+            result
+
+          error ->
+            error
+        end
 
       Types.enum?(type) ->
-        type = registry[field.object_type].enum_class
-        Primitives.read(type, stream)
+        type = registry.enums[field.object_type].enum_class
+
+        case Primitives.read(type, stream) do
+          {:ok, %Result{reified: value}} = result ->
+            Logger.debug("Deserialized primitive enum '#{field.name}': #{inspect(value)}")
+            result
+
+          error ->
+            error
+        end
 
       Types.complex?(type) ->
+        Logger.debug("Deserializing complex ('#{type}') field '#{field.name}'")
         Types.get_complex_module_for_type(type).read(stream, field, registry)
 
       true ->
