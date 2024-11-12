@@ -8,14 +8,17 @@ defmodule ExArk.Ir.ArkEnum do
 
   alias ExArk.Ir.SourceLocation
 
-  union_type enum_classes :: [:uint8, :uint16, :uint32, :uint64, :int8, :int16, :int32, :int64]
-  union_type enum_types :: [:value, :bitmask]
+  @enum_classes [:uint8, :uint16, :uint32, :uint64, :int8, :int16, :int32, :int64]
+  @enum_styles [:value, :bitmask]
+
+  union_type enum_class :: @enum_classes
+  union_type enum_style :: @enum_styles
 
   typedstruct enforce: true do
     field :name, String.t()
     field :object_namespace, String.t()
-    field :enum_class, String.t()
-    field :enum_type, enum_types
+    field :enum_class, enum_class
+    field :enum_type, enum_style
     field :values, %{}
     field :source_location, SourceLocation.t()
   end

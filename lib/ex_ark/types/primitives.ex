@@ -88,7 +88,7 @@ defmodule ExArk.Types.Primitives do
 
     {:ok,
      %Result{
-       stream: %{stream | bytes: rest, offset: offset + 8},
+       stream: %{stream | bytes: rest, offset: offset + 16},
        reified: Ecto.UUID.load(hi <> lo)
      }}
   rescue
@@ -98,14 +98,14 @@ defmodule ExArk.Types.Primitives do
 
   def read(
         :steady_time_point,
-        %InputStream{bytes: <<v::little-signed-integer-size(64), rest::binary>>, offset: offset} = stream
+        %InputStream{bytes: <<v::little-unsigned-integer-size(64), rest::binary>>, offset: offset} = stream
       ) do
     {:ok, %Result{stream: %{stream | bytes: rest, offset: offset + 8}, reified: v}}
   end
 
   def read(
         :system_time_point,
-        %InputStream{bytes: <<v::little-signed-integer-size(64), rest::binary>>, offset: offset} = stream
+        %InputStream{bytes: <<v::little-unsigned-integer-size(64), rest::binary>>, offset: offset} = stream
       ) do
     {:ok, %Result{stream: %{stream | bytes: rest, offset: offset + 8}, reified: v}}
   end
