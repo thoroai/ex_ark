@@ -34,4 +34,7 @@ defmodule ExArk.Serdes.BitstreamHeader do
 
   def read(%InputStream{bytes: <<@magic::4, _groups::1, _sections::1, @version::2, _rest::binary>>}),
     do: {:error, :bad_groups}
+
+  def read(%InputStream{bytes: <<_magic::4, _groups::1, _sections::1, _version::2, _rest::binary>>}),
+    do: {:error, :bad_header}
 end
