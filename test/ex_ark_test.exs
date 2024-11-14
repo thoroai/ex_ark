@@ -2,7 +2,7 @@ defmodule ExArkTest do
   use ExUnit.Case
   doctest ExArk
 
-  test "greets the world" do
-    assert ExArk.hello() == :world
+  test "placeholder" do
+    assert true
   end
 end

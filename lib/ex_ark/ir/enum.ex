@@ -20,18 +20,21 @@ defmodule ExArk.Ir.ArkEnum do
     field :enum_class, enum_class
     field :enum_type, enum_style
     field :values, %{}
-    field :source_location, SourceLocation.t()
+    field :source_location, SourceLocation.t(), enforce: false
   end
 
   @spec from_json(term()) :: t()
   def from_json(json) do
+    source_location =
+      if Map.has_key?(json, :source_location), do: SourceLocation.from_json(json.source_location)
+
     struct(__MODULE__, %{
       name: json.name,
       object_namespace: json.object_namespace,
       enum_class: String.to_existing_atom(json.enum_class),
       enum_type: String.to_existing_atom(json.enum_type),
       values: json.values,
-      source_location: json.source_location
+      source_location: source_location
     })
   end
 end

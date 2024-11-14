@@ -18,7 +18,7 @@ defmodule ExArk.Ir.Schema do
     field :object_namespace, String.t()
     field :fields, [Field.t()]
     field :groups, [Group.t()]
-    field :source_location, SourceLocation.t()
+    field :source_location, SourceLocation.t(), enforce: false
     field :attributes, [attribute_type], enforce: false
   end
 
@@ -40,12 +40,15 @@ defmodule ExArk.Ir.Schema do
       |> Map.keys()
       |> Enum.map(&Utilities.ensure_existing_atom(&1))
 
+    source_location =
+      if Map.has_key?(json, :source_location), do: SourceLocation.from_json(json.source_location)
+
     struct(__MODULE__, %{
       fields: fields,
       groups: groups,
       name: json.name,
       object_namespace: json.object_namespace,
-      source_location: SourceLocation.from_json(json.source_location),
+      source_location: source_location,
       attributes: attributes
     })
   end
