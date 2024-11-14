@@ -6,9 +6,11 @@ defmodule ExArk.Serdes.Deserialization do
   alias ExArk.Ir.Schema
   alias ExArk.Registry
   alias ExArk.Serdes.BitstreamHeader
+  alias ExArk.Serdes.FileTrailer
   alias ExArk.Serdes.InputStream
   alias ExArk.Serdes.InputStream.Result
   alias ExArk.Serdes.OptionalGroupHeader
+  alias ExArk.Types.Primitives
 
   require Logger
 
@@ -20,6 +22,14 @@ defmodule ExArk.Serdes.Deserialization do
 
       error ->
         error
+    end
+  end
+
+  @spec read(Path.t()) :: {:ok, any()} | {:error, any()}
+  def read(path) do
+    with {:ok, data} <- File.read(path),
+         {:ok, {stream, schema, registry}} <- deserialize_type_from(data) do
+      deserialize(stream, schema, registry)
     end
   end
 
@@ -72,6 +82,15 @@ defmodule ExArk.Serdes.Deserialization do
       else
         {:ok, %Result{stream: InputStream.advance(stream, header.group_size)}}
       end
+    end
+  end
+
+  defp deserialize_type_from(data) do
+    with {:ok, {data, trailer}} <- FileTrailer.read(data),
+         {:ok, %Result{stream: stream, reified: schema}} <- Primitives.read(:string, %InputStream{bytes: trailer}),
+         {:ok, %Result{stream: _stream, reified: registry_raw}} <- Primitives.read(:string, stream),
+         {:ok, registry} <- Registry.build(registry_raw) do
+      {:ok, {%InputStream{bytes: data}, registry.schemas[schema], registry}}
     end
   end
 end

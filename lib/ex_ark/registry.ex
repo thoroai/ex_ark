@@ -17,14 +17,21 @@ defmodule ExArk.Registry do
   end
 
   @spec load_schemas(t(), Path.t()) :: {:ok, any()} | {:error, any()}
-  def load_schemas(%__MODULE__{} = registry, path) do
-    with {:ok, file} <- File.read(path),
-         {:ok, decoded} <- Jason.decode(file, @jason_load_options) do
-      merge(registry, from_json(decoded))
+  def load_schemas(%__MODULE__{} = existing_registry, path) do
+    with {:ok, data} <- File.read(path),
+         {:ok, registry} <- build(data) do
+      merge(existing_registry, registry)
     end
   end
 
-  @spec from_json(term()) :: t()
+  @spec build(binary()) :: {:ok, any()} | {:error, any()}
+  def build(data) do
+    with {:ok, decoded} <- Jason.decode(data, @jason_load_options) do
+      from_json(decoded)
+    end
+  end
+
+  @spec from_json(term()) :: {:ok, t()} | {:error, any()}
   def from_json(json) do
     schemas =
       for schema_json <- json.schemas do
@@ -44,7 +51,12 @@ defmodule ExArk.Registry do
     enums =
       Enum.into(enums, %{}, fn enum -> {enum.object_namespace <> "::" <> enum.name, enum} end)
 
-    struct(__MODULE__, %{schemas: schemas, enums: enums})
+    try do
+      {:ok, struct(__MODULE__, %{schemas: schemas, enums: enums})}
+    rescue
+      _error ->
+        {:error, :bad_registry}
+    end
   end
 
   defp merge(registry, new) do
