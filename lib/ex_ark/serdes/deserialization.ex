@@ -29,7 +29,13 @@ defmodule ExArk.Serdes.Deserialization do
   def read(path) do
     with {:ok, data} <- File.read(path),
          {:ok, {stream, schema, registry}} <- deserialize_type_from(data) do
-      deserialize(stream, schema, registry)
+      case deserialize(stream, schema, registry) do
+        {:ok, %Result{reified: reified}} ->
+          reified
+
+        _error ->
+          {:error, :deserialization_error}
+      end
     end
   end
 
@@ -42,9 +48,14 @@ defmodule ExArk.Serdes.Deserialization do
     stream = %{stream | has_more_sections: false}
 
     with {:ok, %Result{} = result} <- BitstreamHeader.read(stream),
-         {:ok, %Result{} = result} <- deserialize_fields(result.stream, schema.fields, registry),
-         {:ok, %Result{} = result} <- deserialize_groups(result.stream, schema.groups, registry) do
-      {:ok, %Result{result | stream: %{result.stream | has_more_sections: has_more_sections}}}
+         {:ok, %Result{reified: fields} = result} <- deserialize_fields(result.stream, schema.fields, registry, %{}),
+         {:ok, %Result{reified: groups} = result} <- deserialize_groups(result.stream, schema.groups, registry, %{}) do
+      {:ok,
+       %Result{
+         result
+         | stream: %{result.stream | has_more_sections: has_more_sections},
+           reified: Map.merge(fields, groups)
+       }}
     else
       error ->
         Logger.error("Got error at offset #{stream.offset}: #{inspect(error)}")
@@ -56,29 +67,31 @@ defmodule ExArk.Serdes.Deserialization do
     InputStream.read(stream, field, registry)
   end
 
-  defp deserialize_fields(stream, [] = _fields, _registry), do: {:ok, %Result{stream: stream}}
+  defp deserialize_fields(stream, [] = _fields, _registry, reified),
+    do: {:ok, %Result{stream: stream, reified: reified}}
 
-  defp deserialize_fields(stream, [field | rest], registry) do
-    with {:ok, %Result{stream: stream}} <- deserialize_field(stream, field, registry) do
-      deserialize_fields(stream, rest, registry)
+  defp deserialize_fields(stream, [field | rest], registry, reified) do
+    with {:ok, %Result{stream: stream, reified: reified_field}} <- deserialize_field(stream, field, registry) do
+      deserialize_fields(stream, rest, registry, Map.put(reified, String.to_atom(field.name), reified_field))
     end
   end
 
-  defp deserialize_groups(%InputStream{has_more_sections: false} = stream, _groups, _registry),
-    do: {:ok, %Result{stream: stream}}
+  defp deserialize_groups(%InputStream{has_more_sections: false} = stream, _schema, _registry, reified),
+    do: {:ok, %Result{stream: stream, reified: reified}}
 
-  defp deserialize_groups(stream, groups, registry) do
-    with {:ok, %Result{stream: stream}} <- deserialize_group(stream, groups, registry) do
-      deserialize_groups(stream, groups, registry)
+  defp deserialize_groups(stream, groups, registry, reified) do
+    with {:ok, %Result{stream: stream, reified: reified_fields}} <-
+           deserialize_group(stream, groups, registry, reified) do
+      deserialize_groups(stream, groups, registry, Map.merge(reified, reified_fields))
     end
   end
 
-  defp deserialize_group(stream, groups, registry) do
+  defp deserialize_group(stream, groups, registry, reified) do
     with {:ok, %Result{stream: stream, reified: header}} <- OptionalGroupHeader.read(stream) do
       group = Enum.find(groups, fn group -> group.identifier == header.identifier end)
 
       if group != nil do
-        deserialize_fields(stream, group.fields, registry)
+        deserialize_fields(stream, group.fields, registry, reified)
       else
         {:ok, %Result{stream: InputStream.advance(stream, header.group_size)}}
       end
