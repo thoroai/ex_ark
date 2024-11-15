@@ -1,4 +1,4 @@
-defmodule Mix.Tasks.Prepare do
+defmodule Mix.Tasks.ExArk.Prepare do
   @moduledoc """
   Alias for the project linter.
   """
