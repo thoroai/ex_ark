@@ -43,7 +43,7 @@ defmodule ExArk.Serdes.Deserialization do
 
     with {:ok, %Result{} = result} <- BitstreamHeader.read(stream),
          {:ok, %Result{} = result} <- deserialize_fields(result.stream, schema.fields, registry),
-         {:ok, %Result{} = result} <- deserialize_groups(result.stream, schema, registry) do
+         {:ok, %Result{} = result} <- deserialize_groups(result.stream, schema.groups, registry) do
       {:ok, %Result{result | stream: %{result.stream | has_more_sections: has_more_sections}}}
     else
       error ->
@@ -64,18 +64,18 @@ defmodule ExArk.Serdes.Deserialization do
     end
   end
 
-  defp deserialize_groups(%InputStream{has_more_sections: false} = stream, _schema, _registry),
+  defp deserialize_groups(%InputStream{has_more_sections: false} = stream, _groups, _registry),
     do: {:ok, %Result{stream: stream}}
 
-  defp deserialize_groups(stream, schema, registry) do
-    with {:ok, %Result{stream: stream}} <- deserialize_group(stream, schema, registry) do
-      deserialize_groups(stream, schema, registry)
+  defp deserialize_groups(stream, groups, registry) do
+    with {:ok, %Result{stream: stream}} <- deserialize_group(stream, groups, registry) do
+      deserialize_groups(stream, groups, registry)
     end
   end
 
-  defp deserialize_group(stream, schema, registry) do
+  defp deserialize_group(stream, groups, registry) do
     with {:ok, %Result{stream: stream, reified: header}} <- OptionalGroupHeader.read(stream) do
-      group = Enum.find(schema.groups, fn group -> group.identifier == header.identifier end)
+      group = Enum.find(groups, fn group -> group.identifier == header.identifier end)
 
       if group != nil do
         deserialize_fields(stream, group.fields, registry)
