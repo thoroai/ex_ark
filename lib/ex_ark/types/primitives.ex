@@ -89,7 +89,7 @@ defmodule ExArk.Types.Primitives do
     {:ok,
      %Result{
        stream: %{stream | bytes: rest, offset: offset + 16},
-       reified: Ecto.UUID.load(hi <> lo)
+       reified: Ecto.UUID.load!(hi <> lo)
      }}
   rescue
     ArgumentError ->
