@@ -48,12 +48,21 @@ defmodule ExArk do
   end
 
   @doc """
-  Deserialize an Ark rbuf with embedded type info. If the schema is not
-  embedded in the serialized data, this will throe.
+  Deserialize an Ark rbuf with embedded type info from the given path.
+  If the schema is not embedded in the serialized data, this will throw.
   """
-  @spec read(Path.t()) :: {:ok, any()} | {:error, any()}
-  def read(path) do
-    Deserialization.read(path)
+  @spec read_path(Path.t()) :: {:ok, any()} | {:error, any()}
+  def read_path(path) do
+    Deserialization.read_path(path)
+  end
+
+  @doc """
+  Deserialize an Ark rbuf with embedded type info from the given byte stream.
+  If the schema is not embedded in the serialized data, this will throw.
+  """
+  @spec read_bytes(binary()) :: {:ok, any()} | {:error, any()}
+  def read_bytes(bytes) do
+    Deserialization.read_bytes(bytes)
   end
 
   defp load_schemas(%Registry{} = _registry, nil), do: {:error, :invalid_path}
