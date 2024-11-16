@@ -3,6 +3,8 @@ defmodule ExArk.Serdes.FileTrailer do
   Serialized file trailer
   """
 
+  alias ExArk.Utilities
+
   #
   # +------------------------------+------------------------------------+
   # | Content (content_size bytes) | Trailer block (trailer_size bytes) |
@@ -20,13 +22,11 @@ defmodule ExArk.Serdes.FileTrailer do
     # by computing and using the section sizes in the match.
     <<@magic_reversed::binary, @version::big-unsigned-integer-size(8), content_size::big-unsigned-integer-size(64),
       trailer_block_size::big-unsigned-integer-size(32), trailer_reversed::binary-size(trailer_block_size),
-      content_reversed::binary-size(content_size)>> = reverse(data)
+      content_reversed::binary-size(content_size)>> = Utilities.reverse_binary(data)
 
-    {:ok, {reverse(content_reversed), reverse(trailer_reversed)}}
+    {:ok, {Utilities.reverse_binary(content_reversed), Utilities.reverse_binary(trailer_reversed)}}
   rescue
     MatchError ->
       {:error, :bad_file_trailer}
   end
-
-  defp reverse(bin), do: :binary.encode_unsigned(:binary.decode_unsigned(bin, :little))
 end
