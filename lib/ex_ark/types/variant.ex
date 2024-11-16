@@ -25,11 +25,10 @@ defmodule ExArk.Types.Variant do
       ) do
     stream = %{stream | bytes: rest, offset: offset + 5}
 
-    result = Enum.find(field.variant_types, fn {type_index, _type} -> type_index == index end)
+    variant = Enum.find(field.variant_types, fn variant -> variant.index == index end)
 
-    if result != nil do
-      type = elem(result, 1)
-      schema = registry.schemas[type]
+    if variant != nil do
+      schema = registry.schemas[variant.object_type]
       Deserialization.deserialize(stream, schema, registry)
     else
       {:ok, %Result{stream: InputStream.advance(stream, length)}}
