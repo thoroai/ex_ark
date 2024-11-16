@@ -6,6 +6,7 @@ defmodule ExArk.Types.Primitives do
   alias ExArk.Serdes.InputStream
   alias ExArk.Serdes.InputStream.Result
   alias ExArk.Types
+  alias ExArk.Utilities
 
   @spec read(String.t(), InputStream.t()) :: {:ok, InputStream.Result.t()} | InputStream.failure()
   def read(typestr, %InputStream{} = stream) when is_binary(typestr), do: read(String.to_existing_atom(typestr), stream)
@@ -83,8 +84,8 @@ defmodule ExArk.Types.Primitives do
         :guid,
         %InputStream{bytes: <<hi::binary-size(8), lo::binary-size(8), rest::binary>>, offset: offset} = stream
       ) do
-    hi = hi |> :binary.decode_unsigned(:little) |> :binary.encode_unsigned(:big)
-    lo = lo |> :binary.decode_unsigned(:little) |> :binary.encode_unsigned(:big)
+    hi = Utilities.reverse_binary(hi, 8)
+    lo = Utilities.reverse_binary(lo, 8)
 
     {:ok,
      %Result{
