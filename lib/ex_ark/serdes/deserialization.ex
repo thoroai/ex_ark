@@ -16,12 +16,9 @@ defmodule ExArk.Serdes.Deserialization do
 
   @spec read(Registry.t(), Schema.t(), Path.t()) :: {:ok, any()} | {:error, any()}
   def read(%Registry{} = registry, %Schema{} = schema, path) do
-    case File.read(path) do
-      {:ok, data} ->
-        deserialize(%InputStream{bytes: data}, schema, registry)
-
-      error ->
-        error
+    with {:ok, bytes} <- File.read(path),
+         {:ok, %Result{reified: reified}} <- deserialize(%InputStream{bytes: bytes}, schema, registry) do
+      {:ok, reified}
     end
   end
 
@@ -34,14 +31,12 @@ defmodule ExArk.Serdes.Deserialization do
 
   @spec read_bytes(binary()) :: {:ok, any()} | {:error, any()}
   def read_bytes(bytes) do
-    with {:ok, {stream, schema, registry}} <- deserialize_type_from(bytes) do
-      case deserialize(stream, schema, registry) do
-        {:ok, %Result{reified: reified}} ->
-          reified
-
-        _error ->
-          {:error, :deserialization_error}
-      end
+    with {:ok, {stream, schema, registry}} <- deserialize_type_from(bytes),
+         {:ok, %Result{reified: reified}} <- deserialize(stream, schema, registry) do
+      {:ok, reified}
+    else
+      _error ->
+        {:error, :deserialization_error}
     end
   end
 
