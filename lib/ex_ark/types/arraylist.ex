@@ -28,7 +28,7 @@ defmodule ExArk.Types.Arraylist do
         %Field{} = field,
         %Registry{} = registry
       ) do
-    stream = %{stream | bytes: rest, offset: offset + 0}
+    stream = %{stream | bytes: rest, offset: offset + 4}
 
     reply = {:ok, %Result{stream: stream, reified: []}}
 
@@ -38,8 +38,8 @@ defmodule ExArk.Types.Arraylist do
           {:ok, %Result{stream: stream, reified: item}} ->
             {:cont, {:ok, %Result{stream: stream, reified: [item] ++ result.reified}}}
 
-          _ ->
-            Logger.error("Error deserializing arraylist item #{i}")
+          error ->
+            Logger.error("Error deserializing arraylist item #{i} (of #{size}): #{inspect(error)}")
             {:halt, {:error, :bad_arraylist}}
         end
       end)

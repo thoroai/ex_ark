@@ -5,12 +5,13 @@ defmodule ExArk.Serdes.InputStream do
 
   use TypedStruct
 
-  alias ExArk.Ir.ContainerField
   alias ExArk.Ir.Field
   alias ExArk.Registry
   alias ExArk.Serdes.InputStream
   alias ExArk.Types
   alias ExArk.Types.Primitives
+
+  require Logger
 
   @type failure :: {:error, any()}
 
@@ -38,25 +39,7 @@ defmodule ExArk.Serdes.InputStream do
     %__MODULE__{stream | bytes: rest, offset: stream.offset + count}
   end
 
-  def read(%__MODULE__{} = stream, %ContainerField{} = container_field, %Registry{} = registry) do
-    type = String.to_existing_atom(container_field.type)
-
-    cond do
-      Types.primitive?(type) ->
-        Primitives.read(type, stream)
-
-      Types.enum?(type) ->
-        type = registry.enums[container_field.object_type].enum_class
-        Primitives.read(type, stream)
-
-      type == :object ->
-        Types.get_complex_module_for_type(type).read(stream, container_field, registry)
-
-      true ->
-        {:error, :bad_stream}
-    end
-  end
-
+  @spec read(t(), Field.t(), Registry.t()) :: {:ok, InputStream.Result.t()} | InputStream.failure()
   def read(%__MODULE__{} = stream, %Field{} = field, %Registry{} = registry) do
     type = String.to_existing_atom(field.type)
 
@@ -69,10 +52,25 @@ defmodule ExArk.Serdes.InputStream do
         Primitives.read(type, stream)
 
       Types.complex?(type) ->
-        Types.get_complex_module_for_type(type).read(stream, field, registry)
+        case Types.get_complex_module_for_type(type).read(stream, field, registry) do
+          {:error, _} = error ->
+            log_field_error(field, error)
+            error
+
+          {:ok, result} ->
+            {:ok, result}
+        end
 
       true ->
-        {:error, :bad_stream}
+        {:error, :unknown_field_type}
     end
+  end
+
+  defp log_field_error(%{name: nil} = field, error) do
+    Logger.error("Got error deserializing field (object type: #{field.object_type}): #{inspect(error)}")
+  end
+
+  defp log_field_error(field, error) do
+    Logger.error("Got error deserializing field #{field.name} (object type: #{field.object_type}): #{inspect(error)}")
   end
 end
