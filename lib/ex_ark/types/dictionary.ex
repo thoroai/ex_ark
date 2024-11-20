@@ -54,5 +54,5 @@ defmodule ExArk.Types.Dictionary do
     end
   end
 
-  def read(%InputStream{} = _stream, %Field{} = _field, %Registry{} = _registry), do: {:error, :bad_stream}
+  def read(%InputStream{} = _stream, %Field{} = _field, %Registry{} = _registry), do: {:error, :bad_dictionary}
 end

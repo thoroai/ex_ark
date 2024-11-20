@@ -22,8 +22,8 @@ defmodule ExArk.Types.Array do
           {:ok, %Result{stream: stream, reified: item}} ->
             {:cont, {:ok, %Result{stream: stream, reified: [item] ++ result.reified}}}
 
-          _ ->
-            Logger.error("Error deserializing array item #{i}")
+          error ->
+            Logger.error("Error deserializing array item #{i} (of #{size}): #{inspect(error)}")
             {:halt, {:error, :bad_array}}
         end
       end)
