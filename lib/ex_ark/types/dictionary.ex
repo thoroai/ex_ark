@@ -42,7 +42,8 @@ defmodule ExArk.Types.Dictionary do
         else
           _ ->
             Logger.error(
-              "Error deserializing dictionary (key type '#{field.ctr_key_type}', value type '#{field.ctr_value_type}') item #{i}"
+              "Error deserializing dictionary (key type '#{field.ctr_key_type}', value type '#{field.ctr_value_type}') item #{i}",
+              domain: [:ex_ark]
             )
 
             {:halt, {:error, :bad_dictionary}}

@@ -67,10 +67,14 @@ defmodule ExArk.Serdes.InputStream do
   end
 
   defp log_field_error(%{name: nil} = field, error) do
-    Logger.error("Got error deserializing field (object type: #{field.object_type}): #{inspect(error)}")
+    Logger.error("Got error deserializing field (object type: #{field.object_type}): #{inspect(error)}",
+      domain: [:ex_ark]
+    )
   end
 
   defp log_field_error(field, error) do
-    Logger.error("Got error deserializing field #{field.name} (object type: #{field.object_type}): #{inspect(error)}")
+    Logger.error("Got error deserializing field #{field.name} (object type: #{field.object_type}): #{inspect(error)}",
+      domain: [:ex_ark]
+    )
   end
 end
