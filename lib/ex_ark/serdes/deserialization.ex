@@ -59,7 +59,7 @@ defmodule ExArk.Serdes.Deserialization do
        }}
     else
       error ->
-        Logger.error("Got error at offset #{stream.offset}: #{inspect(error)}")
+        Logger.error("Got error at offset #{stream.offset}: #{inspect(error)}", domain: [:ex_ark])
         error
     end
   end
