@@ -9,8 +9,6 @@ defmodule ExArk.Registry do
   alias ExArk.Ir.ArkEnum
   alias ExArk.Ir.Schema
 
-  @jason_load_options [keys: :atoms]
-
   typedstruct do
     field :schemas, %{}, default: %{}
     field :enums, %{}, default: %{}
@@ -26,8 +24,10 @@ defmodule ExArk.Registry do
 
   @spec build(binary()) :: {:ok, any()} | {:error, any()}
   def build(data) do
-    with {:ok, decoded} <- Jason.decode(data, @jason_load_options) do
-      from_json(decoded)
+    with {:ok, decoded} <- JSON.decode(data) do
+      decoded
+      |> Cldr.Map.atomize_keys()
+      |> from_json()
     end
   end
 
