@@ -31,9 +31,9 @@ defmodule ExArk.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:jason, "~> 1.4"},
       {:typedstruct, "~> 0.5"},
       {:ecto, "~> 3.12.4"},
+      {:cldr_utils, "~> 2.0"},
       # Testing and Development Tools
       {:union_typespec, "~> 0.0.4", runtime: false},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
