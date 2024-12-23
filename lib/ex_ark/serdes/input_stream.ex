@@ -41,6 +41,20 @@ defmodule ExArk.Serdes.InputStream do
 
   @spec read(t(), Field.t(), Registry.t()) :: {:ok, InputStream.Result.t()} | InputStream.failure()
   def read(%__MODULE__{} = stream, %Field{} = field, %Registry{} = registry) do
+    if Field.optional?(field) do
+      with {:ok, %Result{stream: stream, reified: present}} <- Primitives.read(:bool, stream) do
+        if present do
+          do_read(stream, field, registry)
+        else
+          {:ok, %Result{stream: stream}}
+        end
+      end
+    else
+      do_read(stream, field, registry)
+    end
+  end
+
+  defp do_read(stream, field, registry) do
     type = String.to_existing_atom(field.type)
 
     cond do

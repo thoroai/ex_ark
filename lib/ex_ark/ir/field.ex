@@ -23,6 +23,18 @@ defmodule ExArk.Ir.Field do
     field :attributes, [attribute_type]
   end
 
+  @spec removed?(t()) :: boolean()
+  def removed?(%__MODULE__{} = field), do: Enum.member?(field.attributes, :removed)
+
+  @spec packed_timespec?(t()) :: boolean()
+  def packed_timespec?(%__MODULE__{} = field), do: Enum.member?(field.attributes, :packed_timespec?)
+
+  @spec optional?(t()) :: boolean()
+  def optional?(%__MODULE__{} = field), do: Enum.member?(field.attributes, :optional)
+
+  @spec constant?(t()) :: boolean()
+  def constant?(%__MODULE__{} = field), do: Enum.member?(field.attributes, :constant)
+
   @spec from_json(term()) :: t()
   def from_json(json) do
     attributes =
