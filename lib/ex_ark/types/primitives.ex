@@ -3,6 +3,8 @@ defmodule ExArk.Types.Primitives do
   Module for handling primitive types
   """
 
+  import Bitwise
+
   alias ExArk.Serdes.InputStream
   alias ExArk.Serdes.InputStream.Result
   alias ExArk.Types
@@ -44,11 +46,23 @@ defmodule ExArk.Types.Primitives do
     {:ok, %Result{stream: %{stream | bytes: rest, offset: offset + 8}, reified: v}}
   end
 
-  def read(:float, %InputStream{bytes: <<v::little-float-size(32), rest::binary>>, offset: offset} = stream) do
+  def read(:float, %InputStream{bytes: <<bytes::binary-size(4), rest::binary>>, offset: offset} = stream) do
+    <<raw::little-unsigned-size(32)>> = bytes
+    sign = raw >>> 31 &&& 0x1
+    exponent = raw >>> 23 &&& 0xFF
+    fraction = raw &&& 0x7FFFFF
+    v = decode_float(sign, exponent, fraction, bytes)
+
     {:ok, %Result{stream: %{stream | bytes: rest, offset: offset + 4}, reified: v}}
   end
 
-  def read(:double, %InputStream{bytes: <<v::little-float-size(64), rest::binary>>, offset: offset} = stream) do
+  def read(:double, %InputStream{bytes: <<bytes::binary-size(8), rest::binary>>, offset: offset} = stream) do
+    <<raw::little-unsigned-size(64)>> = bytes
+    sign = raw >>> 63 &&& 0x1
+    exponent = raw >>> 52 &&& 0x7FF
+    fraction = raw &&& 0xFFFFFFFFFFFFF
+    v = decode_double(sign, exponent, fraction, bytes)
+
     {:ok, %Result{stream: %{stream | bytes: rest, offset: offset + 8}, reified: v}}
   end
 
@@ -125,4 +139,16 @@ defmodule ExArk.Types.Primitives do
       ) do
     {:ok, %Result{stream: %{stream | bytes: rest, offset: offset + 4 + len}, reified: s}}
   end
+
+  defp decode_double(0, 0x7FF, 0, _bytes), do: :positive_infinity
+  defp decode_double(1, 0x7FF, 0, _bytes), do: :negative_infinity
+  defp decode_double(_sign, 0x7FF, _fraction, _bytes), do: :nan
+
+  defp decode_double(_sign, _exponent, _fraction, <<v::little-float-size(64)>> = _bytes), do: v
+
+  defp decode_float(0, 0xFF, 0, _bytes), do: :positive_infinity
+  defp decode_float(1, 0xFF, 0, _bytes), do: :negative_infinity
+  defp decode_float(_sign, 0xFF, _fraction, _bytes), do: :nan
+
+  defp decode_float(_sign, _exponent, _fraction, <<v::little-float-size(32)>> = _bytes), do: v
 end
