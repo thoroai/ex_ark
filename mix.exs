@@ -32,7 +32,7 @@ defmodule ExArk.MixProject do
   defp deps do
     [
       {:typedstruct, "~> 0.5"},
-      {:ecto, "~> 3.12.4"},
+      {:ecto, "~> 3.13"},
       {:cldr_utils, "~> 2.0"},
       # Testing and Development Tools
       {:union_typespec, "~> 0.0.4", runtime: false},
