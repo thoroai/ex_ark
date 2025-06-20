@@ -1,0 +1,29 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":dependencyDashboard"
+  ],
+  "schedule": [
+    "every weekday"
+  ],
+  "packageRules": [
+    {
+      "matchManagers": [
+        "mix",
+        "github-actions"
+      ],
+      "reviewers": [
+        "jhosteny",
+        "itamm15"
+      ],
+      "baseBranches": [
+        "develop"
+      ]
+    }
+  ],
+  "enabledManagers": [
+    "mix",
+    "github-actions"
+  ]
+}
