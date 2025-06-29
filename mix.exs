@@ -49,7 +49,16 @@ defmodule ExArk.MixProject do
   # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
-      prepare: "prepare"
+      check: [
+        "format --check-formatted",
+        "deps.unlock --check-unused",
+        "compile --warnings-as-errors",
+        "credo --strict"
+      ],
+      check_with_dialyzer: [
+        "check",
+        "dialyzer"
+      ]
     ]
   end
 end
