@@ -14,64 +14,73 @@ defmodule ExArk.Types.Primitives do
   def read(typestr, %InputStream{} = stream) when is_binary(typestr), do: read(String.to_existing_atom(typestr), stream)
 
   @spec read(Types.primitive_type(), InputStream.t()) :: {:ok, InputStream.Result.t()} | InputStream.failure()
-  def read(:uint8, %InputStream{bytes: <<v::little-unsigned-integer-size(8), rest::binary>>, offset: offset} = stream) do
-    {:ok, %Result{stream: %{stream | bytes: rest, offset: offset + 1}, reified: v}}
+  def read(:uint8, %InputStream{bytes: <<v::little-unsigned-integer-size(8), _rest::binary>>} = stream) do
+    {:ok, %Result{stream: InputStream.advance(stream, 1), reified: v}}
   end
 
-  def read(:uint16, %InputStream{bytes: <<v::little-unsigned-integer-size(16), rest::binary>>, offset: offset} = stream) do
-    {:ok, %Result{stream: %{stream | bytes: rest, offset: offset + 2}, reified: v}}
+  def read(
+        :uint16,
+        %InputStream{bytes: <<v::little-unsigned-integer-size(16), _rest::binary>>} = stream
+      ) do
+    {:ok, %Result{stream: InputStream.advance(stream, 2), reified: v}}
   end
 
-  def read(:uint32, %InputStream{bytes: <<v::little-unsigned-integer-size(32), rest::binary>>, offset: offset} = stream) do
-    {:ok, %Result{stream: %{stream | bytes: rest, offset: offset + 4}, reified: v}}
+  def read(
+        :uint32,
+        %InputStream{bytes: <<v::little-unsigned-integer-size(32), _rest::binary>>} = stream
+      ) do
+    {:ok, %Result{stream: InputStream.advance(stream, 4), reified: v}}
   end
 
-  def read(:uint64, %InputStream{bytes: <<v::little-unsigned-integer-size(64), rest::binary>>, offset: offset} = stream) do
-    {:ok, %Result{stream: %{stream | bytes: rest, offset: offset + 8}, reified: v}}
+  def read(
+        :uint64,
+        %InputStream{bytes: <<v::little-unsigned-integer-size(64), _rest::binary>>} = stream
+      ) do
+    {:ok, %Result{stream: InputStream.advance(stream, 8), reified: v}}
   end
 
-  def read(:int8, %InputStream{bytes: <<v::little-signed-integer-size(8), rest::binary>>, offset: offset} = stream) do
-    {:ok, %Result{stream: %{stream | bytes: rest, offset: offset + 1}, reified: v}}
+  def read(:int8, %InputStream{bytes: <<v::little-signed-integer-size(8), _rest::binary>>} = stream) do
+    {:ok, %Result{stream: InputStream.advance(stream, 1), reified: v}}
   end
 
-  def read(:int16, %InputStream{bytes: <<v::little-signed-integer-size(16), rest::binary>>, offset: offset} = stream) do
-    {:ok, %Result{stream: %{stream | bytes: rest, offset: offset + 2}, reified: v}}
+  def read(:int16, %InputStream{bytes: <<v::little-signed-integer-size(16), _rest::binary>>} = stream) do
+    {:ok, %Result{stream: InputStream.advance(stream, 2), reified: v}}
   end
 
-  def read(:int32, %InputStream{bytes: <<v::little-signed-integer-size(32), rest::binary>>, offset: offset} = stream) do
-    {:ok, %Result{stream: %{stream | bytes: rest, offset: offset + 4}, reified: v}}
+  def read(:int32, %InputStream{bytes: <<v::little-signed-integer-size(32), _rest::binary>>} = stream) do
+    {:ok, %Result{stream: InputStream.advance(stream, 4), reified: v}}
   end
 
-  def read(:int64, %InputStream{bytes: <<v::little-signed-integer-size(64), rest::binary>>, offset: offset} = stream) do
-    {:ok, %Result{stream: %{stream | bytes: rest, offset: offset + 8}, reified: v}}
+  def read(:int64, %InputStream{bytes: <<v::little-signed-integer-size(64), _rest::binary>>} = stream) do
+    {:ok, %Result{stream: InputStream.advance(stream, 8), reified: v}}
   end
 
-  def read(:float, %InputStream{bytes: <<bytes::binary-size(4), rest::binary>>, offset: offset} = stream) do
+  def read(:float, %InputStream{bytes: <<bytes::binary-size(4), _rest::binary>>} = stream) do
     <<raw::little-unsigned-size(32)>> = bytes
     sign = raw >>> 31 &&& 0x1
     exponent = raw >>> 23 &&& 0xFF
     fraction = raw &&& 0x7FFFFF
     v = decode_float(sign, exponent, fraction, bytes)
 
-    {:ok, %Result{stream: %{stream | bytes: rest, offset: offset + 4}, reified: v}}
+    {:ok, %Result{stream: InputStream.advance(stream, 4), reified: v}}
   end
 
-  def read(:double, %InputStream{bytes: <<bytes::binary-size(8), rest::binary>>, offset: offset} = stream) do
+  def read(:double, %InputStream{bytes: <<bytes::binary-size(8), _rest::binary>>} = stream) do
     <<raw::little-unsigned-size(64)>> = bytes
     sign = raw >>> 63 &&& 0x1
     exponent = raw >>> 52 &&& 0x7FF
     fraction = raw &&& 0xFFFFFFFFFFFFF
     v = decode_double(sign, exponent, fraction, bytes)
 
-    {:ok, %Result{stream: %{stream | bytes: rest, offset: offset + 8}, reified: v}}
+    {:ok, %Result{stream: InputStream.advance(stream, 8), reified: v}}
   end
 
-  def read(:bool, %InputStream{bytes: <<0::size(8), rest::binary>>, offset: offset} = stream) do
-    {:ok, %Result{stream: %{stream | bytes: rest, offset: offset + 1}, reified: false}}
+  def read(:bool, %InputStream{bytes: <<0::size(8), _rest::binary>>, offset: _offset} = stream) do
+    {:ok, %Result{stream: InputStream.advance(stream, 1), reified: false}}
   end
 
-  def read(:bool, %InputStream{bytes: <<_::size(8), rest::binary>>, offset: offset} = stream) do
-    {:ok, %Result{stream: %{stream | bytes: rest, offset: offset + 1}, reified: true}}
+  def read(:bool, %InputStream{bytes: <<_::size(8), _rest::binary>>} = stream) do
+    {:ok, %Result{stream: InputStream.advance(stream, 1), reified: true}}
   end
 
   #
@@ -83,29 +92,27 @@ defmodule ExArk.Types.Primitives do
   def read(
         :byte_buffer,
         %InputStream{
-          bytes: <<len::little-unsigned-integer-size(32), bb::bytes-size(len), rest::binary>>,
-          offset: offset
+          bytes: <<len::little-unsigned-integer-size(32), bb::bytes-size(len), _rest::binary>>
         } = stream
       ) do
-    {:ok, %Result{stream: %{stream | bytes: rest, offset: offset + 4 + len}, reified: bb}}
+    {:ok, %Result{stream: InputStream.advance(stream, 4 + len), reified: bb}}
   end
 
-  def read(:duration, %InputStream{bytes: <<v::little-signed-integer-size(64), rest::binary>>, offset: offset} = stream) do
-    {:ok, %Result{stream: %{stream | bytes: rest, offset: offset + 8}, reified: v}}
+  def read(
+        :duration,
+        %InputStream{bytes: <<v::little-signed-integer-size(64), _rest::binary>>} = stream
+      ) do
+    {:ok, %Result{stream: InputStream.advance(stream, 8), reified: v}}
   end
 
   def read(
         :guid,
-        %InputStream{bytes: <<hi::binary-size(8), lo::binary-size(8), rest::binary>>, offset: offset} = stream
+        %InputStream{bytes: <<hi::binary-size(8), lo::binary-size(8), _rest::binary>>} = stream
       ) do
     hi = Utilities.reverse_binary(hi, 8)
     lo = Utilities.reverse_binary(lo, 8)
 
-    {:ok,
-     %Result{
-       stream: %{stream | bytes: rest, offset: offset + 16},
-       reified: Ecto.UUID.load!(hi <> lo)
-     }}
+    {:ok, %Result{stream: InputStream.advance(stream, 16), reified: Ecto.UUID.load!(hi <> lo)}}
   rescue
     ArgumentError ->
       {:error, :bad_guid, nil, %Result{stream: stream}}
@@ -113,16 +120,16 @@ defmodule ExArk.Types.Primitives do
 
   def read(
         :steady_time_point,
-        %InputStream{bytes: <<v::little-unsigned-integer-size(64), rest::binary>>, offset: offset} = stream
+        %InputStream{bytes: <<v::little-unsigned-integer-size(64), _rest::binary>>} = stream
       ) do
-    {:ok, %Result{stream: %{stream | bytes: rest, offset: offset + 8}, reified: v}}
+    {:ok, %Result{stream: InputStream.advance(stream, 8), reified: v}}
   end
 
   def read(
         :system_time_point,
-        %InputStream{bytes: <<v::little-unsigned-integer-size(64), rest::binary>>, offset: offset} = stream
+        %InputStream{bytes: <<v::little-unsigned-integer-size(64), _rest::binary>>} = stream
       ) do
-    {:ok, %Result{stream: %{stream | bytes: rest, offset: offset + 8}, reified: v}}
+    {:ok, %Result{stream: InputStream.advance(stream, 8), reified: v}}
   end
 
   #
@@ -134,10 +141,12 @@ defmodule ExArk.Types.Primitives do
   def read(
         :string,
         # credo:disable-for-next-line
-        %InputStream{bytes: <<len::little-unsigned-integer-size(32), s::bytes-size(len), rest::binary>>, offset: offset} =
+        %InputStream{
+          bytes: <<len::little-unsigned-integer-size(32), s::bytes-size(len), _rest::binary>>
+        } =
           stream
       ) do
-    {:ok, %Result{stream: %{stream | bytes: rest, offset: offset + 4 + len}, reified: s}}
+    {:ok, %Result{stream: InputStream.advance(stream, 4 + len), reified: s}}
   end
 
   defp decode_double(0, 0x7FF, 0, _bytes), do: :positive_infinity

@@ -17,13 +17,12 @@ defmodule ExArk.Types.Variant do
   @spec read(InputStream.t(), Field.t(), Registry.t()) :: {:ok, InputStream.Result.t()} | InputStream.failure()
   def read(
         %InputStream{
-          bytes: <<index::little-unsigned-integer-size(8), length::little-unsigned-integer-size(32), rest::binary>>,
-          offset: offset
+          bytes: <<index::little-unsigned-integer-size(8), length::little-unsigned-integer-size(32), _rest::binary>>
         } = stream,
         %Field{} = field,
         %Registry{} = registry
       ) do
-    stream = %{stream | bytes: rest, offset: offset + 5}
+    stream = InputStream.advance(stream, 5)
 
     variant = Enum.find(field.variant_types, fn variant -> variant.index == index end)
 
