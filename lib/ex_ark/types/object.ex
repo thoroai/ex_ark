@@ -8,6 +8,7 @@ defmodule ExArk.Types.Object do
   alias ExArk.Serdes.InputStream
   alias ExArk.Serdes.InputStream.Result
   alias ExArk.Serdes.OutputStream
+  alias ExArk.Serdes.Serialization
 
   require Logger
 
@@ -26,7 +27,23 @@ defmodule ExArk.Types.Object do
   end
 
   @spec write(OutputStream.t(), Field.t(), any(), Registry.t()) :: {:ok, OutputStream.t()} | OutputStream.failure()
-  def write(%OutputStream{} = _stream, %Field{} = _field, _data, %Registry{} = _registry) do
-    raise RuntimeError, "Not implemented yet"
+  def write(%OutputStream{} = stream, %Field{} = field, data, %Registry{} = registry) do
+    schema = registry.schemas[field.object_type]
+
+    case Serialization.serialize(stream, schema, data, registry) do
+      {:ok, %OutputStream{} = stream} ->
+        {:ok, stream}
+
+      {:error, name, context, %OutputStream{} = stream} ->
+        Logger.error(
+          "Error #{inspect(name)} serializing schema #{schema.name} at offset #{stream.offset}: #{inspect(context)}",
+          domain: [:ex_ark]
+        )
+
+        {:error, :bad_object, nil, stream}
+    end
   end
+
+  @spec default_value(Field.t(), Registry.t()) :: any()
+  def default_value(%Field{}, %Registry{}), do: %{}
 end

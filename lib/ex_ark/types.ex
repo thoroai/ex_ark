@@ -2,7 +2,12 @@ defmodule ExArk.Types do
   @moduledoc """
   Type information
   """
+
   import UnionTypespec, only: [union_type: 1]
+
+  alias ExArk.Ir.Field
+  alias ExArk.Registry
+  alias ExArk.Types.Primitives
 
   @primitive_types [
     :bool,
@@ -71,5 +76,41 @@ defmodule ExArk.Types do
       :object -> ExArk.Types.Object
       :variant -> ExArk.Types.Variant
     end
+  end
+
+  @spec default_value(Field.t(), Registry.t()) :: any()
+  def default_value(%Field{type: type} = field, %Registry{} = registry) do
+    cond do
+      primitive_type?(type) ->
+        default_field_primitive(type)
+
+      enum_type?(type) ->
+        default_field_enum(field, registry)
+
+      complex_type?(type) ->
+        default_field_complex(type, field, registry)
+
+      Map.has_key?(registry.schemas, field.type) ->
+        default_field_schema(field, registry)
+
+      true ->
+        raise ArgumentError, "Unknown field type: #{inspect(field.type)}"
+    end
+  end
+
+  defp default_field_primitive(type), do: Primitives.default_value(type)
+
+  defp default_field_enum(field, registry) do
+    enum_type = registry.enums[field.object_type].enum_class
+    Primitives.default_value(enum_type)
+  end
+
+  defp default_field_complex(type, field, registry) do
+    mod = get_complex_module_for_type(String.to_existing_atom(type))
+    mod.default_value(field, registry)
+  end
+
+  defp default_field_schema(_field, _registry) do
+    raise RuntimeError, "Not yet implemented"
   end
 end

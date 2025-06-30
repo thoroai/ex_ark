@@ -1,0 +1,142 @@
+{
+  "schemas": [
+    {
+      "name": "IntArray",
+      "object_namespace": "ex_ark::test",
+      "fields": [
+        {
+          "name": "int_array",
+          "type": "array",
+          "array_size": 3,
+          "ctr_value_type": {
+            "type": "int32"
+          }
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "test/ex_ark/fixtures/arrays.ir",
+        "line_number": 1
+      }
+    },
+    {
+      "name": "StringArray",
+      "object_namespace": "ex_ark::test",
+      "fields": [
+        {
+          "name": "string_array",
+          "type": "array",
+          "array_size": 3,
+          "ctr_value_type": {
+            "type": "string"
+          }
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "test/ex_ark/fixtures/arrays.ir",
+        "line_number": 1
+      }
+    },
+    {
+      "name": "BoolArray",
+      "object_namespace": "ex_ark::test",
+      "fields": [
+        {
+          "name": "bool_array",
+          "type": "array",
+          "array_size": 3,
+          "ctr_value_type": {
+            "type": "bool"
+          }
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "test/ex_ark/fixtures/arrays.ir",
+        "line_number": 1
+      }
+    },
+    {
+      "name": "DoubleArray",
+      "object_namespace": "ex_ark::test",
+      "fields": [
+        {
+          "name": "double_array",
+          "type": "array",
+          "array_size": 3,
+          "ctr_value_type": {
+            "type": "double"
+          }
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "test/ex_ark/fixtures/arrays.ir",
+        "line_number": 1
+      }
+    },
+    {
+      "name": "NestedStringArray",
+      "object_namespace": "ex_ark::test",
+      "fields": [
+        {
+          "name": "nested_string_array",
+          "type": "array",
+          "array_size": 3,
+          "ctr_value_type": {
+            "type": "array",
+            "array_size": 3,
+            "ctr_value_type": {
+              "type": "string"
+            }
+          }
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "test/ex_ark/fixtures/arrays.ir",
+        "line_number": 1
+      }
+    },
+    {
+      "name": "OptionalArray",
+      "object_namespace": "ex_ark::test",
+      "fields": [
+        {
+          "name": "required_preamble_array",
+          "type": "array",
+          "array_size": 3,
+          "ctr_value_type": {
+            "type": "int32"
+          }
+        },
+        {
+          "name": "optional_array",
+          "type": "array",
+          "array_size": 3,
+          "ctr_value_type": {
+            "type": "string"
+          },
+          "attributes": {
+            "optional": true
+          }
+        },
+        {
+          "name": "required_postamble_array",
+          "type": "array",
+          "array_size": 3,
+          "ctr_value_type": {
+            "type": "int32"
+          }
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "test/ex_ark/fixtures/arrays.ir",
+        "line_number": 1
+      }
+    }
+  ],
+  "enums": []
+}

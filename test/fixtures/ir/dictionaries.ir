@@ -1,0 +1,71 @@
+{
+  "schemas": [
+    {
+      "name": "StringToIntDictionary",
+      "object_namespace": "ex_ark::test",
+      "fields": [
+        {
+          "name": "string_to_int_dictionary",
+          "type": "dictionary",
+          "ctr_key_type": {
+            "type": "string"
+          },
+          "ctr_value_type": {
+            "type": "int32"
+          }
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "test/ex_ark/fixtures/dictionaries.ir",
+        "line_number": 1
+      }
+    },
+    {
+      "name": "NestedDictionary",
+      "object_namespace": "ex_ark::test",
+      "fields": [
+        {
+          "name": "nested_dictionary",
+          "type": "dictionary",
+          "ctr_key_type": {
+            "type": "string"
+          },
+          "ctr_value_type": {
+            "type": "dictionary",
+            "ctr_key_type": {
+              "type": "string"
+            },
+            "ctr_value_type": {
+              "type": "int32"
+            }
+          }
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "test/ex_ark/fixtures/arraylists.ir",
+        "line_number": 1
+      }
+    },
+    {
+      "name": "StringArrayList",
+      "object_namespace": "ex_ark::test",
+      "fields": [
+        {
+          "name": "string_arraylist",
+          "type": "arraylist",
+          "ctr_value_type": {
+            "type": "string"
+          }
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "test/ex_ark/fixtures/arraylists.ir",
+        "line_number": 1
+      }
+    }
+  ],
+  "enums": []
+}

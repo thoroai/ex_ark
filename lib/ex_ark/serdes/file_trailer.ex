@@ -3,8 +3,6 @@ defmodule ExArk.Serdes.FileTrailer do
   Serialized file trailer
   """
 
-  alias ExArk.Utilities
-
   #
   # +------------------------------+------------------------------------+
   # | Content (content_size bytes) | Trailer block (trailer_size bytes) |
@@ -14,19 +12,37 @@ defmodule ExArk.Serdes.FileTrailer do
   # +------------------------------+------------------------+------------------+------------------+
   #
 
-  @magic_reversed <<0xBC, 0x81, 0xAB, 0x29, 0x6B, 0x4C, 0xEA, 0x1F, 0x53, 0xEB, 0xE9, 0xFC, 0xE8, 0xF0, 0x48, 0xB6>>
+  @magic <<0xB6, 0x48, 0xF0, 0xE8, 0xFC, 0xE9, 0xEB, 0x53, 0x1F, 0xEA, 0x4C, 0x6B, 0x29, 0xAB, 0x81, 0xBC>>
   @version 0x1
+  @trailer_size 29
 
   def read(data) do
-    # Reverse the input binary, so that we can pattern match against the trailer
-    # by computing and using the section sizes in the match.
-    <<@magic_reversed::binary, @version::big-unsigned-integer-size(8), content_size::big-unsigned-integer-size(64),
-      trailer_block_size::big-unsigned-integer-size(32), trailer_reversed::binary-size(trailer_block_size),
-      content_reversed::binary-size(content_size)>> = Utilities.reverse_binary(data)
-
-    {:ok, {Utilities.reverse_binary(content_reversed), Utilities.reverse_binary(trailer_reversed)}}
-  rescue
-    MatchError ->
+    # Read the last 29 bytes directly (no reversing needed)
+    if byte_size(data) < @trailer_size do
       {:error, :bad_file_trailer}
+    else
+      trailer_start = byte_size(data) - @trailer_size
+      trailer = binary_part(data, trailer_start, @trailer_size)
+
+      # Parse the trailer structure
+      case trailer do
+        <<trailer_block_size::little-unsigned-integer-size(32), content_size::little-unsigned-integer-size(64),
+          @version::little-unsigned-integer-size(8), @magic::binary>> ->
+          # Extract content and trailer_block
+          content = binary_part(data, 0, content_size)
+          trailer_block_start = content_size
+          trailer_block = binary_part(data, trailer_block_start, trailer_block_size)
+          {:ok, {content, trailer_block}}
+
+        _ ->
+          {:error, :bad_file_trailer}
+      end
+    end
+  end
+
+  @spec write(non_neg_integer(), non_neg_integer()) :: binary()
+  def write(content_size, trailer_block_size \\ 0) do
+    <<trailer_block_size::little-unsigned-integer-size(32), content_size::little-unsigned-integer-size(64),
+      @version::little-unsigned-integer-size(8), @magic::binary>>
   end
 end

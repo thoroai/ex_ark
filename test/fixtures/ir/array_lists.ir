@@ -1,0 +1,130 @@
+{
+  "schemas": [
+    {
+      "name": "IntArrayList",
+      "object_namespace": "ex_ark::test",
+      "fields": [
+        {
+          "name": "int_arraylist",
+          "type": "arraylist",
+          "ctr_value_type": {
+            "type": "int32"
+          }
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "test/ex_ark/fixtures/arraylists.ir",
+        "line_number": 1
+      }
+    },
+    {
+      "name": "StringArrayList",
+      "object_namespace": "ex_ark::test",
+      "fields": [
+        {
+          "name": "string_arraylist",
+          "type": "arraylist",
+          "ctr_value_type": {
+            "type": "string"
+          }
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "test/ex_ark/fixtures/arraylists.ir",
+        "line_number": 1
+      }
+    },
+    {
+      "name": "BoolArrayList",
+      "object_namespace": "ex_ark::test",
+      "fields": [
+        {
+          "name": "bool_arraylist",
+          "type": "arraylist",
+          "ctr_value_type": {
+            "type": "bool"
+          }
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "test/ex_ark/fixtures/arraylists.ir",
+        "line_number": 1
+      }
+    },
+    {
+      "name": "DoubleArrayList",
+      "object_namespace": "ex_ark::test",
+      "fields": [
+        {
+          "name": "double_arraylist",
+          "type": "arraylist",
+          "ctr_value_type": {
+            "type": "double"
+          }
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "test/ex_ark/fixtures/arraylists.ir",
+        "line_number": 1
+      }
+    },
+    {
+      "name": "NestedStringArrayList",
+      "object_namespace": "ex_ark::test",
+      "fields": [
+        {
+          "name": "nested_string_arraylist",
+          "type": "arraylist",
+          "ctr_value_type": {
+            "type": "arraylist",
+            "ctr_value_type": {
+              "type": "string"
+            }
+          }
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "test/ex_ark/fixtures/arraylists.ir",
+        "line_number": 1
+      }
+    },
+    {
+      "name": "OptionalArrayList",
+      "object_namespace": "ex_ark::test",
+      "fields": [
+        {
+          "name": "required_preamble_arraylist",
+          "type": "arraylist",
+          "ctr_value_type": {
+            "type": "int32"
+          }
+        },
+        {
+          "name": "optional_arraylist",
+          "type": "arraylist",
+          "ctr_value_type": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "required_postamble_arraylist",
+          "type": "arraylist",
+          "ctr_value_type": {
+            "type": "int32"
+          }
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "test/ex_ark/fixtures/arraylists.ir",
+        "line_number": 1
+      }
+    }
+  ],
+  "enums": []
+}
