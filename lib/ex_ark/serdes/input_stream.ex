@@ -60,14 +60,14 @@ defmodule ExArk.Serdes.InputStream do
     type = String.to_existing_atom(field.type)
 
     cond do
-      Types.primitive?(type) ->
+      Types.primitive_type?(type) ->
         Primitives.read(type, stream)
 
-      Types.enum?(type) ->
+      Types.enum_type?(type) ->
         type = registry.enums[field.object_type].enum_class
         Primitives.read(type, stream)
 
-      Types.complex?(type) ->
+      Types.complex_type?(type) ->
         case Types.get_complex_module_for_type(type).read(stream, field, registry) do
           {:error, _} = error ->
             log_field_error(field, error)
