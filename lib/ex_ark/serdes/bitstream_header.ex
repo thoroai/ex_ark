@@ -5,6 +5,7 @@ defmodule ExArk.Serdes.BitstreamHeader do
 
   alias ExArk.Serdes.InputStream
   alias ExArk.Serdes.InputStream.Result
+  alias ExArk.Serdes.OutputStream
 
   #
   # +----------------+----------------+------------------+------------------+
@@ -37,4 +38,14 @@ defmodule ExArk.Serdes.BitstreamHeader do
 
   def read(%InputStream{bytes: <<_magic::4, _groups::1, _sections::1, _version::2, _rest::binary>> = header} = stream),
     do: {:error, :bad_header, header, %Result{stream: stream}}
+
+  @spec write(OutputStream.t()) :: {:ok, OutputStream.t()}
+  def write(%OutputStream{} = stream) do
+    # Create header byte: magic (4 bits) + groups (1 bit) + sections (1 bit) + version (2 bits)
+    # For now, we don't support multiple sections
+    sections = 0
+    header_byte = <<@magic::4, @groups::1, sections::1, @version::2>>
+
+    {:ok, OutputStream.append(stream, header_byte)}
+  end
 end

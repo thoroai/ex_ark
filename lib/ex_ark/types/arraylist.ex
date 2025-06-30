@@ -7,6 +7,7 @@ defmodule ExArk.Types.Arraylist do
   alias ExArk.Serdes.InputStream
   alias ExArk.Serdes.InputStream.Result
   alias ExArk.Serdes.OutputStream
+  alias ExArk.Types.Primitives
 
   require Logger
 
@@ -22,7 +23,7 @@ defmodule ExArk.Types.Arraylist do
         %Field{} = _field,
         %Registry{} = _registry
       ),
-      do: {:ok, %Result{stream: InputStream.advance(stream, 4)}}
+      do: {:ok, %Result{stream: InputStream.advance(stream, 4), reified: []}}
 
   def read(
         %InputStream{bytes: <<size::little-unsigned-integer-size(32), _rest::binary>>} = stream,
@@ -37,8 +38,11 @@ defmodule ExArk.Types.Arraylist do
           {:ok, %Result{stream: stream, reified: item}} ->
             {:cont, {:ok, %Result{stream: stream, reified: [item] ++ result.reified}}}
 
-          {:error, _, _, %Result{} = result} = error ->
-            Logger.error("Error deserializing arraylist item #{i} (of #{size}): #{inspect(error)}", domain: [:ex_ark])
+          {:error, name, context, %Result{} = result} ->
+            Logger.error("Error #{inspect(name)} deserializing arraylist item #{i} (of #{size}): #{inspect(context)}",
+              domain: [:ex_ark]
+            )
+
             {:halt, {:error, :bad_arraylist, nil, result}}
         end
       end)
@@ -50,10 +54,29 @@ defmodule ExArk.Types.Arraylist do
 
   @spec write(OutputStream.t(), Field.t(), any(), Registry.t()) :: {:ok, OutputStream.t()} | OutputStream.failure()
   def write(%OutputStream{} = stream, %Field{} = _field, [], %Registry{} = _registry),
-    # TODO: write 0 explicitly?
-    do: {:ok, OutputStream.advance(stream, 4)}
+    do: Primitives.write(:uint32, 0, stream)
 
-  def write(%OutputStream{} = _stream, %Field{} = _field, _data, %Registry{} = _registry) do
-    raise RuntimeError, "Not implemented yet"
+  def write(%OutputStream{} = stream, %Field{} = field, data, %Registry{} = registry) do
+    size = length(data)
+    {:ok, stream} = Primitives.write(:uint32, size, stream)
+
+    data
+    |> Enum.zip(1..size)
+    |> Enum.reduce_while({:ok, stream}, fn {datum, i}, {:ok, stream} ->
+      case OutputStream.write(stream, field.ctr_value_type, datum, registry) do
+        {:ok, stream} ->
+          {:cont, {:ok, stream}}
+
+        {:error, name, context, %OutputStream{} = stream} ->
+          Logger.error("Error #{inspect(name)} serializing arraylist item #{i} (of #{size}): #{inspect(context)}",
+            domain: [:ex_ark]
+          )
+
+          {:halt, {:error, :bad_arraylist, nil, stream}}
+      end
+    end)
   end
+
+  @spec default_value(Field.t(), Registry.t()) :: any()
+  def default_value(%Field{}, %Registry{}), do: []
 end

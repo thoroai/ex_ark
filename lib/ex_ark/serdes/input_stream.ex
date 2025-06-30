@@ -42,21 +42,7 @@ defmodule ExArk.Serdes.InputStream do
   end
 
   @spec read(t(), Field.t(), Registry.t()) :: {:ok, Result.t()} | failure()
-  def read(%__MODULE__{} = stream, %Field{} = field, %Registry{} = registry) do
-    if Field.optional?(field) do
-      with {:ok, %Result{stream: stream, reified: present}} <- Primitives.read(:bool, stream) do
-        if present do
-          read_field(stream, field, registry)
-        else
-          {:ok, %Result{stream: stream}}
-        end
-      end
-    else
-      read_field(stream, field, registry)
-    end
-  end
-
-  defp read_field(stream, %Field{type: type} = field, registry) do
+  def read(%__MODULE__{} = stream, %Field{type: type} = field, %Registry{} = registry) do
     cond do
       Types.primitive_type?(type) ->
         read_field_primitive(stream, type)
@@ -85,8 +71,8 @@ defmodule ExArk.Serdes.InputStream do
     mod = Types.get_complex_module_for_type(String.to_existing_atom(type))
 
     case mod.read(stream, field, registry) do
-      {:error, _} = error ->
-        log_field_error(field, error)
+      {:error, name, context, stream} = error ->
+        log_field_error(field, name, context, stream)
         error
 
       {:ok, result} ->
@@ -94,14 +80,16 @@ defmodule ExArk.Serdes.InputStream do
     end
   end
 
-  defp log_field_error(%{name: nil} = field, error) do
-    Logger.error("Got error deserializing field (object type: #{field.object_type}): #{inspect(error)}",
+  defp log_field_error(%{name: nil} = field, name, context, stream) do
+    Logger.error(
+      "Got error #{inspect(name)} deserializing field (object type: #{field.object_type}) at offset #{stream.offset}: #{inspect(context)}",
       domain: [:ex_ark]
     )
   end
 
-  defp log_field_error(field, error) do
-    Logger.error("Got error deserializing field #{field.name} (object type: #{field.object_type}): #{inspect(error)}",
+  defp log_field_error(field, name, context, stream) do
+    Logger.error(
+      "Got error #{inspect(name)} deserializing field #{field.name} (object type: #{field.object_type}) at offset #{stream.offset}: #{inspect(context)}",
       domain: [:ex_ark]
     )
   end

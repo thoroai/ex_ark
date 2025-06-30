@@ -12,12 +12,14 @@ defmodule ExArk.Serdes.OutputStream do
 
   require Logger
 
-  @type failure :: {:error, any()}
-
   typedstruct enforce: true do
     field :bytes, binary(), default: <<>>
     field :offset, non_neg_integer(), default: 0
   end
+
+  @type name :: any()
+  @type context :: any()
+  @type failure :: {:error, name(), context(), t()}
 
   @spec advance(t(), non_neg_integer()) :: t()
   def advance(%__MODULE__{bytes: bytes, offset: offset} = stream, count) do
@@ -54,7 +56,7 @@ defmodule ExArk.Serdes.OutputStream do
         write_field_schema(stream, field, data, registry)
 
       true ->
-        write_field_unknown(field)
+        raise ArgumentError, "Unknown field type: #{inspect(field.type)}"
     end
   end
 
@@ -69,11 +71,10 @@ defmodule ExArk.Serdes.OutputStream do
 
   defp write_field_complex(stream, field, data, registry, type) do
     mod = Types.get_complex_module_for_type(String.to_existing_atom(type))
-    mod.write(stream, field, data, registry)
 
     case mod.write(stream, field, data, registry) do
-      {:error, _} = error ->
-        log_field_error(field, error)
+      {:error, name, context, stream} = error ->
+        log_field_error(field, name, context, stream)
         error
 
       {:ok, result} ->
@@ -85,18 +86,16 @@ defmodule ExArk.Serdes.OutputStream do
     raise RuntimeError, "Not yet implemented"
   end
 
-  defp write_field_unknown(field) do
-    raise ArgumentError, "Unknown field type: #{inspect(field.type)}"
-  end
-
-  defp log_field_error(%{name: nil} = field, error) do
-    Logger.error("Got error serializing field (object type: #{field.object_type}): #{inspect(error)}",
+  defp log_field_error(%{name: nil} = field, name, context, stream) do
+    Logger.error(
+      "Got error #{inspect(name)} serializing field (object type: #{field.object_type}) at offset #{stream.offset}: #{inspect(context)}",
       domain: [:ex_ark]
     )
   end
 
-  defp log_field_error(field, error) do
-    Logger.error("Got error serializing field #{field.name} (object type: #{field.object_type}): #{inspect(error)}",
+  defp log_field_error(field, name, context, stream) do
+    Logger.error(
+      "Got error #{inspect(name)} serializing field #{field.name} (object type: #{field.object_type}) at offset #{stream.offset}: #{inspect(context)}",
       domain: [:ex_ark]
     )
   end

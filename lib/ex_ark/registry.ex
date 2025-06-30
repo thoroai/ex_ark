@@ -30,6 +30,15 @@ defmodule ExArk.Registry do
     end
   end
 
+  @spec build_from(t(), Schema.t()) :: {:ok, any()} | {:error, any()}
+  def build_from(%__MODULE__{} = registry, %Schema{} = _schema) do
+    # TODO: re-build the registry to include _only_ the needed transitive
+    # dependencies, including the top level schema itself. For now, just
+    # return the whole registry (which is correct, but potentially terribly
+    # inefficient if we loaded all known schemas into it).
+    {:ok, registry}
+  end
+
   @spec from_json(term()) :: {:ok, t()} | {:error, any()}
   def from_json(json) do
     schemas =
@@ -56,6 +65,12 @@ defmodule ExArk.Registry do
       _error ->
         {:error, :bad_registry}
     end
+  end
+
+  @spec to_json(t()) :: {:ok, binary()} | {:error, any()}
+  def to_json(%__MODULE__{} = _registry) do
+    # TODO
+    {:ok, ""}
   end
 
   defp merge(registry, new) do

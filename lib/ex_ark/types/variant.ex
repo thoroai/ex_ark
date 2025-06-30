@@ -36,7 +36,10 @@ defmodule ExArk.Types.Variant do
   end
 
   @spec write(OutputStream.t(), Field.t(), any(), Registry.t()) :: {:ok, OutputStream.t()} | OutputStream.failure()
-  def write(%OutputStream{} = _stream, %Field{} = _field, _data, %Registry{} = _registry) do
-    {:error, :not_implemented}
+  def write(%OutputStream{} = stream, %Field{} = _field, data, %Registry{} = _registry) do
+    {:error, :not_implemented_yet, data, stream}
   end
+
+  @spec default_value(Field.t(), Registry.t()) :: any()
+  def default_value(%Field{}, %Registry{}), do: %{}
 end

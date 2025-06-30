@@ -3,6 +3,7 @@ defmodule ExArk.Serdes.Deserialization do
   Ark deserialization utilities.
   """
 
+  alias ExArk.Ir.Field
   alias ExArk.Ir.Schema
   alias ExArk.Registry
   alias ExArk.Serdes.BitstreamHeader
@@ -16,10 +17,10 @@ defmodule ExArk.Serdes.Deserialization do
 
   @spec read_object_from_bytes(Registry.t(), Schema.t(), binary()) :: {:ok, any()} | {:error, any()}
   def read_object_from_bytes(%Registry{} = registry, %Schema{} = schema, bytes) do
-    case deserialize(%InputStream{bytes: bytes}, schema, registry) do
-      {:ok, %Result{reified: reified}} ->
-        {:ok, reified}
-
+    with {:ok, content} <- deserialize_trailer(bytes),
+         {:ok, %Result{reified: reified}} <- deserialize(%InputStream{bytes: content}, schema, registry) do
+      {:ok, reified}
+    else
       _error ->
         {:error, :deserialization_error}
     end
@@ -27,8 +28,8 @@ defmodule ExArk.Serdes.Deserialization do
 
   @spec read_generic_object_from_bytes(binary()) :: {:ok, any()} | {:error, any()}
   def read_generic_object_from_bytes(bytes) do
-    with {:ok, {stream, schema, registry}} <- deserialize_type_from(bytes),
-         {:ok, %Result{reified: reified}} <- deserialize(stream, schema, registry) do
+    with {:ok, {content, schema, registry}} <- deserialize_trailer_with_registry(bytes),
+         {:ok, %Result{reified: reified}} <- deserialize(%InputStream{bytes: content}, schema, registry) do
       {:ok, reified}
     else
       _error ->
@@ -60,16 +61,37 @@ defmodule ExArk.Serdes.Deserialization do
     end
   end
 
-  defp deserialize_field(stream, field, registry) do
-    InputStream.read(stream, field, registry)
+  defp maybe_deserialize_field(stream, field, registry, reified) do
+    if Field.optional?(field) do
+      case Primitives.read(:bool, stream) do
+        {:ok, %Result{stream: stream, reified: false}} ->
+          {:ok, %Result{stream: stream, reified: reified}}
+
+        {:ok, %Result{stream: stream, reified: true}} ->
+          deserialize_field(stream, field, registry, reified)
+      end
+    else
+      deserialize_field(stream, field, registry, reified)
+    end
+  end
+
+  defp deserialize_field(stream, field, registry, reified) do
+    case InputStream.read(stream, field, registry) do
+      {:ok, %Result{stream: stream, reified: value}} ->
+        {:ok, %Result{stream: stream, reified: Map.put(reified, String.to_atom(field.name), value)}}
+
+      error ->
+        error
+    end
   end
 
   defp deserialize_fields(stream, [] = _fields, _registry, reified),
     do: {:ok, %Result{stream: stream, reified: reified}}
 
   defp deserialize_fields(stream, [field | rest], registry, reified) do
-    with {:ok, %Result{stream: stream, reified: reified_field}} <- deserialize_field(stream, field, registry) do
-      deserialize_fields(stream, rest, registry, Map.put(reified, String.to_atom(field.name), reified_field))
+    with {:ok, %Result{stream: stream, reified: reified}} <-
+           maybe_deserialize_field(stream, field, registry, reified) do
+      deserialize_fields(stream, rest, registry, reified)
     end
   end
 
@@ -95,12 +117,22 @@ defmodule ExArk.Serdes.Deserialization do
     end
   end
 
-  defp deserialize_type_from(data) do
+  defp deserialize_trailer(data) do
+    case FileTrailer.read(data) do
+      {:ok, {data, _trailer}} ->
+        {:ok, data}
+
+      error ->
+        error
+    end
+  end
+
+  defp deserialize_trailer_with_registry(data) do
     with {:ok, {data, trailer}} <- FileTrailer.read(data),
          {:ok, %Result{stream: stream, reified: schema}} <- Primitives.read(:string, %InputStream{bytes: trailer}),
          {:ok, %Result{stream: _stream, reified: registry_raw}} <- Primitives.read(:string, stream),
          {:ok, registry} <- Registry.build(registry_raw) do
-      {:ok, {%InputStream{bytes: data}, registry.schemas[schema], registry}}
+      {:ok, {data, registry.schemas[schema], registry}}
     end
   end
 end

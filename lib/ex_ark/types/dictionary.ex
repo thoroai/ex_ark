@@ -57,7 +57,10 @@ defmodule ExArk.Types.Dictionary do
   def read(%InputStream{} = _stream, %Field{} = _field, %Registry{} = _registry), do: {:error, :bad_dictionary}
 
   @spec write(OutputStream.t(), Field.t(), any(), Registry.t()) :: {:ok, OutputStream.t()} | OutputStream.failure()
-  def write(%OutputStream{} = _stream, %Field{} = _field, _data, %Registry{} = _registry) do
-    raise RuntimeError, "Not implemented yet"
+  def write(%OutputStream{} = stream, %Field{} = _field, data, %Registry{} = _registry) do
+    {:error, :not_implemented_yet, data, stream}
   end
+
+  @spec default_value(Field.t(), Registry.t()) :: any()
+  def default_value(%Field{}, %Registry{}), do: %{}
 end

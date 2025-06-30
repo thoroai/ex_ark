@@ -11,9 +11,10 @@ defmodule ExArk.Types.Primitives do
   alias ExArk.Types
   alias ExArk.Utilities
 
-  @spec read(Types.primitive_type() | String.t(), InputStream.t()) :: {:ok, Result.t()} | InputStream.failure()
+  @spec read(String.t(), InputStream.t()) :: {:ok, Result.t()} | InputStream.failure()
   def read(typestr, %InputStream{} = stream) when is_binary(typestr), do: read(String.to_existing_atom(typestr), stream)
 
+  @spec read(Types.primitive_type(), InputStream.t()) :: {:ok, Result.t()} | InputStream.failure()
   def read(:uint8, %InputStream{bytes: <<v::little-unsigned-integer-size(8), _rest::binary>>} = stream) do
     {:ok, %Result{stream: InputStream.advance(stream, 1), reified: v}}
   end
@@ -75,7 +76,7 @@ defmodule ExArk.Types.Primitives do
     {:ok, %Result{stream: InputStream.advance(stream, 8), reified: v}}
   end
 
-  def read(:bool, %InputStream{bytes: <<0::size(8), _rest::binary>>, offset: _offset} = stream) do
+  def read(:bool, %InputStream{bytes: <<0::size(8), _rest::binary>>} = stream) do
     {:ok, %Result{stream: InputStream.advance(stream, 1), reified: false}}
   end
 
@@ -150,7 +151,7 @@ defmodule ExArk.Types.Primitives do
   end
 
   @spec write(Types.primitive_type() | String.t(), any(), OutputStream.t()) ::
-          {:ok, OutputStream.t()} | {:error, any()}
+          {:ok, OutputStream.t()} | OutputStream.failure()
   def write(type, value, stream) when is_binary(type), do: write(String.to_existing_atom(type), value, stream)
 
   def write(:uint8, value, stream) do
@@ -255,7 +256,32 @@ defmodule ExArk.Types.Primitives do
     {:ok, OutputStream.append(stream, bytes)}
   end
 
-  def write(type, value, _stream), do: {:error, {:invalid_value_for_type, type, value}}
+  def write(type, value, stream), do: {:error, :invalid_value_for_type, {type, value}, stream}
+
+  @spec default_value(String.t()) :: any()
+  def default_value(typestr) when is_binary(typestr), do: default_value(String.to_existing_atom(typestr))
+
+  @spec default_value(Types.primitive_type()) :: any()
+  def default_value(type)
+      when type in [
+             :uint8,
+             :uint16,
+             :uint32,
+             :uint64,
+             :int8,
+             :int16,
+             :int32,
+             :int64,
+             :float,
+             :double,
+             :steady_time_point,
+             :system_time_point
+           ],
+      do: 0
+
+  def default_value(:byte_buffer), do: <<>>
+  def default_value(:guid), do: "00000000-0000-0000-0000-000000000000"
+  def default_value(:string), do: ""
 
   defp decode_double(0, 0x7FF, 0, _bytes), do: :positive_infinity
   defp decode_double(1, 0x7FF, 0, _bytes), do: :negative_infinity
