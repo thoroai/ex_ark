@@ -6,6 +6,7 @@ defmodule ExArk.Types.Dictionary do
   alias ExArk.Registry
   alias ExArk.Serdes.InputStream
   alias ExArk.Serdes.InputStream.Result
+  alias ExArk.Serdes.OutputStream
 
   require Logger
 
@@ -54,4 +55,9 @@ defmodule ExArk.Types.Dictionary do
   end
 
   def read(%InputStream{} = _stream, %Field{} = _field, %Registry{} = _registry), do: {:error, :bad_dictionary}
+
+  @spec write(OutputStream.t(), Field.t(), any(), Registry.t()) :: {:ok, OutputStream.t()} | OutputStream.failure()
+  def write(%OutputStream{} = _stream, %Field{} = _field, _data, %Registry{} = _registry) do
+    raise RuntimeError, "Not implemented yet"
+  end
 end

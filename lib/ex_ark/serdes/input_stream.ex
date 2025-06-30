@@ -1,6 +1,6 @@
 defmodule ExArk.Serdes.InputStream do
   @moduledoc """
-  Input stream module.
+  Input stream for deserialization.
   """
 
   use TypedStruct
@@ -30,7 +30,7 @@ defmodule ExArk.Serdes.InputStream do
   @type failure :: {:error, name(), context(), Result.t()}
 
   typedstruct do
-    field :bytes, binary()
+    field :bytes, binary(), default: <<>>
     field :offset, integer(), default: 0
     field :has_more_sections, bool(), default: false
   end
@@ -46,39 +46,51 @@ defmodule ExArk.Serdes.InputStream do
     if Field.optional?(field) do
       with {:ok, %Result{stream: stream, reified: present}} <- Primitives.read(:bool, stream) do
         if present do
-          do_read(stream, field, registry)
+          read_field(stream, field, registry)
         else
           {:ok, %Result{stream: stream}}
         end
       end
     else
-      do_read(stream, field, registry)
+      read_field(stream, field, registry)
     end
   end
 
-  defp do_read(stream, field, registry) do
-    type = String.to_existing_atom(field.type)
-
+  defp read_field(stream, %Field{type: type} = field, registry) do
     cond do
       Types.primitive_type?(type) ->
-        Primitives.read(type, stream)
+        read_field_primitive(stream, type)
 
       Types.enum_type?(type) ->
-        type = registry.enums[field.object_type].enum_class
-        Primitives.read(type, stream)
+        read_field_enum(stream, field, registry)
 
       Types.complex_type?(type) ->
-        case Types.get_complex_module_for_type(type).read(stream, field, registry) do
-          {:error, _} = error ->
-            log_field_error(field, error)
-            error
-
-          {:ok, result} ->
-            {:ok, result}
-        end
+        read_field_complex(stream, field, registry, type)
 
       true ->
         {:error, :unknown_field_type}
+    end
+  end
+
+  def read_field_primitive(stream, type) do
+    Primitives.read(type, stream)
+  end
+
+  def read_field_enum(stream, field, registry) do
+    type = registry.enums[field.object_type].enum_class
+    Primitives.read(type, stream)
+  end
+
+  defp read_field_complex(stream, field, registry, type) do
+    mod = Types.get_complex_module_for_type(String.to_existing_atom(type))
+
+    case mod.read(stream, field, registry) do
+      {:error, _} = error ->
+        log_field_error(field, error)
+        error
+
+      {:ok, result} ->
+        {:ok, result}
     end
   end
 
