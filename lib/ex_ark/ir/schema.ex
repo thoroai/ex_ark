@@ -4,6 +4,7 @@ defmodule ExArk.Ir.Schema do
   """
 
   use TypedStruct
+  import ExArk.Utilities, only: [maybe_add_map_value: 3]
   import UnionTypespec, only: [union_type: 1]
 
   alias ExArk.Ir.Field
@@ -11,7 +12,8 @@ defmodule ExArk.Ir.Schema do
   alias ExArk.Ir.SourceLocation
   alias ExArk.Utilities
 
-  union_type attribute_type :: [:final]
+  @attribute_types [:final]
+  union_type attribute_type :: @attribute_types
 
   typedstruct enforce: true do
     field :name, String.t()
@@ -21,6 +23,12 @@ defmodule ExArk.Ir.Schema do
     field :source_location, SourceLocation.t(), enforce: false
     field :attributes, [attribute_type], enforce: false
   end
+
+  @spec final?(t()) :: boolean()
+  def final?(%__MODULE__{} = schema), do: Enum.member?(schema.attributes, :final)
+
+  @spec object_name(t()) :: String.t()
+  def object_name(%__MODULE__{} = schema), do: "#{schema.object_namespace}::#{schema.name}"
 
   @spec from_json(term()) :: t()
   def from_json(json) do
@@ -51,5 +59,21 @@ defmodule ExArk.Ir.Schema do
       source_location: source_location,
       attributes: attributes
     })
+  end
+
+  @spec to_map(t()) :: term()
+  def to_map(%__MODULE__{} = schema) do
+    fields = Enum.map(schema.fields, &Field.to_map/1)
+    groups = Enum.map(schema.groups, &Group.to_map/1)
+    attributes = Enum.into(schema.attributes, %{}, fn attribute -> {attribute, true} end)
+
+    %{
+      "fields" => fields,
+      "groups" => groups,
+      "name" => schema.name,
+      "object_namespace" => schema.object_namespace
+    }
+    |> maybe_add_map_value("attributes", attributes)
+    |> maybe_add_map_value("source_location", schema.source_location)
   end
 end

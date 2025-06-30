@@ -1,0 +1,88 @@
+{
+  "schemas": [
+    {
+      "name": "ObjectA",
+      "object_namespace": "ex_ark::test",
+      "fields": [
+        {
+          "name": "field_a",
+          "type": "uint32"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "test/ex_ark/fixtures/variants.ir",
+        "line_number": 1
+      }
+    },
+    {
+      "name": "ObjectB",
+      "object_namespace": "ex_ark::test",
+      "fields": [
+        {
+          "name": "field_b",
+          "type": "dictionary",
+          "ctr_key_type": {
+            "type": "string"
+          },
+          "ctr_value_type": {
+            "type": "int32"
+          }
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "test/ex_ark/fixtures/variants.ir",
+        "line_number": 1
+      }
+    },
+    {
+      "name": "ObjectC",
+      "object_namespace": "ex_ark::test",
+      "fields": [
+        {
+          "name": "field_c",
+          "type": "arraylist",
+          "ctr_value_type": {
+            "type": "string"
+          }
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "test/ex_ark/fixtures/variants.ir",
+        "line_number": 1
+      }
+    },
+    {
+      "name": "Variant",
+      "object_namespace": "ex_ark::test",
+      "fields": [
+        {
+          "name": "variant_field",
+          "type": "variant",
+          "variant_types": [
+            [
+              1,
+              "ex_ark::test::ObjectA"
+            ],
+            [
+              2,
+              "ex_ark::test::ObjectB"
+            ],
+            [
+              3,
+              "ex_ark::test::ObjectC"
+            ]
+          ]
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "test/ex_ark/fixtures/variants.ir",
+        "line_number": 1
+      }
+    }
+  ],
+  "enums": []
+}

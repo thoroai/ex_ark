@@ -2,7 +2,13 @@ defmodule ExArk.Types do
   @moduledoc """
   Type information
   """
+
   import UnionTypespec, only: [union_type: 1]
+
+  alias ExArk.Ir.Field
+  alias ExArk.Registry
+  alias ExArk.Types.Primitives
+  alias ExArk.Utilities
 
   @primitive_types [
     :bool,
@@ -33,6 +39,7 @@ defmodule ExArk.Types do
   @type ark_type :: primitive_type() | complex_type() | String.t()
 
   @primitive_type_names Enum.map(@primitive_types, &Atom.to_string/1)
+  @complex_type_names Enum.map(@complex_types, &Atom.to_string/1)
 
   @doc """
   Checks if the given type is a primitive type.
@@ -46,8 +53,9 @@ defmodule ExArk.Types do
   Checks if the given type is a complex type.
   """
   @spec complex_type?(ark_type()) :: boolean()
-  def complex_type?(type) when is_binary(type), do: complex_type?(String.to_existing_atom(type))
-  def complex_type?(type), do: !primitive_type?(type)
+  def complex_type?(type) when is_binary(type), do: type in @complex_type_names
+  def complex_type?(type) when type in @complex_types, do: true
+  def complex_type?(_type), do: false
 
   @doc """
   Gets the module responsible for handling the given complex type.
@@ -61,5 +69,26 @@ defmodule ExArk.Types do
       :variant -> ExArk.Types.Variant
       :enum -> ExArk.Types.ArkEnum
     end
+  end
+
+  @spec default_value(Field.t() | String.t(), Registry.t()) :: any()
+  def default_value(%Field{type: type} = field, %Registry{} = registry) do
+    cond do
+      primitive_type?(type) ->
+        default_field_primitive(type)
+
+      complex_type?(type) ->
+        default_field_complex(field, registry)
+
+      true ->
+        raise ArgumentError, "Unknown field type: #{inspect(field.type)}"
+    end
+  end
+
+  defp default_field_primitive(type), do: Primitives.default_value(type)
+
+  defp default_field_complex(%Field{type: type} = field, registry) do
+    mod = get_complex_module_for_type(Utilities.ensure_existing_atom(type))
+    mod.default_value(field, registry)
   end
 end

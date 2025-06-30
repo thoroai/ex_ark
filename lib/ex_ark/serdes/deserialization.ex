@@ -3,6 +3,7 @@ defmodule ExArk.Serdes.Deserialization do
   Ark deserialization utilities.
   """
 
+  alias ExArk.Ir.Field
   alias ExArk.Ir.Schema
   alias ExArk.Registry
   alias ExArk.Serdes.BitstreamHeader
@@ -10,25 +11,15 @@ defmodule ExArk.Serdes.Deserialization do
   alias ExArk.Serdes.InputStream
   alias ExArk.Serdes.InputStream.Result
   alias ExArk.Serdes.OptionalGroupHeader
+  alias ExArk.Types.Object
   alias ExArk.Types.Primitives
 
   require Logger
 
   @spec read_object_from_bytes(Registry.t(), Schema.t(), binary()) :: {:ok, any()} | {:error, any()}
   def read_object_from_bytes(%Registry{} = registry, %Schema{} = schema, bytes) do
-    case deserialize(%InputStream{bytes: bytes}, schema, registry) do
-      {:ok, %Result{reified: reified}} ->
-        {:ok, reified}
-
-      _error ->
-        {:error, :deserialization_error}
-    end
-  end
-
-  @spec read_generic_object_from_bytes(binary()) :: {:ok, any()} | {:error, any()}
-  def read_generic_object_from_bytes(bytes) do
-    with {:ok, {stream, schema, registry}} <- deserialize_type_from(bytes),
-         {:ok, %Result{reified: reified}} <- deserialize(stream, schema, registry) do
+    with {:ok, content} <- deserialize_trailer(bytes),
+         {:ok, %Result{reified: reified}} <- deserialize(%InputStream{bytes: content}, schema, registry) do
       {:ok, reified}
     else
       _error ->
@@ -36,22 +27,40 @@ defmodule ExArk.Serdes.Deserialization do
     end
   end
 
-  @spec deserialize(InputStream.t(), Schema.t(), Registry.t()) :: {:ok, InputStream.Result.t()} | InputStream.failure()
+  @spec read_generic_object_from_bytes(binary()) :: {:ok, any()} | {:error, any()}
+  def read_generic_object_from_bytes(bytes) do
+    with {:ok, {content, schema, registry}} <- deserialize_trailer_with_registry(bytes),
+         {:ok, %Result{reified: reified}} <-
+           deserialize(%InputStream{bytes: content, offset: 0}, schema, registry) do
+      {:ok, %{object: reified, registry: registry}}
+    else
+      _error ->
+        {:error, :deserialization_error}
+    end
+  end
+
+  @spec deserialize(InputStream.t(), Schema.t(), Registry.t(), boolean()) ::
+          {:ok, InputStream.Result.t()} | InputStream.failure()
   def deserialize(
         %InputStream{has_more_sections: has_more_sections} = stream,
         %Schema{} = schema,
-        %Registry{} = registry
+        %Registry{} = registry,
+        add_type \\ false
       ) do
     stream = %{stream | has_more_sections: false}
 
-    with {:ok, %Result{} = result} <- BitstreamHeader.read(stream),
-         {:ok, %Result{reified: fields} = result} <- deserialize_fields(result.stream, schema.fields, registry, %{}),
-         {:ok, %Result{reified: groups} = result} <- deserialize_groups(result.stream, schema.groups, registry, %{}) do
+    reified = if add_type, do: Object.add_type(%{}, schema), else: %{}
+
+    with {:ok, %Result{} = result} <- maybe_read_header(stream, schema),
+         {:ok, %Result{reified: reified} = result} <-
+           deserialize_fields(result.stream, schema.fields, registry, reified),
+         {:ok, %Result{reified: reified} = result} <-
+           deserialize_groups(result.stream, schema.groups, registry, reified) do
       {:ok,
        %Result{
          result
          | stream: %{result.stream | has_more_sections: has_more_sections},
-           reified: Map.merge(fields, groups)
+           reified: reified
        }}
     else
       {:error, name, context, %Result{stream: stream}} = error ->
@@ -60,16 +69,49 @@ defmodule ExArk.Serdes.Deserialization do
     end
   end
 
-  defp deserialize_field(stream, field, registry) do
-    InputStream.read(stream, field, registry)
+  defp maybe_read_header(stream, schema) do
+    if Schema.final?(schema) do
+      {:ok, %Result{stream: stream}}
+    else
+      BitstreamHeader.read(stream)
+    end
+  end
+
+  defp maybe_deserialize_field(stream, field, registry, reified) do
+    if Field.optional?(field) do
+      case Primitives.read(:bool, stream) do
+        {:ok, %Result{stream: stream, reified: false}} ->
+          {:ok, %Result{stream: stream, reified: reified}}
+
+        {:ok, %Result{stream: stream, reified: true}} ->
+          deserialize_field(stream, field, registry, reified)
+      end
+    else
+      deserialize_field(stream, field, registry, reified)
+    end
+  end
+
+  defp deserialize_field(stream, field, registry, reified) do
+    case InputStream.read(stream, field, registry) do
+      {:ok, %Result{stream: stream, reified: value}} ->
+        if Field.removed?(field) do
+          {:ok, %Result{stream: stream, reified: reified}}
+        else
+          {:ok, %Result{stream: stream, reified: Map.put(reified, String.to_atom(field.name), value)}}
+        end
+
+      error ->
+        error
+    end
   end
 
   defp deserialize_fields(stream, [] = _fields, _registry, reified),
     do: {:ok, %Result{stream: stream, reified: reified}}
 
   defp deserialize_fields(stream, [field | rest], registry, reified) do
-    with {:ok, %Result{stream: stream, reified: reified_field}} <- deserialize_field(stream, field, registry) do
-      deserialize_fields(stream, rest, registry, Map.put(reified, String.to_atom(field.name), reified_field))
+    with {:ok, %Result{stream: stream, reified: reified}} <-
+           maybe_deserialize_field(stream, field, registry, reified) do
+      deserialize_fields(stream, rest, registry, reified)
     end
   end
 
@@ -95,12 +137,22 @@ defmodule ExArk.Serdes.Deserialization do
     end
   end
 
-  defp deserialize_type_from(data) do
+  defp deserialize_trailer(data) do
+    case FileTrailer.read(data) do
+      {:ok, {data, _trailer}} ->
+        {:ok, data}
+
+      error ->
+        error
+    end
+  end
+
+  defp deserialize_trailer_with_registry(data) do
     with {:ok, {data, trailer}} <- FileTrailer.read(data),
          {:ok, %Result{stream: stream, reified: schema}} <- Primitives.read(:string, %InputStream{bytes: trailer}),
          {:ok, %Result{stream: _stream, reified: registry_raw}} <- Primitives.read(:string, stream),
          {:ok, registry} <- Registry.build(registry_raw) do
-      {:ok, {%InputStream{bytes: data}, registry.schemas[schema], registry}}
+      {:ok, {data, registry.schemas[schema], registry}}
     end
   end
 end
