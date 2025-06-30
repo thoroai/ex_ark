@@ -71,4 +71,9 @@ defmodule ExArk.Ir.Field do
       attributes: attributes
     })
   end
+
+  @spec new(String.t()) :: t()
+  def new(type) do
+    struct(__MODULE__, %{type: type})
+  end
 end

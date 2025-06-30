@@ -6,14 +6,15 @@ defmodule ExArk.Types.Primitives do
   import Bitwise
 
   alias ExArk.Serdes.InputStream
-  alias ExArk.Serdes.InputStream.Result
+  alias ExArk.Serdes.InputStream.Result, as: Result
+  alias ExArk.Serdes.OutputStream
   alias ExArk.Types
   alias ExArk.Utilities
 
-  @spec read(String.t(), InputStream.t()) :: {:ok, InputStream.Result.t()} | InputStream.failure()
+  @spec read(String.t(), InputStream.t()) :: {:ok, Result.t()} | InputStream.failure()
   def read(typestr, %InputStream{} = stream) when is_binary(typestr), do: read(String.to_existing_atom(typestr), stream)
 
-  @spec read(Types.primitive_type(), InputStream.t()) :: {:ok, InputStream.Result.t()} | InputStream.failure()
+  @spec read(Types.primitive_type(), InputStream.t()) :: {:ok, Result.t()} | InputStream.failure()
   def read(:uint8, %InputStream{bytes: <<v::little-unsigned-integer-size(8), _rest::binary>>} = stream) do
     {:ok, %Result{stream: InputStream.advance(stream, 1), reified: v}}
   end
@@ -148,6 +149,114 @@ defmodule ExArk.Types.Primitives do
       ) do
     {:ok, %Result{stream: InputStream.advance(stream, 4 + len), reified: s}}
   end
+
+  @spec write(Types.primitive_type() | String.t(), any(), OutputStream.t()) ::
+          {:ok, OutputStream.t()} | {:error, any()}
+  def write(type, value, stream) when is_binary(type), do: write(String.to_existing_atom(type), value, stream)
+
+  def write(:uint8, value, stream) do
+    bytes = <<value::little-unsigned-integer-size(8)>>
+    {:ok, OutputStream.append(stream, bytes)}
+  end
+
+  def write(:uint16, value, stream) do
+    bytes = <<value::little-unsigned-integer-size(16)>>
+    {:ok, OutputStream.append(stream, bytes)}
+  end
+
+  def write(:uint32, value, stream) do
+    bytes = <<value::little-unsigned-integer-size(32)>>
+    {:ok, OutputStream.append(stream, bytes)}
+  end
+
+  def write(:uint64, value, stream) do
+    bytes = <<value::little-unsigned-integer-size(64)>>
+    {:ok, OutputStream.append(stream, bytes)}
+  end
+
+  def write(:int8, value, stream) do
+    bytes = <<value::little-signed-integer-size(8)>>
+    {:ok, OutputStream.append(stream, bytes)}
+  end
+
+  def write(:int16, value, stream) do
+    bytes = <<value::little-signed-integer-size(16)>>
+    {:ok, OutputStream.append(stream, bytes)}
+  end
+
+  def write(:int32, value, stream) do
+    bytes = <<value::little-signed-integer-size(32)>>
+    {:ok, OutputStream.append(stream, bytes)}
+  end
+
+  def write(:int64, value, stream) do
+    bytes = <<value::little-signed-integer-size(64)>>
+    {:ok, OutputStream.append(stream, bytes)}
+  end
+
+  def write(:float, value, stream) do
+    bytes = <<value::little-float-size(32)>>
+    {:ok, OutputStream.append(stream, bytes)}
+  end
+
+  def write(:double, value, stream) do
+    bytes = <<value::little-float-size(64)>>
+    {:ok, OutputStream.append(stream, bytes)}
+  end
+
+  def write(:bool, value, stream) do
+    bytes = if value, do: <<1::size(8)>>, else: <<0::size(8)>>
+    {:ok, OutputStream.append(stream, bytes)}
+  end
+
+  #
+  # +-------------------------------+---------------------+
+  # | Length (N) in bytes (32 bits) | Binary (N * 8 bits) |
+  # +-------------------------------+---------------------+
+  #
+
+  def write(:byte_buffer, value, stream) do
+    len = byte_size(value)
+    bytes = <<len::little-unsigned-integer-size(32)>> <> value
+    {:ok, OutputStream.append(stream, bytes)}
+  end
+
+  def write(:duration, value, stream) do
+    bytes = <<value::little-signed-integer-size(64)>>
+    {:ok, OutputStream.append(stream, bytes)}
+  end
+
+  def write(:guid, value, stream) do
+    uuid_binary = Ecto.UUID.dump!(value)
+    hi = Utilities.reverse_binary(binary_part(uuid_binary, 0, 8), 8)
+    lo = Utilities.reverse_binary(binary_part(uuid_binary, 8, 8), 8)
+    bytes = hi <> lo
+    {:ok, OutputStream.append(stream, bytes)}
+  end
+
+  def write(:steady_time_point, value, stream) do
+    bytes = <<value::little-unsigned-integer-size(64)>>
+    {:ok, OutputStream.append(stream, bytes)}
+  end
+
+  def write(:system_time_point, value, stream) do
+    bytes = <<value::little-unsigned-integer-size(64)>>
+    {:ok, OutputStream.append(stream, bytes)}
+  end
+
+  #
+  # +-------------------------------+---------------------+
+  # | Length (N) in bytes (32 bits) | Binary (N * 8 bits) |
+  # +-------------------------------+---------------------+
+  #
+
+  def write(:string, value, stream) do
+    len = byte_size(value)
+    bytes = <<len::little-unsigned-integer-size(32)>> <> value
+    {:ok, OutputStream.append(stream, bytes)}
+  end
+
+  def write(type, value, _stream), do: {:error, {:invalid_value_for_type, type, value}}
 
   defp decode_double(0, 0x7FF, 0, _bytes), do: :positive_infinity
   defp decode_double(1, 0x7FF, 0, _bytes), do: :negative_infinity

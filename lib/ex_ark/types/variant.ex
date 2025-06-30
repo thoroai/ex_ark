@@ -7,6 +7,7 @@ defmodule ExArk.Types.Variant do
   alias ExArk.Serdes.Deserialization
   alias ExArk.Serdes.InputStream
   alias ExArk.Serdes.InputStream.Result
+  alias ExArk.Serdes.OutputStream
 
   #
   # +-------+--------+------+
@@ -32,5 +33,10 @@ defmodule ExArk.Types.Variant do
     else
       {:ok, %Result{stream: InputStream.advance(stream, length)}}
     end
+  end
+
+  @spec write(OutputStream.t(), Field.t(), any(), Registry.t()) :: {:ok, OutputStream.t()} | OutputStream.failure()
+  def write(%OutputStream{} = _stream, %Field{} = _field, _data, %Registry{} = _registry) do
+    {:error, :not_implemented}
   end
 end
