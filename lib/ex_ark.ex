@@ -39,30 +39,53 @@ defmodule ExArk do
   end
 
   @doc """
-  Deserialize an Ark rbuf with the given registry and type.
+  Deserialize an Ark rbuf with the given registry and type from a file.
   """
-  @spec read(Registry.t(), String.t(), Path.t()) :: {:ok, any()} | {:error, any()}
-  def read(%Registry{} = registry, type, path) do
+  @spec read_object_from_file(Registry.t(), String.t(), Path.t()) :: {:ok, any()} | {:error, any()}
+  def read_object_from_file(%Registry{} = registry, type, path) do
     schema = registry.schemas[type]
-    Deserialization.read(registry, schema, path)
+
+    if is_nil(schema) do
+      {:error, :schema_not_found}
+    else
+      with {:ok, bytes} <- File.read(path) do
+        Deserialization.read_object_from_bytes(registry, schema, bytes)
+      end
+    end
   end
 
   @doc """
-  Deserialize an Ark rbuf with embedded type info from the given path.
+  Deserialize an Ark rbuf with embedded type info from the given file.
   If the schema is not embedded in the serialized data, this will throw.
   """
-  @spec read_path(Path.t()) :: {:ok, any()} | {:error, any()}
-  def read_path(path) do
-    Deserialization.read_path(path)
+  @spec read_generic_object_from_file(Path.t()) :: {:ok, any()} | {:error, any()}
+  def read_generic_object_from_file(path) do
+    with {:ok, bytes} <- File.read(path) do
+      Deserialization.read_generic_object_from_bytes(bytes)
+    end
   end
 
   @doc """
-  Deserialize an Ark rbuf with embedded type info from the given byte stream.
+  Deserialize an Ark rbuf with the given registry and type from raw bytes.
+  """
+  @spec read_object_from_bytes(Registry.t(), String.t(), binary()) :: {:ok, any()} | {:error, any()}
+  def read_object_from_bytes(%Registry{} = registry, type, bytes) do
+    schema = registry.schemas[type]
+
+    if is_nil(schema) do
+      {:error, :schema_not_found}
+    else
+      Deserialization.read_object_from_bytes(registry, schema, bytes)
+    end
+  end
+
+  @doc """
+  Deserialize an Ark rbuf with embedded type info from the given raw bytes.
   If the schema is not embedded in the serialized data, this will throw.
   """
-  @spec read_bytes(binary()) :: {:ok, any()} | {:error, any()}
-  def read_bytes(bytes) do
-    Deserialization.read_bytes(bytes)
+  @spec read_generic_object_from_bytes(binary()) :: {:ok, any()} | {:error, any()}
+  def read_generic_object_from_bytes(bytes) do
+    Deserialization.read_generic_object_from_bytes(bytes)
   end
 
   defp load_schemas(%Registry{} = _registry, nil), do: {:error, :invalid_path}
@@ -79,6 +102,12 @@ defmodule ExArk do
   end
 
   defp load_schemas(%Registry{} = registry, path) do
-    Registry.load_schemas(registry, path)
+    case File.read(path) do
+      {:ok, data} ->
+        Registry.load(registry, data)
+
+      _ ->
+        {:error, :load_schema}
+    end
   end
 end
