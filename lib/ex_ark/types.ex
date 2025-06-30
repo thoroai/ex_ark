@@ -32,19 +32,37 @@ defmodule ExArk.Types do
   union_type complex_type :: @complex_types
   union_type types :: @all_types
 
-  defguard is_primitive?(type) when type in @primitive_types
+  @type ark_type :: primitive_type() | enum_type() | complex_type() | String.t()
 
-  def primitive?(type) when is_binary(type), do: primitive?(String.to_existing_atom(type))
-  def primitive?(type) when type in @primitive_types, do: true
-  def primitive?(_type), do: false
+  @enum_type_names Enum.map(@enum_types, &Atom.to_string/1)
+  @primitive_type_names Enum.map(@primitive_types, &Atom.to_string/1)
 
-  def enum?(type) when is_binary(type), do: enum?(String.to_existing_atom(type))
-  def enum?(:enum), do: true
-  def enum?(_), do: false
+  @doc """
+  Checks if the given type is a primitive type.
+  """
+  @spec primitive_type?(ark_type()) :: boolean()
+  def primitive_type?(type) when is_binary(type), do: type in @primitive_type_names
+  def primitive_type?(type) when type in @primitive_types, do: true
+  def primitive_type?(_type), do: false
 
-  def complex?(type) when is_binary(type), do: complex?(String.to_existing_atom(type))
-  def complex?(type), do: !primitive?(type) and !enum?(type)
+  @doc """
+  Checks if the given type is an enum type.
+  """
+  @spec enum_type?(ark_type()) :: boolean()
+  def enum_type?(type) when is_binary(type), do: type in @enum_type_names
+  def enum_type?(:enum), do: true
+  def enum_type?(_), do: false
 
+  @doc """
+  Checks if the given type is a complex type.
+  """
+  @spec complex_type?(ark_type()) :: boolean()
+  def complex_type?(type) when is_binary(type), do: complex_type?(String.to_existing_atom(type))
+  def complex_type?(type), do: !primitive_type?(type) and !enum_type?(type)
+
+  @doc """
+  Gets the module responsible for handling the given complex type.
+  """
   def get_complex_module_for_type(type) when type in @complex_types do
     case type do
       :array -> ExArk.Types.Array
