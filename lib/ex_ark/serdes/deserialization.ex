@@ -14,23 +14,19 @@ defmodule ExArk.Serdes.Deserialization do
 
   require Logger
 
-  @spec read(Registry.t(), Schema.t(), Path.t()) :: {:ok, any()} | {:error, any()}
-  def read(%Registry{} = registry, %Schema{} = schema, path) do
-    with {:ok, bytes} <- File.read(path),
-         {:ok, %Result{reified: reified}} <- deserialize(%InputStream{bytes: bytes}, schema, registry) do
-      {:ok, reified}
+  @spec read_object_from_bytes(Registry.t(), Schema.t(), binary()) :: {:ok, any()} | {:error, any()}
+  def read_object_from_bytes(%Registry{} = registry, %Schema{} = schema, bytes) do
+    case deserialize(%InputStream{bytes: bytes}, schema, registry) do
+      {:ok, %Result{reified: reified}} ->
+        {:ok, reified}
+
+      _error ->
+        {:error, :deserialization_error}
     end
   end
 
-  @spec read_path(Path.t()) :: {:ok, any()} | {:error, any()}
-  def read_path(path) do
-    with {:ok, bytes} <- File.read(path) do
-      read_bytes(bytes)
-    end
-  end
-
-  @spec read_bytes(binary()) :: {:ok, any()} | {:error, any()}
-  def read_bytes(bytes) do
+  @spec read_generic_object_from_bytes(binary()) :: {:ok, any()} | {:error, any()}
+  def read_generic_object_from_bytes(bytes) do
     with {:ok, {stream, schema, registry}} <- deserialize_type_from(bytes),
          {:ok, %Result{reified: reified}} <- deserialize(stream, schema, registry) do
       {:ok, reified}

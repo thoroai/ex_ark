@@ -14,10 +14,9 @@ defmodule ExArk.Registry do
     field :enums, %{}, default: %{}
   end
 
-  @spec load_schemas(t(), Path.t()) :: {:ok, any()} | {:error, any()}
-  def load_schemas(%__MODULE__{} = existing_registry, path) do
-    with {:ok, data} <- File.read(path),
-         {:ok, registry} <- build(data) do
+  @spec load(t(), binary()) :: {:ok, any()} | {:error, any()}
+  def load(%__MODULE__{} = existing_registry, data) do
+    with {:ok, registry} <- build(data) do
       merge(existing_registry, registry)
     end
   end
