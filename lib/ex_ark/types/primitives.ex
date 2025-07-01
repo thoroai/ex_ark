@@ -11,10 +11,9 @@ defmodule ExArk.Types.Primitives do
   alias ExArk.Types
   alias ExArk.Utilities
 
-  @spec read(String.t(), InputStream.t()) :: {:ok, Result.t()} | InputStream.failure()
+  @spec read(Types.primitive_type() | String.t(), InputStream.t()) :: {:ok, Result.t()} | InputStream.failure()
   def read(typestr, %InputStream{} = stream) when is_binary(typestr), do: read(String.to_existing_atom(typestr), stream)
 
-  @spec read(Types.primitive_type(), InputStream.t()) :: {:ok, Result.t()} | InputStream.failure()
   def read(:uint8, %InputStream{bytes: <<v::little-unsigned-integer-size(8), _rest::binary>>} = stream) do
     {:ok, %Result{stream: InputStream.advance(stream, 1), reified: v}}
   end
@@ -195,12 +194,12 @@ defmodule ExArk.Types.Primitives do
   end
 
   def write(:float, value, stream) do
-    bytes = <<value::little-float-size(32)>>
+    bytes = encode_float(value)
     {:ok, OutputStream.append(stream, bytes)}
   end
 
   def write(:double, value, stream) do
-    bytes = <<value::little-float-size(64)>>
+    bytes = encode_double(value)
     {:ok, OutputStream.append(stream, bytes)}
   end
 
@@ -261,12 +260,20 @@ defmodule ExArk.Types.Primitives do
   defp decode_double(0, 0x7FF, 0, _bytes), do: :positive_infinity
   defp decode_double(1, 0x7FF, 0, _bytes), do: :negative_infinity
   defp decode_double(_sign, 0x7FF, _fraction, _bytes), do: :nan
-
   defp decode_double(_sign, _exponent, _fraction, <<v::little-float-size(64)>> = _bytes), do: v
+
+  defp encode_double(:positive_infinity), do: <<0 <<< 63 ||| 0x7FF <<< 52::little-unsigned-size(64)>>
+  defp encode_double(:negative_infinity), do: <<1 <<< 63 ||| 0x7FF <<< 52::little-unsigned-size(64)>>
+  defp encode_double(:nan), do: <<0 <<< 63 ||| 0x7FF <<< 52 ||| 1 <<< 51::little-unsigned-size(64)>>
+  defp encode_double(value) when is_float(value), do: <<value::little-float-size(64)>>
 
   defp decode_float(0, 0xFF, 0, _bytes), do: :positive_infinity
   defp decode_float(1, 0xFF, 0, _bytes), do: :negative_infinity
   defp decode_float(_sign, 0xFF, _fraction, _bytes), do: :nan
-
   defp decode_float(_sign, _exponent, _fraction, <<v::little-float-size(32)>> = _bytes), do: v
+
+  defp encode_float(:positive_infinity), do: <<0 <<< 31 ||| 0xFF <<< 23::little-unsigned-size(32)>>
+  defp encode_float(:negative_infinity), do: <<1 <<< 31 ||| 0xFF <<< 23::little-unsigned-size(32)>>
+  defp encode_float(:nan), do: <<0 <<< 31 ||| 0xFF <<< 23 ||| 1 <<< 22::little-unsigned-size(32)>>
+  defp encode_float(value) when is_float(value), do: <<value::little-float-size(32)>>
 end
