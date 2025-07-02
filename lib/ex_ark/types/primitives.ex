@@ -108,7 +108,7 @@ defmodule ExArk.Types.Primitives do
      }}
   rescue
     ArgumentError ->
-      {:error, :bad_guid}
+      {:error, :bad_guid, nil, %Result{stream: stream}}
   end
 
   def read(

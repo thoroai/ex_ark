@@ -13,8 +13,6 @@ defmodule ExArk.Serdes.InputStream do
 
   require Logger
 
-  @type failure :: {:error, any()}
-
   defmodule Result do
     @moduledoc """
     Typed structure for input stream read results
@@ -26,6 +24,10 @@ defmodule ExArk.Serdes.InputStream do
       field :stream, InputStream.t()
     end
   end
+
+  @type name :: any()
+  @type context :: any()
+  @type failure :: {:error, name(), context(), Result.t()}
 
   typedstruct do
     field :bytes, binary()
@@ -39,7 +41,7 @@ defmodule ExArk.Serdes.InputStream do
     %__MODULE__{stream | bytes: rest, offset: stream.offset + count}
   end
 
-  @spec read(t(), Field.t(), Registry.t()) :: {:ok, InputStream.Result.t()} | InputStream.failure()
+  @spec read(t(), Field.t(), Registry.t()) :: {:ok, Result.t()} | failure()
   def read(%__MODULE__{} = stream, %Field{} = field, %Registry{} = registry) do
     if Field.optional?(field) do
       with {:ok, %Result{stream: stream, reified: present}} <- Primitives.read(:bool, stream) do
