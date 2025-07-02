@@ -7,6 +7,7 @@ defmodule ExArk.Types.Dictionary do
   alias ExArk.Serdes.InputStream
   alias ExArk.Serdes.InputStream.Result
   alias ExArk.Serdes.OutputStream
+  alias ExArk.Types.Primitives
 
   require Logger
 
@@ -57,8 +58,24 @@ defmodule ExArk.Types.Dictionary do
   def read(%InputStream{} = _stream, %Field{} = _field, %Registry{} = _registry), do: {:error, :bad_dictionary}
 
   @spec write(OutputStream.t(), Field.t(), any(), Registry.t()) :: {:ok, OutputStream.t()} | OutputStream.failure()
-  def write(%OutputStream{} = stream, %Field{} = _field, data, %Registry{} = _registry) do
-    {:error, :not_implemented_yet, data, stream}
+  def write(%OutputStream{} = stream, %Field{} = field, data, %Registry{} = registry) do
+    size = Kernel.map_size(data)
+    {:ok, stream} = Primitives.write(:uint32, size, stream)
+
+    Enum.reduce_while(data, {:ok, stream}, fn {key, value}, {:ok, stream} ->
+      with {:ok, %OutputStream{} = stream} <- OutputStream.write(stream, field.ctr_key_type, key, registry),
+           {:ok, %OutputStream{} = stream} <- OutputStream.write(stream, field.ctr_value_type, value, registry) do
+        {:cont, {:ok, stream}}
+      else
+        {:error, name, context, %OutputStream{} = stream} ->
+          Logger.error(
+            "Error #{inspect(name)} serializing dictionary (key type '#{field.ctr_key_type}', value type '#{field.ctr_value_type}'): item #{context}",
+            domain: [:ex_ark]
+          )
+
+          {:halt, {:error, :bad_dictionary, nil, stream}}
+      end
+    end)
   end
 
   @spec default_value(Field.t(), Registry.t()) :: any()
