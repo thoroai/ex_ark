@@ -72,11 +72,11 @@ defmodule ExArk.Serdes.InputStream do
     end
   end
 
-  def read_field_primitive(stream, type) do
+  defp read_field_primitive(stream, type) do
     Primitives.read(type, stream)
   end
 
-  def read_field_enum(stream, field, registry) do
+  defp read_field_enum(stream, field, registry) do
     type = registry.enums[field.object_type].enum_class
     Primitives.read(type, stream)
   end

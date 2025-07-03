@@ -106,8 +106,8 @@ defmodule ExArk do
       {:ok, data} ->
         Registry.load(registry, data)
 
-      _ ->
-        {:error, :load_schema}
+      error ->
+        error
     end
   end
 end
