@@ -5,11 +5,12 @@ defmodule ExArk.Types.Array do
   alias ExArk.Ir.Field
   alias ExArk.Registry
   alias ExArk.Serdes.InputStream
-  alias ExArk.Serdes.InputStream.Result
+  alias ExArk.Serdes.InputStream.Result, as: Result
+  alias ExArk.Serdes.OutputStream
 
   require Logger
 
-  @spec read(InputStream.t(), Field.t(), Registry.t()) :: {:ok, InputStream.Result.t()} | InputStream.failure()
+  @spec read(InputStream.t(), Field.t(), Registry.t()) :: {:ok, Result.t()} | InputStream.failure()
   def read(%InputStream{} = stream, %Field{array_size: 0} = _field, %Registry{} = _registry),
     do: {:ok, %Result{stream: stream}}
 
@@ -31,5 +32,12 @@ defmodule ExArk.Types.Array do
     with {:ok, %Result{stream: stream, reified: items}} <- result do
       {:ok, %Result{stream: stream, reified: Enum.reverse(items)}}
     end
+  end
+
+  @spec write(OutputStream.t(), Field.t(), [any()], Registry.t()) :: {:ok, OutputStream.t()} | OutputStream.failure()
+  def write(%OutputStream{} = stream, %Field{} = _field, [], %Registry{} = _registry), do: {:ok, stream}
+
+  def write(%OutputStream{} = _stream, %Field{} = _field, _data, %Registry{} = _registry) do
+    {:error, :not_implemented}
   end
 end

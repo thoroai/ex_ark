@@ -7,6 +7,7 @@ defmodule ExArk.Types.Object do
   alias ExArk.Serdes.Deserialization
   alias ExArk.Serdes.InputStream
   alias ExArk.Serdes.InputStream.Result
+  alias ExArk.Serdes.OutputStream
 
   require Logger
 
@@ -22,5 +23,10 @@ defmodule ExArk.Types.Object do
         Logger.error("Error deserializing schema #{schema.name}: #{inspect(error)}", domain: [:ex_ark])
         {:error, :bad_object, nil, result}
     end
+  end
+
+  @spec write(OutputStream.t(), Field.t(), any(), Registry.t()) :: {:ok, OutputStream.t()} | OutputStream.failure()
+  def write(%OutputStream{} = _stream, %Field{} = _field, _data, %Registry{} = _registry) do
+    raise RuntimeError, "Not implemented yet"
   end
 end
