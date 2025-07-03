@@ -40,7 +40,7 @@ defmodule ExArk.Serdes.Deserialization do
     end
   end
 
-  @spec deserialize(InputStream.t(), Schema.t(), Registry.t()) :: {:ok, InputStream.Result.t()} | {:error, any()}
+  @spec deserialize(InputStream.t(), Schema.t(), Registry.t()) :: {:ok, InputStream.Result.t()} | InputStream.failure()
   def deserialize(
         %InputStream{has_more_sections: has_more_sections} = stream,
         %Schema{} = schema,
@@ -58,8 +58,8 @@ defmodule ExArk.Serdes.Deserialization do
            reified: Map.merge(fields, groups)
        }}
     else
-      error ->
-        Logger.error("Got error at offset #{stream.offset}: #{inspect(error)}", domain: [:ex_ark])
+      {:error, name, context, %Result{stream: stream}} = error ->
+        Logger.error("Got error #{inspect(name)} at offset #{stream.offset}: #{inspect(context)}", domain: [:ex_ark])
         error
     end
   end

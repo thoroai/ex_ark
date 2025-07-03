@@ -26,15 +26,15 @@ defmodule ExArk.Serdes.BitstreamHeader do
      }}
   end
 
-  def read(%InputStream{bytes: <<_magic::4, @groups::1, _sections::1, @version::2, _rest::binary>>}),
-    do: {:error, :bad_magic}
+  def read(%InputStream{bytes: <<magic::4, @groups::1, _sections::1, @version::2, _rest::binary>>} = stream),
+    do: {:error, :bad_magic, magic, %Result{stream: stream}}
 
-  def read(%InputStream{bytes: <<@magic::4, @groups::1, _sections::1, _version::2, _rest::binary>>}),
-    do: {:error, :bad_version}
+  def read(%InputStream{bytes: <<@magic::4, @groups::1, _sections::1, version::2, _rest::binary>>} = stream),
+    do: {:error, :bad_version, version, %Result{stream: stream}}
 
-  def read(%InputStream{bytes: <<@magic::4, _groups::1, _sections::1, @version::2, _rest::binary>>}),
-    do: {:error, :bad_groups}
+  def read(%InputStream{bytes: <<@magic::4, groups::1, _sections::1, @version::2, _rest::binary>>} = stream),
+    do: {:error, :bad_groups, groups, %Result{stream: stream}}
 
-  def read(%InputStream{bytes: <<_magic::4, _groups::1, _sections::1, _version::2, _rest::binary>>}),
-    do: {:error, :bad_header}
+  def read(%InputStream{bytes: <<_magic::4, _groups::1, _sections::1, _version::2, _rest::binary>> = header} = stream),
+    do: {:error, :bad_header, header, %Result{stream: stream}}
 end

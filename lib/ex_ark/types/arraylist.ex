@@ -38,9 +38,9 @@ defmodule ExArk.Types.Arraylist do
           {:ok, %Result{stream: stream, reified: item}} ->
             {:cont, {:ok, %Result{stream: stream, reified: [item] ++ result.reified}}}
 
-          error ->
+          {:error, _, _, %Result{} = result} = error ->
             Logger.error("Error deserializing arraylist item #{i} (of #{size}): #{inspect(error)}", domain: [:ex_ark])
-            {:halt, {:error, :bad_arraylist}}
+            {:halt, {:error, :bad_arraylist, nil, result}}
         end
       end)
 

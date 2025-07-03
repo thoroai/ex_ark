@@ -40,13 +40,13 @@ defmodule ExArk.Types.Dictionary do
              {:ok, %Result{stream: stream, reified: value}} <- InputStream.read(stream, field.ctr_value_type, registry) do
           {:cont, {:ok, %Result{stream: stream, reified: [{key, value}] ++ result.reified}}}
         else
-          _ ->
+          {:error, _, _, %Result{} = result} ->
             Logger.error(
               "Error deserializing dictionary (key type '#{field.ctr_key_type}', value type '#{field.ctr_value_type}') item #{i}",
               domain: [:ex_ark]
             )
 
-            {:halt, {:error, :bad_dictionary}}
+            {:halt, {:error, :bad_dictionary, nil, result}}
         end
       end)
 

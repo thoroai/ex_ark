@@ -18,9 +18,9 @@ defmodule ExArk.Types.Object do
       {:ok, %Result{} = result} ->
         {:ok, result}
 
-      error ->
+      {:error, _, _, %Result{} = result} = error ->
         Logger.error("Error deserializing schema #{schema.name}: #{inspect(error)}", domain: [:ex_ark])
-        {:error, :bad_object}
+        {:error, :bad_object, nil, result}
     end
   end
 end
