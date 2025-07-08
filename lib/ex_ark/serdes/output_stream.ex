@@ -44,9 +44,6 @@ defmodule ExArk.Serdes.OutputStream do
       Types.primitive_type?(type) ->
         write_field_primitive(stream, type, data)
 
-      Types.enum_type?(type) ->
-        write_field_enum(stream, field, data, registry)
-
       Types.complex_type?(type) ->
         write_field_complex(stream, field, data, registry, type)
 
@@ -60,11 +57,6 @@ defmodule ExArk.Serdes.OutputStream do
 
   defp write_field_primitive(stream, type, data) do
     Primitives.write(type, data, stream)
-  end
-
-  defp write_field_enum(stream, field, data, registry) do
-    enum_type = registry.enums[field.object_type].enum_class
-    Primitives.write(enum_type, data, stream)
   end
 
   defp write_field_complex(stream, field, data, registry, type) do
