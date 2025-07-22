@@ -547,7 +547,7 @@ defmodule ExArk.Types.PrimitivesTest do
       {:ok, %Result{reified: uuid}} =
         Primitives.read(:guid, %InputStream{bytes: bin, offset: 0})
 
-      assert uuid == "11223344-5566-7700-8899-aabbccddeeff"
+      assert uuid == "00112233-4455-6677-8899-aabbccddeeff"
     end
 
     test "read/2 with all-zero guid returns valid uuid" do
