@@ -20,6 +20,6 @@ defmodule ExArk.Utilities do
   def reverse_binary(bin, len) when is_binary(bin) do
     res = bin |> :binary.decode_unsigned(:little) |> :binary.encode_unsigned(:big)
     pad = len - byte_size(res)
-    <<res::binary, 0::pad*8>>
+    <<0::pad*8, res::binary>>
   end
 end
