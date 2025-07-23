@@ -3,13 +3,17 @@ defmodule ExArk.Types.Object do
   Module for handling objects
   """
   alias ExArk.Ir.Field
+  alias ExArk.Ir.Schema
   alias ExArk.Registry
   alias ExArk.Serdes.Deserialization
   alias ExArk.Serdes.InputStream
   alias ExArk.Serdes.InputStream.Result
   alias ExArk.Serdes.OutputStream
+  alias ExArk.Serdes.Serialization
 
   require Logger
+
+  @ark_schema_field :__ark_schema
 
   @spec read(InputStream.t(), Field.t(), Registry.t()) :: {:ok, InputStream.Result.t()} | InputStream.failure()
   def read(%InputStream{} = stream, %Field{} = field, %Registry{} = registry) do
@@ -26,7 +30,44 @@ defmodule ExArk.Types.Object do
   end
 
   @spec write(OutputStream.t(), Field.t(), any(), Registry.t()) :: {:ok, OutputStream.t()} | OutputStream.failure()
-  def write(%OutputStream{} = _stream, %Field{} = _field, _data, %Registry{} = _registry) do
-    raise RuntimeError, "Not implemented yet"
+  def write(%OutputStream{} = stream, %Field{} = field, data, %Registry{} = registry) do
+    schema = registry.schemas[field.object_type]
+
+    case Serialization.serialize(stream, schema, data, registry) do
+      {:ok, %OutputStream{} = stream} ->
+        {:ok, stream}
+
+      {:error, name, context, %OutputStream{} = stream} ->
+        Logger.error(
+          "Error #{inspect(name)} serializing schema #{schema.name} at offset #{stream.offset}: #{inspect(context)}",
+          domain: [:ex_ark]
+        )
+
+        {:error, :bad_object, nil, stream}
+    end
+  end
+
+  @spec get_type(map()) :: String.t()
+  def get_type(data) do
+    Map.get(data, @ark_schema_field)
+  end
+
+  @spec add_type(map(), Schema.t() | String.t()) :: map()
+  def add_type(data, %Schema{} = schema) do
+    Map.merge(data, %{@ark_schema_field => Schema.object_name(schema)})
+  end
+
+  def add_type(data, object_name) do
+    Map.merge(data, %{@ark_schema_field => object_name})
+  end
+
+  @spec default_value(String.t(), Registry.t()) :: any()
+  def default_value(type, %Registry{} = registry) do
+    schema = registry.schemas[type]
+
+    schema.fields
+    |> Enum.map(fn field -> {String.to_atom(field.name), ExArk.Types.default_value(field, registry)} end)
+    |> Map.new()
+    |> add_type(schema)
   end
 end

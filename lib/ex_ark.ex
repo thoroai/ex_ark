@@ -5,6 +5,7 @@ defmodule ExArk do
 
   alias ExArk.Registry
   alias ExArk.Serdes.Deserialization
+  alias ExArk.Serdes.Serialization
 
   @doc """
   Load schema file(s)
@@ -39,7 +40,8 @@ defmodule ExArk do
   end
 
   @doc """
-  Deserialize an Ark rbuf with the given registry and type from a file.
+  Deserialize an Ark object from a file according to the given type from the
+  registry.
   """
   @spec read_object_from_file(Registry.t(), String.t(), Path.t()) :: {:ok, any()} | {:error, any()}
   def read_object_from_file(%Registry{} = registry, type, path) do
@@ -55,8 +57,9 @@ defmodule ExArk do
   end
 
   @doc """
-  Deserialize an Ark rbuf with embedded type info from the given file.
-  If the schema is not embedded in the serialized data, this will throw.
+  Deserialize an Ark object from the given file according to the embedded type
+  information. If the schema is not embedded in the serialized data, this will
+  throw.
   """
   @spec read_generic_object_from_file(Path.t()) :: {:ok, any()} | {:error, any()}
   def read_generic_object_from_file(path) do
@@ -66,7 +69,7 @@ defmodule ExArk do
   end
 
   @doc """
-  Deserialize an Ark rbuf with the given registry and type from raw bytes.
+  Deserialize an Ark object with the given registry and type from raw bytes.
   """
   @spec read_object_from_bytes(Registry.t(), String.t(), binary()) :: {:ok, any()} | {:error, any()}
   def read_object_from_bytes(%Registry{} = registry, type, bytes) do
@@ -80,12 +83,45 @@ defmodule ExArk do
   end
 
   @doc """
-  Deserialize an Ark rbuf with embedded type info from the given raw bytes.
-  If the schema is not embedded in the serialized data, this will throw.
+  Deserialize an Ark object from the given bytes according to the embedded type
+  information. If the schema is not embedded in the serialized data, this will
+  throw.
   """
   @spec read_generic_object_from_bytes(binary()) :: {:ok, any()} | {:error, any()}
   def read_generic_object_from_bytes(bytes) do
     Deserialization.read_generic_object_from_bytes(bytes)
+  end
+
+  @doc """
+  Serialize object to an Ark object byte stream with the given registry and
+  type, without embedded schema information.
+  """
+  @spec write_object_to_bytes(Registry.t(), String.t(), any()) :: {:ok, any()} | {:error, any()}
+  def write_object_to_bytes(%Registry{} = registry, type, data) do
+    schema = registry.schemas[type]
+
+    if is_nil(schema) do
+      {:error, :schema_not_found}
+    else
+      Serialization.write_object_to_bytes(registry, schema, data)
+    end
+  end
+
+  @doc """
+  Serialize object to an Ark object byte stream with the given registry and
+  type, with embedded schema information. The serialization will use the schemas
+  in the provided registry, but embed a registry with only the minimal set of
+  schemas needed to deserialize the object.
+  """
+  @spec write_generic_object_to_bytes(Registry.t(), String.t(), any()) :: {:ok, any()} | {:error, any()}
+  def write_generic_object_to_bytes(%Registry{} = registry, type, data) do
+    schema = registry.schemas[type]
+
+    if is_nil(schema) do
+      {:error, :schema_not_found}
+    else
+      Serialization.write_generic_object_to_bytes(registry, schema, data)
+    end
   end
 
   defp load_schemas(%Registry{} = _registry, nil), do: {:error, :invalid_path}

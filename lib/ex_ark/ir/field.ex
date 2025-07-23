@@ -4,13 +4,15 @@ defmodule ExArk.Ir.Field do
   """
 
   use TypedStruct
+  import ExArk.Utilities, only: [maybe_add_map_value: 3, maybe_add_map_value: 4]
   import UnionTypespec, only: [union_type: 1]
 
   alias ExArk.Ir.Field
   alias ExArk.Ir.Variant
   alias ExArk.Utilities
 
-  union_type attribute_type :: [:removed, :packed_timespec, :optional, :constant]
+  @attribute_types [:removed, :packed_timespec, :optional, :constant]
+  union_type attribute_type :: @attribute_types
 
   typedstruct enforce: false do
     field :name, String.t()
@@ -55,7 +57,8 @@ defmodule ExArk.Ir.Field do
 
     variant_types =
       if Map.has_key?(json, :variant_types),
-        do: Enum.map(json.variant_types, fn variant -> Variant.from_json(variant) end)
+        do: Enum.map(json.variant_types, fn variant -> Variant.from_json(variant) end),
+        else: []
 
     name =
       if Map.has_key?(json, :name), do: json.name
@@ -70,6 +73,20 @@ defmodule ExArk.Ir.Field do
       variant_types: variant_types,
       attributes: attributes
     })
+  end
+
+  @spec to_map(t()) :: term()
+  def to_map(%__MODULE__{} = field) do
+    attributes = Enum.into(field.attributes, %{}, fn attribute -> {attribute, true} end)
+
+    %{"type" => field.type}
+    |> maybe_add_map_value("name", field.name)
+    |> maybe_add_map_value("object_type", field.object_type)
+    |> maybe_add_map_value("array_size", field.array_size)
+    |> maybe_add_map_value("ctr_value_type", field.ctr_value_type, &Field.to_map/1)
+    |> maybe_add_map_value("ctr_key_type", field.ctr_key_type, &Field.to_map/1)
+    |> maybe_add_map_value("attributes", attributes)
+    |> maybe_add_map_value("variant_types", field.variant_types, &Variant.to_list/1)
   end
 
   @spec new(String.t()) :: t()

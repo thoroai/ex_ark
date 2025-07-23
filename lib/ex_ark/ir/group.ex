@@ -21,4 +21,12 @@ defmodule ExArk.Ir.Group do
 
     struct(__MODULE__, %{identifier: json.identifier, fields: fields})
   end
+
+  @spec to_map(t()) :: term()
+  def to_map(%__MODULE__{} = group) do
+    %{
+      "identifier" => group.identifier,
+      "fields" => Enum.map(group.fields, &Field.to_map/1)
+    }
+  end
 end

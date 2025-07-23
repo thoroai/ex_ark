@@ -9,6 +9,8 @@ defmodule ExArk.Registry do
   alias ExArk.Ir.ArkEnum
   alias ExArk.Ir.Schema
 
+  require Logger
+
   typedstruct do
     field :schemas, %{}, default: %{}
     field :enums, %{}, default: %{}
@@ -28,6 +30,15 @@ defmodule ExArk.Registry do
       |> Cldr.Map.atomize_keys()
       |> from_json()
     end
+  end
+
+  @spec build_from(t(), Schema.t()) :: {:ok, any()} | {:error, any()}
+  def build_from(%__MODULE__{} = registry, %Schema{} = _schema) do
+    # TODO: re-build the registry to include _only_ the needed transitive
+    # dependencies, including the top level schema itself. For now, just
+    # return the whole registry (which is correct, but potentially terribly
+    # inefficient if we loaded all known schemas into it).
+    {:ok, registry}
   end
 
   @spec from_json(term()) :: {:ok, t()} | {:error, any()}
@@ -56,6 +67,21 @@ defmodule ExArk.Registry do
       _error ->
         {:error, :bad_registry}
     end
+  end
+
+  @spec to_json(t()) :: {:ok, binary()} | {:error, any()}
+  def to_json(%__MODULE__{} = registry) do
+    schemas = registry.schemas |> Map.values() |> Enum.map(&Schema.to_map/1)
+    enums = registry.enums |> Map.values() |> Enum.map(&ArkEnum.to_map/1)
+
+    result =
+      %{"schemas" => schemas, "enums" => enums}
+      |> JSON.encode!()
+
+    {:ok, result}
+  rescue
+    _error ->
+      {:error, :bad_registry}
   end
 
   defp merge(registry, new) do

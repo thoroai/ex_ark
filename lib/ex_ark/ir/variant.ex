@@ -14,4 +14,9 @@ defmodule ExArk.Ir.Variant do
   def from_json(json) do
     struct(__MODULE__, %{index: hd(json), object_type: hd(tl(json))})
   end
+
+  @spec to_list(t()) :: term()
+  def to_list(%__MODULE__{} = variant) do
+    [variant.index, variant.object_type]
+  end
 end

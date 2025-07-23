@@ -5,6 +5,7 @@ defmodule ExArk.Ir.ArkEnum do
 
   use TypedStruct
   import UnionTypespec, only: [union_type: 1]
+  import ExArk.Utilities, only: [ensure_existing_atom: 1, maybe_add_map_value: 4]
 
   alias ExArk.Ir.SourceLocation
 
@@ -31,10 +32,24 @@ defmodule ExArk.Ir.ArkEnum do
     struct(__MODULE__, %{
       name: json.name,
       object_namespace: json.object_namespace,
-      enum_class: String.to_existing_atom(json.enum_class),
-      enum_type: String.to_existing_atom(json.enum_type),
+      enum_class: ensure_existing_atom(json.enum_class),
+      enum_type: ensure_existing_atom(json.enum_type),
       values: json.values,
       source_location: source_location
     })
+  end
+
+  @spec to_map(t()) :: term()
+  def to_map(%__MODULE__{} = enum) do
+    values = Map.new(enum.values, fn {k, v} -> {to_string(k), v} end)
+
+    %{
+      "name" => enum.name,
+      "object_namespace" => enum.object_namespace,
+      "enum_class" => enum.enum_class,
+      "enum_type" => enum.enum_type,
+      "values" => values
+    }
+    |> maybe_add_map_value("source_location", enum.source_location, &SourceLocation.to_map/1)
   end
 end

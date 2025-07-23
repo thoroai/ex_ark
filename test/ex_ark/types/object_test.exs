@@ -1,0 +1,29 @@
+defmodule ExArk.Serdes.ObjectTest do
+  use ExUnit.Case, async: true
+  alias ExArk
+
+  setup do
+    registry = ExArk.load_schemas!("test/fixtures/ir/objects.ir")
+    {:ok, %{registry: registry}}
+  end
+
+  describe "raw object serialization and deserialization" do
+    test "final roundtrip", %{registry: registry} do
+      data = %{field: %{"key1" => 42, "key2" => 74}}
+      type_final = "ex_ark::test::FinalObject"
+
+      {:ok, serialized_final} = ExArk.write_object_to_bytes(registry, type_final, data)
+      {:ok, deserialized_final} = ExArk.read_object_from_bytes(registry, type_final, serialized_final)
+
+      assert deserialized_final == data
+
+      type = "ex_ark::test::Object"
+
+      {:ok, serialized} = ExArk.write_object_to_bytes(registry, type, data)
+      {:ok, deserialized} = ExArk.read_object_from_bytes(registry, type, serialized)
+
+      assert deserialized == data
+      refute serialized == serialized_final
+    end
+  end
+end
