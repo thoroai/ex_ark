@@ -1,0 +1,64 @@
+defmodule ExArk.Serdes.Binary.BitstreamHeader do
+  @moduledoc """
+  Bitstream header
+  """
+
+  alias ExArk.Serdes.Binary.InputStream
+  alias ExArk.Serdes.Binary.InputStream.Result
+  alias ExArk.Serdes.Binary.OutputStream
+
+  #
+  # +----------------+----------------+------------------+------------------+
+  # | Magic (4 bits) | Groups (1 bit) | Sections (1 bit) | Version (2 bits) |
+  # +----------------+----------------+------------------+------------------+
+  #
+
+  @magic 0xD
+  @version 0x1
+  @groups 0x0
+
+  def read(
+        %InputStream{bytes: <<@magic::4, @groups::1, sections::1, @version::2, rest::binary>>, offset: offset} = stream
+      ) do
+    {:ok,
+     %Result{
+       stream: %{stream | bytes: rest, offset: offset + 1, has_more_sections: sections != 0},
+       reified: nil
+     }}
+  end
+
+  def read(%InputStream{bytes: <<magic::4, @groups::1, _sections::1, @version::2, _rest::binary>>} = stream),
+    do: {:error, :bad_magic, magic, %Result{stream: stream}}
+
+  def read(%InputStream{bytes: <<@magic::4, @groups::1, _sections::1, version::2, _rest::binary>>} = stream),
+    do: {:error, :bad_version, version, %Result{stream: stream}}
+
+  def read(%InputStream{bytes: <<@magic::4, groups::1, _sections::1, @version::2, _rest::binary>>} = stream),
+    do: {:error, :bad_groups, groups, %Result{stream: stream}}
+
+  def read(%InputStream{bytes: <<_magic::4, _groups::1, _sections::1, _version::2, _rest::binary>> = header} = stream),
+    do: {:error, :bad_header, header, %Result{stream: stream}}
+
+  @spec write(OutputStream.t()) :: {:ok, OutputStream.t()}
+  def write(%OutputStream{} = stream) do
+    # Create header byte: magic (4 bits) + groups (1 bit) + sections (1 bit) + version (2 bits)
+    # For now, we don't support multiple sections
+    sections = 0
+    header_byte = <<@magic::4, @groups::1, sections::1, @version::2>>
+
+    {:ok, OutputStream.append(stream, header_byte)}
+  end
+
+  @spec finalize(OutputStream.t(), non_neg_integer()) :: {:ok, OutputStream.t()}
+  def finalize(%OutputStream{} = stream, header_offset) do
+    # Re-write the header byte to indicate the presence of the data.
+    sections = if stream.had_more_sections, do: 1, else: 0
+
+    new_bytes =
+      :binary.part(stream.bytes, 0, header_offset) <>
+        <<@magic::4, @groups::1, sections::1, @version::2>> <>
+        :binary.part(stream.bytes, header_offset + 1, byte_size(stream.bytes) - header_offset - 1)
+
+    {:ok, %OutputStream{stream | bytes: new_bytes}}
+  end
+end

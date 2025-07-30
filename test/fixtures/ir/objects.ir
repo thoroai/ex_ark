@@ -44,6 +44,48 @@
         "filename": "test/ex_ark/fixtures/objects.ir",
         "line_number": 1
       }
+    },
+    {
+      "name": "GroupsObject",
+      "object_namespace": "ex_ark::test",
+      "fields": [
+        {
+          "name": "field",
+          "type": "uint32"
+        }
+      ],
+      "groups": [
+        {
+          "identifier": 0,
+          "fields": [
+            {
+              "name": "field_0",
+              "type": "uint32"
+            },
+            {
+              "name": "field_1",
+              "type": "uint32"
+            }
+          ]
+        },
+        {
+          "identifier": 2,
+          "fields": [
+            {
+              "name": "field_4",
+              "type": "uint32"
+            },
+            {
+              "name": "field_5",
+              "type": "uint32"
+            }
+          ]
+        }
+      ],
+      "source_location": {
+        "filename": "test/ex_ark/fixtures/objects.ir",
+        "line_number": 1
+      }
     }
   ],
   "enums": []

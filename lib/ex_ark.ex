@@ -4,8 +4,8 @@ defmodule ExArk do
   """
 
   alias ExArk.Registry
-  alias ExArk.Serdes.Deserialization
-  alias ExArk.Serdes.Serialization
+  alias ExArk.Serdes.Binary
+  alias ExArk.Serdes.Json
 
   @doc """
   Load schema file(s)
@@ -51,7 +51,7 @@ defmodule ExArk do
       {:error, :schema_not_found}
     else
       with {:ok, bytes} <- File.read(path) do
-        Deserialization.read_object_from_bytes(registry, schema, bytes)
+        Binary.Deserialization.read_object_from_bytes(registry, schema, bytes)
       end
     end
   end
@@ -64,7 +64,7 @@ defmodule ExArk do
   @spec read_generic_object_from_file(Path.t()) :: {:ok, any()} | {:error, any()}
   def read_generic_object_from_file(path) do
     with {:ok, bytes} <- File.read(path) do
-      Deserialization.read_generic_object_from_bytes(bytes)
+      Binary.Deserialization.read_generic_object_from_bytes(bytes)
     end
   end
 
@@ -78,7 +78,7 @@ defmodule ExArk do
     if is_nil(schema) do
       {:error, :schema_not_found}
     else
-      Deserialization.read_object_from_bytes(registry, schema, bytes)
+      Binary.Deserialization.read_object_from_bytes(registry, schema, bytes)
     end
   end
 
@@ -89,7 +89,24 @@ defmodule ExArk do
   """
   @spec read_generic_object_from_bytes(binary()) :: {:ok, any()} | {:error, any()}
   def read_generic_object_from_bytes(bytes) do
-    Deserialization.read_generic_object_from_bytes(bytes)
+    Binary.Deserialization.read_generic_object_from_bytes(bytes)
+  end
+
+  @doc """
+  Deserialize an Ark object with the given registry and type from a JSON string.
+  """
+  @spec read_object_from_json(Registry.t(), String.t(), String.t()) :: {:ok, any()} | {:error, any()}
+  def read_object_from_json(%Registry{} = registry, type, jsonstr) do
+    schema = registry.schemas[type]
+
+    if is_nil(schema) do
+      {:error, :schema_not_found}
+    else
+      with sanitized <- Json.sanitize(jsonstr),
+           {:ok, data} <- JSON.decode(sanitized) do
+        Json.Deserialization.read_object_from_json_data(registry, schema, data)
+      end
+    end
   end
 
   @doc """
@@ -103,7 +120,7 @@ defmodule ExArk do
     if is_nil(schema) do
       {:error, :schema_not_found}
     else
-      Serialization.write_object_to_bytes(registry, schema, data)
+      Binary.Serialization.write_object_to_bytes(registry, schema, data)
     end
   end
 
@@ -120,7 +137,21 @@ defmodule ExArk do
     if is_nil(schema) do
       {:error, :schema_not_found}
     else
-      Serialization.write_generic_object_to_bytes(registry, schema, data)
+      Binary.Serialization.write_generic_object_to_bytes(registry, schema, data)
+    end
+  end
+
+  @doc """
+  Seerialize an Ark object with the given registry and type from a JSON string.
+  """
+  @spec write_object_to_json(Registry.t(), String.t(), any()) :: {:ok, any()} | {:error, any()}
+  def write_object_to_json(%Registry{} = registry, type, data) do
+    schema = registry.schemas[type]
+
+    if is_nil(schema) do
+      {:error, :schema_not_found}
+    else
+      Json.Serialization.write_object_to_json(registry, schema, data)
     end
   end
 

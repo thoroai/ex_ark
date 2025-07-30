@@ -9,8 +9,6 @@ defmodule ExArk.Registry do
   alias ExArk.Ir.ArkEnum
   alias ExArk.Ir.Schema
 
-  require Logger
-
   typedstruct do
     field :schemas, %{}, default: %{}
     field :enums, %{}, default: %{}

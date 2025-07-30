@@ -5,10 +5,10 @@ defmodule ExArk.Types do
 
   import UnionTypespec, only: [union_type: 1]
 
-  alias ExArk.Ir.Field
-  alias ExArk.Registry
-  alias ExArk.Types.Primitives
+  alias ExArk.Ir.Schema
   alias ExArk.Utilities
+
+  @ark_schema_field :__ark_schema
 
   @primitive_types [
     :bool,
@@ -57,38 +57,42 @@ defmodule ExArk.Types do
   def complex_type?(type) when type in @complex_types, do: true
   def complex_type?(_type), do: false
 
-  @doc """
-  Gets the module responsible for handling the given complex type.
-  """
-  def get_complex_module_for_type(type) when type in @complex_types do
-    case type do
-      :array -> ExArk.Types.Array
-      :arraylist -> ExArk.Types.Arraylist
-      :dictionary -> ExArk.Types.Dictionary
-      :object -> ExArk.Types.Object
-      :variant -> ExArk.Types.Variant
-      :enum -> ExArk.Types.ArkEnum
-    end
+  @spec default_value(String.t()) :: any()
+  def default_value(typestr) when is_binary(typestr), do: default_value(Utilities.ensure_existing_atom(typestr))
+
+  @spec default_value(primitive_type()) :: any()
+  def default_value(type)
+      when type in [
+             :uint8,
+             :uint16,
+             :uint32,
+             :uint64,
+             :int8,
+             :int16,
+             :int32,
+             :int64,
+             :float,
+             :double,
+             :steady_time_point,
+             :system_time_point
+           ],
+      do: 0
+
+  def default_value(:byte_buffer), do: <<>>
+  def default_value(:guid), do: "00000000-0000-0000-0000-000000000000"
+  def default_value(:string), do: ""
+
+  @spec get_type(map()) :: String.t()
+  def get_type(data) do
+    Map.get(data, @ark_schema_field)
   end
 
-  @spec default_value(Field.t() | String.t(), Registry.t()) :: any()
-  def default_value(%Field{type: type} = field, %Registry{} = registry) do
-    cond do
-      primitive_type?(type) ->
-        default_field_primitive(type)
-
-      complex_type?(type) ->
-        default_field_complex(field, registry)
-
-      true ->
-        raise ArgumentError, "Unknown field type: #{inspect(field.type)}"
-    end
+  @spec add_type(map(), Schema.t() | String.t()) :: map()
+  def add_type(data, %Schema{} = schema) do
+    Map.merge(data, %{@ark_schema_field => Schema.object_name(schema)})
   end
 
-  defp default_field_primitive(type), do: Primitives.default_value(type)
-
-  defp default_field_complex(%Field{type: type} = field, registry) do
-    mod = get_complex_module_for_type(Utilities.ensure_existing_atom(type))
-    mod.default_value(field, registry)
+  def add_type(data, object_name) do
+    Map.merge(data, %{@ark_schema_field => object_name})
   end
 end
