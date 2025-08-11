@@ -21,7 +21,7 @@ jobs:
       otp-version: ${{ steps.set-versions.outputs.otp_version }}
     steps:
       - name: Checkout .tool-versions file
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           sparse-checkout: |
             .tool-versions
@@ -51,7 +51,7 @@ jobs:
           elixir-version: ${{ env.elixir-version }}
 
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with: 
           fetch-depth: 0
 
