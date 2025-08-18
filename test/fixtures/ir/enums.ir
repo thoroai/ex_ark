@@ -31,6 +31,22 @@
         "filename": "test/ex_ark/fixtures/enums.ir",
         "line_number": 1
       }
+    },
+    {
+      "name": "EmptyObject",
+      "object_namespace": "ex_ark::test",
+      "fields": [
+        {
+          "name": "field",
+          "type": "enum",
+          "object_type": "ex_ark::test::EmptyEnum"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "test/ex_ark/fixtures/enums.ir",
+        "line_number": 1
+      }
     }
   ],
   "enums": [
@@ -65,6 +81,16 @@
         "BIT_6": 64,
         "BIT_7": 128
       },
+      "source_location": {
+        "filename": "test/ex_ark/fixtures/enums.ir",
+        "line_number": 1
+      }
+    },
+    {
+      "name": "EmptyEnum",
+      "object_namespace": "ex_ark::test",
+      "enum_class": "int32",
+      "enum_type": "value",
       "source_location": {
         "filename": "test/ex_ark/fixtures/enums.ir",
         "line_number": 1

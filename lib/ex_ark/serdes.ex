@@ -46,8 +46,7 @@ defmodule ExArk.Serdes do
 
     case enum.enum_type do
       :value ->
-        [{_key, value} | _rest] = enum.values
-        value
+        get_default_enum_value(enum.values)
 
       :bitmask ->
         []
@@ -61,5 +60,12 @@ defmodule ExArk.Serdes do
     |> Enum.map(fn field -> {String.to_atom(field.name), default_value(field, registry)} end)
     |> Map.new()
     |> Types.add_type(schema)
+  end
+
+  defp get_default_enum_value([] = _values), do: 0
+
+  defp get_default_enum_value(values) do
+    [{_key, value} | _rest] = values
+    value
   end
 end

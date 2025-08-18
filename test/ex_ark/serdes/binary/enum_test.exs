@@ -35,5 +35,24 @@ defmodule ExArk.Serdes.Binary.Fields.EnumTest do
 
       assert deserialized == data
     end
+
+    test "empty enum test", %{registry: registry} do
+      data = %{}
+      deserialized_data = %{field: nil}
+      type = "ex_ark::test::EmptyObject"
+
+      {:ok, serialized} = ExArk.write_object_to_bytes(registry, type, data)
+      {:ok, deserialized} = ExArk.read_object_from_bytes(registry, type, serialized)
+
+      assert deserialized == deserialized_data
+
+      data = %{field: nil}
+      type = "ex_ark::test::EmptyObject"
+
+      {:ok, serialized} = ExArk.write_object_to_bytes(registry, type, data)
+      {:ok, deserialized} = ExArk.read_object_from_bytes(registry, type, serialized)
+
+      assert deserialized == deserialized_data
+    end
   end
 end

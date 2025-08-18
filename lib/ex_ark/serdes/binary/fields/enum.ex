@@ -23,7 +23,7 @@ defmodule ExArk.Serdes.Binary.Fields.ArkEnum do
 
   defp read_enum(%ArkEnum{enum_type: :value} = enum, stream, value) do
     # When we read the enum, return the name (key).
-    {key, _value} = Enum.find(enum.values, fn {_k, v} -> v == value end)
+    {key, _value} = Enum.find(enum.values, {nil, 0}, fn {_k, v} -> v == value end)
     {:ok, %Result{stream: stream, reified: key}}
   end
 
@@ -42,7 +42,7 @@ defmodule ExArk.Serdes.Binary.Fields.ArkEnum do
 
   defp write_enum(%ArkEnum{enum_type: :value} = enum, stream, key) do
     # When we write the enum, we use the value for the key.
-    {_key, value} = Enum.find(enum.values, fn {k, _v} -> k == key end)
+    {_key, value} = Enum.find(enum.values, {nil, 0}, fn {k, _v} -> k == key end)
     Primitives.write(enum.enum_class, value, stream)
   end
 
