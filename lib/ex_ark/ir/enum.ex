@@ -29,12 +29,14 @@ defmodule ExArk.Ir.ArkEnum do
     source_location =
       if Map.has_key?(json, :source_location), do: SourceLocation.from_json(json.source_location)
 
+    values = if Map.has_key?(json, :values), do: json.values, else: []
+
     struct(__MODULE__, %{
       name: json.name,
       object_namespace: json.object_namespace,
       enum_class: ensure_existing_atom(json.enum_class),
       enum_type: ensure_existing_atom(json.enum_type),
-      values: json.values,
+      values: values,
       source_location: source_location
     })
   end
