@@ -30,7 +30,7 @@ defmodule ExArk.Serdes.Binary.Fields.Dictionary do
   defp read(0 = _size, %InputStream{} = stream, %Field{} = _field, %Registry{} = _registry),
     do: {:ok, %Result{stream: stream, reified: %{}}}
 
-  defp read(size, stream, field, registry) do
+  defp read(size, %InputStream{} = stream, field, registry) do
     # NOTE: we reify a list here, since we will convert this to a map at the
     # end of the operation.
     reply = {:ok, %Result{stream: stream, reified: []}}

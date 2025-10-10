@@ -189,9 +189,9 @@ defmodule ExArk.Serdes.Binary.Object do
     end
   end
 
-  defp serialize_groups(stream, [], _data, _registry), do: {:ok, %OutputStream{stream | had_more_sections: false}}
+  defp serialize_groups(%OutputStream{} = stream, [], _data, _registry), do: {:ok, %{stream | had_more_sections: false}}
 
-  defp serialize_groups(stream, [group | rest], data, registry) do
+  defp serialize_groups(%OutputStream{} = stream, [group | rest], data, registry) do
     group_header_offset = stream.offset
     stream = %{stream | had_more_sections: false}
 
@@ -200,7 +200,7 @@ defmodule ExArk.Serdes.Binary.Object do
            serialize_fields(stream, group.fields, data, registry),
          {:ok, stream} <- serialize_groups(stream, rest, data, registry),
          {:ok, stream} <- OptionalGroupHeader.finalize(stream, group_header_offset, group_end_offset) do
-      {:ok, %OutputStream{stream | had_more_sections: true}}
+      {:ok, %{stream | had_more_sections: true}}
     end
   end
 end

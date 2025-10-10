@@ -49,7 +49,7 @@ defmodule ExArk.Serdes.Json.Fields.Dictionary do
   @spec write(Field.t(), any(), Registry.t()) :: {:ok, WriterResult.t()} | Json.serialization_failure()
   def write(%Field{} = field, data, %Registry{} = registry) do
     result =
-      Enum.reduce_while(data, {:ok, %WriterResult{encoded: []}}, fn {key, value}, {:ok, result} ->
+      Enum.reduce_while(data, {:ok, %WriterResult{encoded: []}}, fn {key, value}, {:ok, %WriterResult{} = result} ->
         acc = result.encoded
 
         with {:ok, %WriterResult{encoded: key}} <- Fields.write(field.ctr_key_type, key, registry),
