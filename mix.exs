@@ -16,7 +16,19 @@ defmodule ExArk.MixProject do
         plt_add_apps: [:mix]
       ],
       test_coverage: [
-        summary: [threshold: 35]
+        tool: ExCoveralls
+      ]
+    ]
+  end
+
+  def cli do
+    [
+      preferred_envs: [
+        coveralls: :test,
+        "coveralls.detail": :test,
+        "coveralls.post": :test,
+        "coveralls.html": :test,
+        "coveralls.cobertura": :test
       ]
     ]
   end
@@ -37,7 +49,8 @@ defmodule ExArk.MixProject do
       # Testing and Development Tools
       {:union_typespec, "~> 0.0.4", runtime: false},
       {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
-      {:credo, "~> 1.7", only: [:dev, :test], runtime: false}
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+      {:excoveralls, "~> 0.18", only: :test}
     ]
   end
 
