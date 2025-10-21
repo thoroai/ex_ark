@@ -21,7 +21,7 @@ jobs:
       otp-version: ${{ steps.set-versions.outputs.otp_version }}
     steps:
       - name: Checkout .tool-versions file
-        uses: actions/checkout@v4
+        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
         with:
           sparse-checkout: |
             .tool-versions
@@ -45,19 +45,19 @@ jobs:
 
     steps:
       - name: Set up Elixir
-        uses: erlef/setup-beam@v1
+        uses: erlef/setup-beam@e6d7c94229049569db56a7ad5a540c051a010af9 # v1.20.4
         with:
           otp-version: ${{ env.otp-version }}
           elixir-version: ${{ env.elixir-version }}
 
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with: 
           fetch-depth: 0
 
       - name: Cache deps
         id: cache-deps
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         env:
           cache-name: cache-elixir-deps
         with:
@@ -71,7 +71,7 @@ jobs:
       # downloaded deps every run.
       - name: Cache compiled build
         id: cache-build
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         env:
           cache-name: cache-compiled-build
         with:
@@ -84,7 +84,7 @@ jobs:
       - name: Restore PLT cache
         id: plt_cache
         if: ${{ inputs.dialyzer }}
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         with:
           key: |
             plt-${{ runner.os }}-${{ env.otp-version }}-${{ env.elixir-version }}-${{ hashFiles('**/mix.lock') }}
@@ -122,7 +122,7 @@ jobs:
       # so we separate the cache restore and save steps in case running dialyzer fails.
       - name: Save PLT cache
         id: plt_cache_save
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         if: ${{ inputs.dialyzer && steps.plt_cache.outputs.cache-hit != 'true' }}
         with:
           key: |
@@ -147,7 +147,7 @@ jobs:
         run: mix coveralls.json
 
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7 # v5.5.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: thoroai/ex_ark
