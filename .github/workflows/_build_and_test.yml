@@ -144,8 +144,13 @@ jobs:
         run: mix credo --strict
 
       - name: Tests & Coverage
-        if: false
-        uses: josecfreittas/elixir-coverage-feedback-action@v1
+        run: mix coveralls.json
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
         with:
-          github_token: ${{ secrets.github_token }}
-          coverage_threshold: 35
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: thoroai/ex_ark
+          files: ./cover/excoveralls.json
+          flags: unittests
+          name: codecov-elixir
