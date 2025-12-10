@@ -54,5 +54,15 @@ defmodule ExArk.Serdes.Binary.Fields.EnumTest do
 
       assert deserialized == deserialized_data
     end
+
+    test "top level value roundtrip", %{registry: registry} do
+      data = %{field: :THREE}
+      type = "TopLevelValueObject"
+
+      {:ok, serialized} = ExArk.write_object_to_bytes(registry, type, data)
+      {:ok, deserialized} = ExArk.read_object_from_bytes(registry, type, serialized)
+
+      assert deserialized == data
+    end
   end
 end

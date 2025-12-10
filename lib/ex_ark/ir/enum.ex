@@ -5,7 +5,7 @@ defmodule ExArk.Ir.ArkEnum do
 
   use TypedStruct
   import UnionTypespec, only: [union_type: 1]
-  import ExArk.Utilities, only: [ensure_existing_atom: 1, maybe_add_map_value: 4]
+  import ExArk.Utilities, only: [ensure_existing_atom: 1, maybe_add_map_value: 3, maybe_add_map_value: 4]
 
   alias ExArk.Ir.SourceLocation
 
@@ -17,12 +17,16 @@ defmodule ExArk.Ir.ArkEnum do
 
   typedstruct enforce: true do
     field :name, String.t()
-    field :object_namespace, String.t()
+    field :object_namespace, String.t(), enforce: false
     field :enum_class, enum_class
     field :enum_type, enum_style
     field :values, %{}
     field :source_location, SourceLocation.t(), enforce: false
   end
+
+  @spec object_name(t()) :: String.t()
+  def object_name(%__MODULE__{object_namespace: nil} = enum), do: enum.name
+  def object_name(%__MODULE__{} = enum), do: "#{enum.object_namespace}::#{enum.name}"
 
   @spec from_json(term()) :: t()
   def from_json(json) do
@@ -33,7 +37,7 @@ defmodule ExArk.Ir.ArkEnum do
 
     struct(__MODULE__, %{
       name: json.name,
-      object_namespace: json.object_namespace,
+      object_namespace: json[:object_namespace],
       enum_class: ensure_existing_atom(json.enum_class),
       enum_type: ensure_existing_atom(json.enum_type),
       values: values,
@@ -53,5 +57,6 @@ defmodule ExArk.Ir.ArkEnum do
       "values" => values
     }
     |> maybe_add_map_value("source_location", enum.source_location, &SourceLocation.to_map/1)
+    |> maybe_add_map_value("object_namespace", enum.object_namespace)
   end
 end
