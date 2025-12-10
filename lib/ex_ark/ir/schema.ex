@@ -17,7 +17,7 @@ defmodule ExArk.Ir.Schema do
 
   typedstruct enforce: true do
     field :name, String.t()
-    field :object_namespace, String.t()
+    field :object_namespace, String.t(), enforce: false
     field :fields, [Field.t()]
     field :groups, [Group.t()]
     field :source_location, SourceLocation.t(), enforce: false
@@ -28,6 +28,7 @@ defmodule ExArk.Ir.Schema do
   def final?(%__MODULE__{} = schema), do: Enum.member?(schema.attributes, :final)
 
   @spec object_name(t()) :: String.t()
+  def object_name(%__MODULE__{object_namespace: nil} = schema), do: schema.name
   def object_name(%__MODULE__{} = schema), do: "#{schema.object_namespace}::#{schema.name}"
 
   @spec from_json(term()) :: t()
@@ -55,7 +56,7 @@ defmodule ExArk.Ir.Schema do
       fields: fields,
       groups: groups,
       name: json.name,
-      object_namespace: json.object_namespace,
+      object_namespace: json[:object_namespace],
       source_location: source_location,
       attributes: attributes
     })
@@ -75,5 +76,6 @@ defmodule ExArk.Ir.Schema do
     }
     |> maybe_add_map_value("attributes", attributes)
     |> maybe_add_map_value("source_location", schema.source_location)
+    |> maybe_add_map_value("object_namespace", schema.object_namespace)
   end
 end

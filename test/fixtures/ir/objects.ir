@@ -1,6 +1,26 @@
 {
   "schemas": [
     {
+      "name": "TopLevelObject",
+      "fields": [
+        {
+          "name": "field",
+          "type": "dictionary",
+          "ctr_key_type": {
+            "type": "string"
+          },
+          "ctr_value_type": {
+            "type": "int32"
+          }
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "test/ex_ark/fixtures/objects.ir",
+        "line_number": 1
+      }
+    },
+    {
       "name": "Object",
       "object_namespace": "ex_ark::test",
       "fields": [

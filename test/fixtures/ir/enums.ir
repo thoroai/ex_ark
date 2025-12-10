@@ -1,6 +1,21 @@
 {
   "schemas": [
     {
+      "name": "TopLevelValueObject",
+      "fields": [
+        {
+          "name": "field",
+          "type": "enum",
+          "object_type": "ex_ark::test::ValueEnum"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "test/ex_ark/fixtures/enums.ir",
+        "line_number": 1
+      }
+    },
+    {
       "name": "ValueObject",
       "object_namespace": "ex_ark::test",
       "fields": [

@@ -35,5 +35,15 @@ defmodule ExArk.Serdes.Binary.ObjectTest do
       assert deserialized == data
       refute serialized == serialized_final
     end
+
+    test "top level object", %{registry: registry} do
+      data = %{field: %{"key1" => 42, "key2" => 74}}
+      type = "TopLevelObject"
+
+      {:ok, serialized} = ExArk.write_object_to_bytes(registry, type, data)
+      {:ok, deserialized} = ExArk.read_object_from_bytes(registry, type, serialized)
+
+      assert deserialized == data
+    end
   end
 end

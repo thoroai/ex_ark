@@ -48,7 +48,7 @@ defmodule ExArk.Registry do
 
     schemas =
       Enum.into(schemas, %{}, fn schema ->
-        {schema.object_namespace <> "::" <> schema.name, schema}
+        {Schema.object_name(schema), schema}
       end)
 
     enums =
@@ -57,7 +57,7 @@ defmodule ExArk.Registry do
       end
 
     enums =
-      Enum.into(enums, %{}, fn enum -> {enum.object_namespace <> "::" <> enum.name, enum} end)
+      Enum.into(enums, %{}, fn enum -> {ArkEnum.object_name(enum), enum} end)
 
     try do
       {:ok, struct(__MODULE__, %{schemas: schemas, enums: enums})}
