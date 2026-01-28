@@ -82,7 +82,15 @@ defmodule ExArk.Serdes.Json.Object do
   end
 
   defp deserialize_group(reader, group, registry, reified) do
-    deserialize_fields(reader, group.fields, registry, reified)
+    # Check if any field from this group is present in the JSON data
+    # If no fields are present, the entire group is considered optional and should be skipped
+    has_any_field = Enum.any?(group.fields, fn field -> Map.has_key?(reader.decoded, field.name) end)
+
+    if has_any_field do
+      deserialize_fields(reader, group.fields, registry, reified)
+    else
+      {:ok, %ReaderResult{reified: reified}}
+    end
   end
 
   @spec serialize(Schema.t(), any(), Registry.t()) :: {:ok, WriterResult.t()} | Json.serialization_failure()
