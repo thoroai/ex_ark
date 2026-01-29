@@ -57,7 +57,7 @@ jobs:
 
       - name: Cache deps
         id: cache-deps
-        uses: actions/cache@8b402f58fbc84540c8b491a91e594a4576fec3d7 # v5.0.2
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         env:
           cache-name: cache-elixir-deps
         with:
@@ -71,7 +71,7 @@ jobs:
       # downloaded deps every run.
       - name: Cache compiled build
         id: cache-build
-        uses: actions/cache@8b402f58fbc84540c8b491a91e594a4576fec3d7 # v5.0.2
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         env:
           cache-name: cache-compiled-build
         with:
@@ -84,7 +84,7 @@ jobs:
       - name: Restore PLT cache
         id: plt_cache
         if: ${{ inputs.dialyzer }}
-        uses: actions/cache/restore@8b402f58fbc84540c8b491a91e594a4576fec3d7 # v5.0.2
+        uses: actions/cache/restore@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         with:
           key: |
             plt-${{ runner.os }}-${{ env.otp-version }}-${{ env.elixir-version }}-${{ hashFiles('**/mix.lock') }}
@@ -122,7 +122,7 @@ jobs:
       # so we separate the cache restore and save steps in case running dialyzer fails.
       - name: Save PLT cache
         id: plt_cache_save
-        uses: actions/cache/save@8b402f58fbc84540c8b491a91e594a4576fec3d7 # v5.0.2
+        uses: actions/cache/save@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         if: ${{ inputs.dialyzer && steps.plt_cache.outputs.cache-hit != 'true' }}
         with:
           key: |
