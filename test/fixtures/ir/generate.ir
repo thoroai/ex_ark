@@ -1,0 +1,161 @@
+{
+  "schemas": [
+    {
+      "name": "Primitives",
+      "object_namespace": "ex_ark::gen::test",
+      "fields": [
+        {"name": "a_bool",    "type": "bool"},
+        {"name": "a_uint8",   "type": "uint8"},
+        {"name": "a_uint32",  "type": "uint32"},
+        {"name": "a_int32",   "type": "int32"},
+        {"name": "a_float",   "type": "float"},
+        {"name": "a_double",  "type": "double"},
+        {"name": "a_string",  "type": "string"},
+        {"name": "a_guid",    "type": "guid"},
+        {"name": "a_duration","type": "duration"}
+      ],
+      "groups": [],
+      "source_location": {"filename": "generate.ir", "line_number": 1}
+    },
+    {
+      "name": "Child",
+      "object_namespace": "ex_ark::gen::test",
+      "fields": [
+        {"name": "value", "type": "int32"},
+        {"name": "label", "type": "string"}
+      ],
+      "groups": [],
+      "source_location": {"filename": "generate.ir", "line_number": 1}
+    },
+    {
+      "name": "WithObject",
+      "object_namespace": "ex_ark::gen::test",
+      "fields": [
+        {"name": "id",    "type": "string"},
+        {"name": "child", "type": "object", "object_type": "ex_ark::gen::test::Child"}
+      ],
+      "groups": [],
+      "source_location": {"filename": "generate.ir", "line_number": 1}
+    },
+    {
+      "name": "WithOptionals",
+      "object_namespace": "ex_ark::gen::test",
+      "fields": [
+        {"name": "required",          "type": "string"},
+        {"name": "opt_string",        "type": "string",  "attributes": {"optional": true}},
+        {"name": "opt_child",         "type": "object",  "object_type": "ex_ark::gen::test::Child", "attributes": {"optional": true}}
+      ],
+      "groups": [],
+      "source_location": {"filename": "generate.ir", "line_number": 1}
+    },
+    {
+      "name": "WithGroups",
+      "object_namespace": "ex_ark::gen::test",
+      "fields": [
+        {"name": "base", "type": "string"}
+      ],
+      "groups": [
+        {
+          "identifier": 0,
+          "fields": [
+            {"name": "extra_int",    "type": "int32"},
+            {"name": "extra_string", "type": "string"}
+          ]
+        }
+      ],
+      "source_location": {"filename": "generate.ir", "line_number": 1}
+    },
+    {
+      "name": "VariantA",
+      "object_namespace": "ex_ark::gen::test",
+      "fields": [{"name": "x", "type": "int32"}],
+      "groups": [],
+      "source_location": {"filename": "generate.ir", "line_number": 1}
+    },
+    {
+      "name": "VariantB",
+      "object_namespace": "ex_ark::gen::test",
+      "fields": [{"name": "y", "type": "string"}],
+      "groups": [],
+      "source_location": {"filename": "generate.ir", "line_number": 1}
+    },
+    {
+      "name": "WithVariant",
+      "object_namespace": "ex_ark::gen::test",
+      "fields": [
+        {
+          "name": "payload",
+          "type": "variant",
+          "variant_types": [
+            [1, "ex_ark::gen::test::VariantA"],
+            [2, "ex_ark::gen::test::VariantB"]
+          ]
+        }
+      ],
+      "groups": [],
+      "source_location": {"filename": "generate.ir", "line_number": 1}
+    },
+    {
+      "name": "WithOptionalVariant",
+      "object_namespace": "ex_ark::gen::test",
+      "fields": [
+        {"name": "id", "type": "string"},
+        {
+          "name": "payload",
+          "type": "variant",
+          "attributes": {"optional": true},
+          "variant_types": [
+            [1, "ex_ark::gen::test::VariantA"],
+            [2, "ex_ark::gen::test::VariantB"]
+          ]
+        }
+      ],
+      "groups": [],
+      "source_location": {"filename": "generate.ir", "line_number": 1}
+    },
+    {
+      "name": "WithCollections",
+      "object_namespace": "ex_ark::gen::test",
+      "fields": [
+        {
+          "name": "tags",
+          "type": "arraylist",
+          "ctr_value_type": {"type": "string"}
+        },
+        {
+          "name": "children",
+          "type": "arraylist",
+          "ctr_value_type": {"type": "object", "object_type": "ex_ark::gen::test::Child"}
+        },
+        {
+          "name": "scores",
+          "type": "dictionary",
+          "ctr_key_type": {"type": "string"},
+          "ctr_value_type": {"type": "int32"}
+        }
+      ],
+      "groups": [],
+      "source_location": {"filename": "generate.ir", "line_number": 1}
+    },
+    {
+      "name": "WithEnum",
+      "object_namespace": "ex_ark::gen::test",
+      "fields": [
+        {"name": "id",   "type": "string"},
+        {"name": "mode", "type": "enum", "object_type": "ex_ark::gen::test::Mode"}
+      ],
+      "groups": [],
+      "source_location": {"filename": "generate.ir", "line_number": 1}
+    }
+  ],
+  "enums": [
+    {
+      "name": "Mode",
+      "object_namespace": "ex_ark::gen::test",
+      "enum_class": "uint8",
+      "enum_type": "value",
+      "values": {"Off": 0, "On": 1, "Auto": 2},
+      "source_location": {"filename": "generate.ir", "line_number": 1}
+    }
+  ]
+}

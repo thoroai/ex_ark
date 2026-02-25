@@ -21,6 +21,17 @@ defmodule ExArk.Registry do
     end
   end
 
+  @spec build!(binary()) :: t()
+  def build!(data) do
+    case build(data) do
+      {:ok, registry} ->
+        registry
+
+      {:error, reason} ->
+        raise ArgumentError, "ExArk.Registry.build! failed: #{inspect(reason)}"
+    end
+  end
+
   @spec build(binary()) :: {:ok, any()} | {:error, any()}
   def build(data) do
     with {:ok, decoded} <- JSON.decode(data) do

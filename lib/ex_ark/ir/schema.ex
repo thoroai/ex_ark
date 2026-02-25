@@ -4,7 +4,7 @@ defmodule ExArk.Ir.Schema do
   """
 
   use TypedStruct
-  import ExArk.Utilities, only: [maybe_add_map_value: 3]
+  import ExArk.Utilities, only: [maybe_add_map_value: 3, maybe_add_map_value: 4]
   import UnionTypespec, only: [union_type: 1]
 
   alias ExArk.Ir.Field
@@ -75,7 +75,7 @@ defmodule ExArk.Ir.Schema do
       "object_namespace" => schema.object_namespace
     }
     |> maybe_add_map_value("attributes", attributes)
-    |> maybe_add_map_value("source_location", schema.source_location)
+    |> maybe_add_map_value("source_location", schema.source_location, &SourceLocation.to_map/1)
     |> maybe_add_map_value("object_namespace", schema.object_namespace)
   end
 end

@@ -38,12 +38,31 @@ defmodule ExArk.Ir.ArkEnum do
     struct(__MODULE__, %{
       name: json.name,
       object_namespace: json[:object_namespace],
-      enum_class: ensure_existing_atom(json.enum_class),
-      enum_type: ensure_existing_atom(json.enum_type),
+      enum_class: parse_enum_class(json.enum_class),
+      enum_type: parse_enum_style(json.enum_type),
       values: values,
       source_location: source_location
     })
   end
+
+  # Pattern-matching on string literals ensures the returned atoms appear in
+  # this module's bytecode (Atom chunk) and are interned when the module loads.
+  # Using String.to_existing_atom via ensure_existing_atom is not safe here
+  # because @enum_classes/@enum_styles are only used by the compile-time
+  # union_type macro and their atoms are otherwise absent from the Atom chunk.
+  defp parse_enum_class("uint8"), do: :uint8
+  defp parse_enum_class("uint16"), do: :uint16
+  defp parse_enum_class("uint32"), do: :uint32
+  defp parse_enum_class("uint64"), do: :uint64
+  defp parse_enum_class("int8"), do: :int8
+  defp parse_enum_class("int16"), do: :int16
+  defp parse_enum_class("int32"), do: :int32
+  defp parse_enum_class("int64"), do: :int64
+  defp parse_enum_class(other), do: ensure_existing_atom(other)
+
+  defp parse_enum_style("value"), do: :value
+  defp parse_enum_style("bitmask"), do: :bitmask
+  defp parse_enum_style(other), do: ensure_existing_atom(other)
 
   @spec to_map(t()) :: term()
   def to_map(%__MODULE__{} = enum) do
