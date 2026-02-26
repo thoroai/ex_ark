@@ -1,8 +1,17 @@
 defmodule ExArk.Utilities do
   @moduledoc """
-  Common utilities
+  Internal utility functions shared across ExArk modules.
   """
 
+  @doc """
+  Convert a string to an atom, guarding against atom-table exhaustion in
+  production.
+
+  In `:test` env uses `String.to_atom/1` (allows new atoms for test fixtures).
+  In all other envs uses `String.to_existing_atom/1`, which raises
+  `ArgumentError` if the atom has not already been interned. When passed an atom
+  it is returned unchanged.
+  """
   @spec ensure_existing_atom(binary()) :: atom()
   def ensure_existing_atom(identifier) when is_binary(identifier) do
     if Mix.env() == :test do
@@ -15,11 +24,17 @@ defmodule ExArk.Utilities do
   @spec ensure_existing_atom(atom()) :: atom()
   def ensure_existing_atom(identifier) when is_atom(identifier), do: identifier
 
+  @doc """
+  Reverse the byte order of a binary.
+  """
   @spec reverse_binary(binary()) :: binary()
   def reverse_binary(bin) when is_binary(bin) do
     reverse_binary(bin, byte_size(bin))
   end
 
+  @doc """
+  Reverse the byte order of a binary, zero-padding the result to `len` bytes.
+  """
   @spec reverse_binary(binary(), non_neg_integer()) :: binary()
   def reverse_binary(bin, len) when is_binary(bin) do
     res = bin |> :binary.decode_unsigned(:little) |> :binary.encode_unsigned(:big)
@@ -27,6 +42,13 @@ defmodule ExArk.Utilities do
     <<0::pad*8, res::binary>>
   end
 
+  @doc """
+  Conditionally insert a key–value pair into a map, skipping absent values.
+
+  `value` is considered absent if it is `nil`, an empty list `[]`, or an empty
+  map `%{}`. Otherwise `fun` is applied to `value` and the result is stored
+  under `key`. The default `fun` is `Function.identity/1` (no transformation).
+  """
   @spec maybe_add_map_value(map(), any(), any(), fun()) :: map()
   def maybe_add_map_value(map, key, value, fun \\ &Function.identity/1)
   def maybe_add_map_value(map, _key, nil, _fun), do: map
