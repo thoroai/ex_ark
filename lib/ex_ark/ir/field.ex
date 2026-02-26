@@ -1,6 +1,29 @@
 defmodule ExArk.Ir.Field do
   @moduledoc """
-  Field information.
+  IR representation of a single field within an Ark schema.
+
+  A field carries a `:type` string that names the Ark type (primitive or
+  complex). Additional fields are populated depending on the type:
+
+  - **array** — `:array_size` (fixed length) and `:ctr_value_type` (element type)
+  - **arraylist** — `:ctr_value_type` (element type)
+  - **dictionary** — `:ctr_key_type` and `:ctr_value_type`
+  - **object** — `:object_type` (fully-qualified schema name)
+  - **variant** — `:variant_types` (list of `ExArk.Ir.Variant`)
+  - **enum** — `:object_type` (fully-qualified enum name)
+
+  ## Fields
+
+    * `:name` — field name string; `nil` for anonymous container element types
+    * `:type` — Ark type string (e.g. `"int32"`, `"object"`, `"arraylist"`)
+    * `:object_type` — fully-qualified name for `object` and `enum` fields
+    * `:array_size` — element count for fixed-size `array` fields
+    * `:ctr_value_type` — element type descriptor for container fields
+    * `:ctr_key_type` — key type descriptor for `dictionary` fields
+    * `:variant_types` — list of `ExArk.Ir.Variant` for `variant` fields
+    * `:attributes` — list of field attributes: `:removed`, `:packed_timespec`,
+      `:optional`, `:constant`
+    * `:comments` — optional documentation comment extracted from the source file
   """
 
   use TypedStruct
@@ -26,18 +49,45 @@ defmodule ExArk.Ir.Field do
     field :comments, String.t()
   end
 
+  @doc """
+  Return `true` if the field carries the `:removed` attribute.
+
+  Removed fields are still present in the binary layout for backwards
+  compatibility but their values are discarded during deserialization.
+  """
   @spec removed?(t()) :: boolean()
   def removed?(%__MODULE__{} = field), do: Enum.member?(field.attributes, :removed)
 
+  @doc """
+  Return `true` if the field carries the `:packed_timespec` attribute.
+
+  Packed timespec fields store a timestamp in a compact binary representation.
+  """
   @spec packed_timespec?(t()) :: boolean()
   def packed_timespec?(%__MODULE__{} = field), do: Enum.member?(field.attributes, :packed_timespec?)
 
+  @doc """
+  Return `true` if the field carries the `:optional` attribute.
+
+  Optional fields belong to a versioned group and may be absent in older
+  serialized data; missing optional fields are filled with their default values.
+  """
   @spec optional?(t()) :: boolean()
   def optional?(%__MODULE__{} = field), do: Enum.member?(field.attributes, :optional)
 
+  @doc """
+  Return `true` if the field carries the `:constant` attribute.
+
+  Constant fields are read-only and their value is fixed by the schema.
+  """
   @spec constant?(t()) :: boolean()
   def constant?(%__MODULE__{} = field), do: Enum.member?(field.attributes, :constant)
 
+  @doc """
+  Parse a field from a decoded JSON term (atom-keyed map).
+
+  Called internally during registry and schema parsing.
+  """
   @spec from_json(term()) :: t()
   def from_json(json) do
     attributes =
@@ -77,6 +127,9 @@ defmodule ExArk.Ir.Field do
     })
   end
 
+  @doc """
+  Serialize a field struct to a plain map suitable for JSON encoding.
+  """
   @spec to_map(t()) :: term()
   def to_map(%__MODULE__{} = field) do
     attributes = Enum.into(field.attributes, %{}, fn attribute -> {attribute, true} end)
@@ -92,6 +145,12 @@ defmodule ExArk.Ir.Field do
     |> maybe_add_map_value("comments", field.comments)
   end
 
+  @doc """
+  Create a minimal field struct with only the `:type` field populated.
+
+  Useful when constructing synthetic field descriptors (e.g. for container
+  element types in tests or code generation).
+  """
   @spec new(String.t()) :: t()
   def new(type) do
     struct(__MODULE__, %{type: type})

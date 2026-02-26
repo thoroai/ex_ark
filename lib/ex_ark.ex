@@ -1,6 +1,100 @@
 defmodule ExArk do
   @moduledoc """
-  Documentation for `ExArk`.
+  Elixir library for serializing and deserializing Ark serialized objects.
+
+  [Ark](https://ark.tbdrobotics.com) is a robotics toolkit that includes a serialization
+  library with a custom IDL for structured data objects. ExArk provides the tooling to load
+  Ark IR (intermediate representation) schema files and to serialize and deserialize Ark
+  objects in both binary and JSON formats.
+
+  There are two ways to work with Ark objects in Elixir:
+
+  1. **Compile-time generated modules** (preferred) — `ExArk.Generate` reads a registry JSON
+     file at compile time and generates typed Elixir structs with built-in serialize/deserialize
+     functions. This gives you full type safety, struct field access, and no runtime registry
+     dependency.
+
+  2. **Generic map-based API** (this module) — schemas are loaded at runtime from `.ir` files
+     and objects are represented as atom-keyed maps. Useful when the schema is not known at
+     compile time, or for self-describing binary data that embeds its own schema.
+
+  ## Compile-Time Code Generation
+
+  Point `ExArk.Generate` at a `registry.json` file (exported from the Ark compiler) and
+  declare which schemas your application needs:
+
+      defmodule MyApp.ArkSchemas do
+        use ExArk.Generate,
+          registry: "priv/registry.json",
+          namespace: MyApp.Ark,
+          schemas: [
+            "my::namespace::Point",
+            "my::namespace::Pose"
+          ]
+      end
+
+  This generates a module per schema (e.g. `MyApp.Ark.MyNamespace.Point`) with a typed
+  struct and serialize/deserialize functions:
+
+      # Serialize
+      point = %MyApp.Ark.MyNamespace.Point{x: 1.0, y: 2.0}
+      {:ok, bytes} = MyApp.Ark.MyNamespace.Point.serialize_to_binary(point)
+      {:ok, json}  = MyApp.Ark.MyNamespace.Point.serialize_to_json(point)
+
+      # Deserialize
+      {:ok, point} = MyApp.Ark.MyNamespace.Point.deserialize_from_binary(bytes)
+      {:ok, point} = MyApp.Ark.MyNamespace.Point.deserialize_from_json(json)
+
+  See `ExArk.Generate` for the full option reference and generated module contract.
+
+  ## Generic Map-Based API
+
+  Load one or more `.ir` schema files into a registry at runtime:
+
+      {:ok, registry} = ExArk.load_schemas("/path/to/my.ir")
+
+  Then read and write objects using the fully-qualified Ark type name as a string:
+
+      {:ok, object} = ExArk.read_object_from_bytes(registry, "my::namespace::Point", bytes)
+      {:ok, object} = ExArk.read_object_from_json(registry, "my::namespace::Point", json_string)
+
+      {:ok, bytes} = ExArk.write_object_to_bytes(registry, "my::namespace::Point", object)
+      {:ok, json}  = ExArk.write_object_to_json(registry, "my::namespace::Point", object)
+
+  Objects are returned as **atom-keyed maps**, e.g. `%{x: 1.0, y: 2.0}`.
+
+  When the binary data is self-describing (schema embedded in the payload), no registry or
+  type name is needed:
+
+      {:ok, object} = ExArk.read_generic_object_from_bytes(bytes)
+      {:ok, object} = ExArk.read_generic_object_from_file("/path/to/data.bin")
+
+  ### Variant fields
+
+  Variant fields in map-based objects carry a `:__ark_schema` key that identifies the
+  concrete type at runtime. Use `ExArk.Types.get_type/1` to read it and
+  `ExArk.Types.add_type/2` to set it when constructing objects for serialization.
+
+  ## Schema Registry
+
+  `ExArk.Registry` holds all loaded schemas (`ExArk.Ir.Schema`) and enums
+  (`ExArk.Ir.ArkEnum`), keyed by their fully-qualified name (e.g.
+  `"my::namespace::Point"`). Multiple `.ir` files can be combined into a single registry by
+  passing a list of paths to `load_schemas/1`.
+
+  ## Modules
+
+  | Module | Purpose |
+  |---|---|
+  | `ExArk.Generate` | Compile-time code generation of typed structs from a registry |
+  | `ExArk.Registry` | Runtime registry of Ark schemas and enums loaded from `.ir` files |
+  | `ExArk.Types` | Type predicates, default value generation, and variant tagging |
+  | `ExArk.Ir.Schema` | IR representation of a schema definition |
+  | `ExArk.Ir.ArkEnum` | IR representation of an enum definition |
+  | `ExArk.Ir.Field` | IR representation of a schema field |
+  | `ExArk.Ir.Group` | IR representation of an optional field group |
+  | `ExArk.Ir.Variant` | IR representation of one arm of a variant field |
+  | `ExArk.Ir.SourceLocation` | Source file location metadata attached to IR nodes |
   """
 
   alias ExArk.Registry
@@ -8,7 +102,11 @@ defmodule ExArk do
   alias ExArk.Serdes.Json
 
   @doc """
-  Load schema file(s)
+  Load schema file(s) from disk into a new registry.
+
+  Accepts either a single path or a list of paths. When a list is given all
+  schemas and enums are merged into a single `ExArk.Registry`; duplicate
+  schema or enum names across files are treated as an error.
 
   ## Examples
 
@@ -21,7 +119,10 @@ defmodule ExArk do
   end
 
   @doc """
-  Load schema file(s)
+  Load schema file(s) from disk into a new registry, raising on error.
+
+  Same as `load_schemas/1` but returns the `ExArk.Registry` directly and raises
+  a `RuntimeError` if loading fails.
 
   ## Examples
 
@@ -142,7 +243,7 @@ defmodule ExArk do
   end
 
   @doc """
-  Seerialize an Ark object with the given registry and type from a JSON string.
+  Serialize an Ark object to a JSON string with the given registry and type.
   """
   @spec write_object_to_json(Registry.t(), String.t(), any()) :: {:ok, any()} | {:error, any()}
   def write_object_to_json(%Registry{} = registry, type, data) do
