@@ -58,41 +58,126 @@ defmodule ExArk.Generate.DocBuilder do
 
   @doc """
   Returns a human-readable type description for a field, suitable for embedding
-  in a Markdown table cell. Pipe characters are escaped as `\\|`.
+  in prose or a Markdown list. For variant fields this returns the full union
+  type string; use `fields_table/3` for a table-friendly rendering.
   """
   @spec field_type_string(Field.t(), Registry.t(), module()) :: String.t()
   def field_type_string(field, registry, namespace) do
     field_type_string_inner(field, registry, namespace)
   end
 
+  # ---------------------------------------------------------------------------
+  # Private helpers — fields table
+  # ---------------------------------------------------------------------------
+
   defp fields_table(%Schema{} = schema, registry, namespace) do
-    regular_rows =
-      schema.fields
+    regular = schema.fields |> Enum.reject(&Field.removed?/1)
+
+    group =
+      schema.groups
+      |> Enum.flat_map(& &1.fields)
       |> Enum.reject(&Field.removed?/1)
-      |> Enum.map(fn field ->
-        notes = if Field.optional?(field), do: "optional", else: "required"
-        "| `#{field.name}` | #{field_type_string_inner(field, registry, namespace)} | #{notes} |"
+
+    all_fields = regular ++ group
+
+    if all_fields == [] do
+      "*(no fields)*"
+    else
+      table = build_fields_table(regular, group, registry, namespace)
+      details = build_field_details_section(all_fields, registry, namespace)
+
+      if details == "" do
+        table
+      else
+        table <> "\n\n" <> details
+      end
+    end
+  end
+
+  defp build_fields_table(regular, group, registry, namespace) do
+    regular_rows =
+      Enum.map(regular, fn field ->
+        type_cell = table_type_cell(field, registry, namespace)
+        notes = field_notes(Field.optional?(field), "")
+        "| `#{field.name}` | #{type_cell} | #{notes} |"
       end)
 
     group_rows =
-      Enum.flat_map(schema.groups, fn group ->
-        group.fields
-        |> Enum.reject(&Field.removed?/1)
-        |> Enum.map(fn field ->
-          type_str = field_type_string_inner(field, registry, namespace)
-          "| `#{field.name}` | #{type_str} | optional (group) |"
-        end)
+      Enum.map(group, fn field ->
+        type_cell = table_type_cell(field, registry, namespace)
+        notes = field_notes(true, " (group)")
+        "| `#{field.name}` | #{type_cell} | #{notes} |"
       end)
 
-    all_rows = regular_rows ++ group_rows
+    header = "## Fields\n\n| Field | Type | Notes |\n|-------|------|-------|"
+    Enum.join([header | regular_rows ++ group_rows], "\n")
+  end
 
-    if all_rows == [] do
-      "*(no fields)*"
+  # Variant types are listed in a dedicated sub-section so the Type column
+  # stays narrow regardless of how many variant types a field has.
+  defp table_type_cell(%Field{type: "variant"}, _registry, _namespace), do: "variant"
+  defp table_type_cell(field, registry, namespace), do: field_type_string_inner(field, registry, namespace)
+
+  defp field_notes(true, suffix), do: "optional#{suffix}"
+  defp field_notes(false, _suffix), do: "required"
+
+  # Builds the "## Field Details" section below the table. A field gets a
+  # sub-section when it has a comment, is a variant (type list), or both.
+  # Returns "" when no field needs extra detail.
+  defp build_field_details_section(fields, registry, namespace) do
+    blocks =
+      fields
+      |> Enum.map(&field_detail_block(&1, registry, namespace))
+      |> Enum.reject(&is_nil/1)
+
+    if blocks == [] do
+      ""
     else
-      header = "## Fields\n\n| Field | Type | Notes |\n|-------|------|-------|"
-      Enum.join([header | all_rows], "\n")
+      "## Field Details\n\n" <> Enum.join(blocks, "\n\n")
     end
   end
+
+  # Returns a detail block for a field, or nil if none is needed.
+  defp field_detail_block(%Field{type: "variant"} = field, registry, namespace) do
+    items =
+      Enum.map(field.variant_types, fn v ->
+        if Map.has_key?(registry.schemas, v.object_type) do
+          mod = Naming.ark_name_to_module(v.object_type, namespace)
+          "- `#{inspect(mod)}`"
+        else
+          "- `#{v.object_type}`"
+        end
+      end)
+
+    ["### `#{field.name}` (variant)", format_comment(field.comments), "One of:\n" <> Enum.join(items, "\n")]
+    |> Enum.reject(&is_nil/1)
+    |> Enum.join("\n\n")
+  end
+
+  defp field_detail_block(%Field{comments: c}, _registry, _namespace) when c in [nil, ""] do
+    nil
+  end
+
+  defp field_detail_block(%Field{} = field, _registry, _namespace) do
+    "### `#{field.name}`\n\n#{format_comment(field.comments)}"
+  end
+
+  # Normalises a comment string for Markdown prose output:
+  #   - trims trailing whitespace from each line
+  #   - joins lines with a Markdown hard line break (two trailing spaces + \n)
+  #     so that multi-line comments render as distinct lines in both ExDoc and IEx
+  defp format_comment(nil), do: nil
+  defp format_comment(""), do: nil
+
+  defp format_comment(comment) do
+    comment
+    |> String.split("\n")
+    |> Enum.map_join("  \n", &String.trim_trailing/1)
+  end
+
+  # ---------------------------------------------------------------------------
+  # Private helpers — values table
+  # ---------------------------------------------------------------------------
 
   defp values_table(%ArkEnum{values: values}) when values == [] or values == %{} do
     "*(no values)*"
@@ -107,6 +192,10 @@ defmodule ExArk.Generate.DocBuilder do
     header = "## Values\n\n| Value | Integer |\n|-------|---------|"
     Enum.join([header | rows], "\n")
   end
+
+  # ---------------------------------------------------------------------------
+  # Private helpers — field type descriptions
+  # ---------------------------------------------------------------------------
 
   @primitives ~w(bool uint8 uint16 uint32 uint64 int8 int16 int32 int64
                  float double string guid byte_buffer duration
@@ -157,8 +246,7 @@ defmodule ExArk.Generate.DocBuilder do
         end
       end)
 
-    # Escape | so it doesn't break the Markdown table cell.
-    Enum.join(type_strs, " \\| ")
+    Enum.join(type_strs, " | ")
   end
 
   defp field_type_string_inner(

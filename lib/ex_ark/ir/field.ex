@@ -23,6 +23,7 @@ defmodule ExArk.Ir.Field do
     field :ctr_key_type, Field.t()
     field :variant_types, [Variant.t()]
     field :attributes, [attribute_type]
+    field :comments, String.t()
   end
 
   @spec removed?(t()) :: boolean()
@@ -71,7 +72,8 @@ defmodule ExArk.Ir.Field do
       ctr_value_type: ctr_value_type,
       ctr_key_type: ctr_key_type,
       variant_types: variant_types,
-      attributes: attributes
+      attributes: attributes,
+      comments: parse_comments(Map.get(json, :comments))
     })
   end
 
@@ -87,10 +89,17 @@ defmodule ExArk.Ir.Field do
     |> maybe_add_map_value("ctr_key_type", field.ctr_key_type, &Field.to_map/1)
     |> maybe_add_map_value("attributes", attributes)
     |> maybe_add_map_value("variant_types", field.variant_types, &Variant.to_list/1)
+    |> maybe_add_map_value("comments", field.comments)
   end
 
   @spec new(String.t()) :: t()
   def new(type) do
     struct(__MODULE__, %{type: type})
   end
+
+  # Comments may be stored as a plain string or as a list of lines.
+  defp parse_comments(nil), do: nil
+  defp parse_comments([]), do: nil
+  defp parse_comments(lines) when is_list(lines), do: Enum.join(lines, "\n")
+  defp parse_comments(comment) when is_binary(comment), do: comment
 end
