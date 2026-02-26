@@ -59,7 +59,17 @@ defmodule ExArk.Generate.SchemaBuilder do
           (unquote_splicing(field_defs))
         end
 
-        @doc false
+        @doc """
+        Returns the fully-qualified Ark schema name for this generated module.
+
+        Useful when bridging between the generated struct API and the generic
+        map-based API, for example when you need to pass the schema name to
+        `ExArk.Generate.module_for/2` or to `ExArk` serialization functions.
+
+            iex> #{unquote(module_name)}.__ark_schema_name()
+            #{inspect(unquote(ark_name))}
+
+        """
         @spec __ark_schema_name() :: String.t()
         def __ark_schema_name, do: @ark_schema_name
 
