@@ -43,6 +43,7 @@ defmodule ExArk.Generate do
   - `serialize_to_json/1` -> `{:ok, String.t()} | {:error, any()}`
   - `deserialize_from_binary/1` -> `{:ok, t()} | {:error, any()}`
   - `deserialize_from_json/1` -> `{:ok, t()} | {:error, any()}`
+  - `__ark_schema_name/0` — returns the fully-qualified Ark schema name string
   - `to_map/1` / `from_map/1` — `@doc false` public helpers for nested
     struct <-> map conversion
 
@@ -50,14 +51,85 @@ defmodule ExArk.Generate do
 
   - `@type t` — union type of all value atoms
   - `values/0` — returns all value atoms in declaration order
+
+  ## Resolving a module from a schema name
+
+  When a schema name arrives at runtime (e.g. from an MQTT message's `schema`
+  field), use `module_for/2` to obtain the corresponding generated module and
+  then dispatch to its deserialize functions:
+
+      {:ok, mod} = ExArk.Generate.module_for(schema_name, MyApp.Ark)
+      {:ok, struct} = mod.deserialize_from_json(payload)
+
+      # or, raising on unknown schema:
+      mod = ExArk.Generate.module_for!(schema_name, MyApp.Ark)
+      {:ok, struct} = mod.deserialize_from_binary(payload)
+
   """
 
   alias ExArk.Generate.DependencyResolver
   alias ExArk.Generate.EnumBuilder
+  alias ExArk.Generate.Naming
   alias ExArk.Generate.SchemaBuilder
   alias ExArk.Ir.ArkEnum
   alias ExArk.Ir.Schema
   alias ExArk.Registry
+
+  @doc """
+  Returns the generated module for the given Ark schema name and namespace.
+
+  The module is identified by computing its expected name via the same
+  `ExArk.Generate.Naming` rules used at code-generation time, then verifying
+  that the module is loaded and is an ExArk-generated schema module (i.e. it
+  exports `__ark_schema_name/0`).
+
+  Returns `{:error, :not_found}` if no matching generated module exists.
+
+  ## Examples
+
+      iex> ExArk.Generate.module_for("tai::fleet::cloud::RobotStatus", MyApp.Ark)
+      {:ok, MyApp.Ark.Tai.Fleet.Cloud.RobotStatus}
+
+      iex> ExArk.Generate.module_for("unknown::Schema", MyApp.Ark)
+      {:error, :not_found}
+
+  """
+  @spec module_for(String.t(), module()) :: {:ok, module()} | {:error, :not_found}
+  def module_for(ark_name, namespace) when is_binary(ark_name) and is_atom(namespace) do
+    mod = Naming.ark_name_to_module(ark_name, namespace)
+
+    if function_exported?(mod, :__ark_schema_name, 0) do
+      {:ok, mod}
+    else
+      {:error, :not_found}
+    end
+  end
+
+  @doc """
+  Returns the generated module for the given Ark schema name and namespace,
+  raising if no matching module is found.
+
+  Same as `module_for/2` but returns the module directly and raises
+  `ArgumentError` on failure.
+
+  ## Examples
+
+      iex> ExArk.Generate.module_for!("tai::fleet::cloud::RobotStatus", MyApp.Ark)
+      MyApp.Ark.Tai.Fleet.Cloud.RobotStatus
+
+  """
+  @spec module_for!(String.t(), module()) :: module()
+  def module_for!(ark_name, namespace) when is_binary(ark_name) and is_atom(namespace) do
+    case module_for(ark_name, namespace) do
+      {:ok, mod} ->
+        mod
+
+      {:error, :not_found} ->
+        raise ArgumentError,
+              "ExArk.Generate: no generated module found for Ark schema " <>
+                inspect(ark_name) <> " under namespace #{inspect(namespace)}"
+    end
+  end
 
   defmacro __using__(opts) do
     registry_path = Keyword.fetch!(opts, :registry)
