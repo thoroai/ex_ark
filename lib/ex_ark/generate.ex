@@ -98,10 +98,16 @@ defmodule ExArk.Generate do
   def module_for(ark_name, namespace) when is_binary(ark_name) and is_atom(namespace) do
     mod = Naming.ark_name_to_module(ark_name, namespace)
 
-    if function_exported?(mod, :__ark_schema_name, 0) do
-      {:ok, mod}
-    else
-      {:error, :not_found}
+    case Code.ensure_loaded(mod) do
+      {:module, ^mod} ->
+        if function_exported?(mod, :__ark_schema_name, 0) do
+          {:ok, mod}
+        else
+          {:error, :not_found}
+        end
+
+      _ ->
+        {:error, :not_found}
     end
   end
 
