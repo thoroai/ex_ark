@@ -10,7 +10,7 @@ defmodule ExArk.Serdes.Binary.Serialization do
   alias ExArk.Serdes.Binary.Object
   alias ExArk.Serdes.Binary.OutputStream
 
-  @spec write_object_to_bytes(Registry.t(), Schema.t(), any()) :: {:ok, any()} | {:error, any()}
+  @spec write_object_to_bytes(Registry.t(), Schema.t(), any()) :: {:ok, binary()} | {:error, any()}
   def write_object_to_bytes(%Registry{} = registry, %Schema{} = schema, data) do
     with {:ok, stream} <- Object.serialize(%OutputStream{}, schema, data, registry),
          {:ok, %OutputStream{bytes: bytes}} <- serialize_trailer(stream) do
@@ -21,7 +21,7 @@ defmodule ExArk.Serdes.Binary.Serialization do
     end
   end
 
-  @spec write_generic_object_to_bytes(Registry.t(), Schema.t(), any()) :: {:ok, any()} | {:error, any()}
+  @spec write_generic_object_to_bytes(Registry.t(), Schema.t(), any()) :: {:ok, binary()} | {:error, any()}
   def write_generic_object_to_bytes(%Registry{} = registry, %Schema{} = schema, data) do
     with {:ok, stream} <- Object.serialize(%OutputStream{}, schema, data, registry),
          {:ok, %OutputStream{bytes: bytes}} <- serialize_trailer(stream, schema, registry) do

@@ -7,6 +7,7 @@ defmodule ExArk.MixProject do
       version: "0.5.1",
       elixir: "~> 1.19",
       start_permanent: Mix.env() == :prod,
+      elixirc_paths: elixirc_paths(Mix.env()),
       aliases: aliases(),
       deps: deps(),
       dialyzer: [
@@ -32,6 +33,11 @@ defmodule ExArk.MixProject do
       ]
     ]
   end
+
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  # Include test/support in dev so dialyzer can analyze the generated sample modules.
+  defp elixirc_paths(:dev), do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib"]
 
   # Run "mix help compile.app" to learn about applications.
   def application do

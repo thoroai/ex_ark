@@ -138,7 +138,9 @@ defmodule ExArk.Generate do
   end
 
   defmacro __using__(opts) do
-    registry_path = Keyword.fetch!(opts, :registry)
+    # Evaluate the registry path in the caller's context so that expressions
+    # like `Path.expand("../registry.json", __DIR__)` work, not just literals.
+    {registry_path, _} = Code.eval_quoted(Keyword.fetch!(opts, :registry), [], __CALLER__)
 
     namespace =
       case Keyword.fetch(opts, :namespace) do
