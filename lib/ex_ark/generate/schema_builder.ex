@@ -104,11 +104,13 @@ defmodule ExArk.Generate.SchemaBuilder do
         end
 
         @doc false
+        @spec to_map(t()) :: map()
         def to_map(%__MODULE__{} = s) do
           unquote(to_map_body)
         end
 
         @doc false
+        @spec from_map(map()) :: t()
         def from_map(map) do
           unquote(from_map_body)
         end

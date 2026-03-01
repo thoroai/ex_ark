@@ -23,8 +23,8 @@ defmodule ExArk.Registry do
   alias ExArk.Ir.Schema
 
   typedstruct do
-    field :schemas, %{}, default: %{}
-    field :enums, %{}, default: %{}
+    field :schemas, %{optional(String.t()) => Schema.t()}, default: %{}
+    field :enums, %{optional(String.t()) => ArkEnum.t()}, default: %{}
   end
 
   @doc """

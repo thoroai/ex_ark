@@ -144,7 +144,7 @@ defmodule ExArk do
   Deserialize an Ark object from a file according to the given type from the
   registry.
   """
-  @spec read_object_from_file(Registry.t(), String.t(), Path.t()) :: {:ok, any()} | {:error, any()}
+  @spec read_object_from_file(Registry.t(), String.t(), Path.t()) :: {:ok, map()} | {:error, any()}
   def read_object_from_file(%Registry{} = registry, type, path) do
     schema = registry.schemas[type]
 
@@ -172,7 +172,7 @@ defmodule ExArk do
   @doc """
   Deserialize an Ark object with the given registry and type from raw bytes.
   """
-  @spec read_object_from_bytes(Registry.t(), String.t(), binary()) :: {:ok, any()} | {:error, any()}
+  @spec read_object_from_bytes(Registry.t(), String.t(), binary()) :: {:ok, map()} | {:error, any()}
   def read_object_from_bytes(%Registry{} = registry, type, bytes) do
     schema = registry.schemas[type]
 
@@ -196,7 +196,7 @@ defmodule ExArk do
   @doc """
   Deserialize an Ark object with the given registry and type from a JSON string.
   """
-  @spec read_object_from_json(Registry.t(), String.t(), String.t()) :: {:ok, any()} | {:error, any()}
+  @spec read_object_from_json(Registry.t(), String.t(), String.t()) :: {:ok, map()} | {:error, any()}
   def read_object_from_json(%Registry{} = registry, type, jsonstr) do
     schema = registry.schemas[type]
 
@@ -214,7 +214,7 @@ defmodule ExArk do
   Serialize object to an Ark object byte stream with the given registry and
   type, without embedded schema information.
   """
-  @spec write_object_to_bytes(Registry.t(), String.t(), any()) :: {:ok, any()} | {:error, any()}
+  @spec write_object_to_bytes(Registry.t(), String.t(), any()) :: {:ok, binary()} | {:error, any()}
   def write_object_to_bytes(%Registry{} = registry, type, data) do
     schema = registry.schemas[type]
 
@@ -231,7 +231,7 @@ defmodule ExArk do
   in the provided registry, but embed a registry with only the minimal set of
   schemas needed to deserialize the object.
   """
-  @spec write_generic_object_to_bytes(Registry.t(), String.t(), any()) :: {:ok, any()} | {:error, any()}
+  @spec write_generic_object_to_bytes(Registry.t(), String.t(), any()) :: {:ok, binary()} | {:error, any()}
   def write_generic_object_to_bytes(%Registry{} = registry, type, data) do
     schema = registry.schemas[type]
 
@@ -245,7 +245,7 @@ defmodule ExArk do
   @doc """
   Serialize an Ark object to a JSON string with the given registry and type.
   """
-  @spec write_object_to_json(Registry.t(), String.t(), any()) :: {:ok, any()} | {:error, any()}
+  @spec write_object_to_json(Registry.t(), String.t(), any()) :: {:ok, String.t()} | {:error, any()}
   def write_object_to_json(%Registry{} = registry, type, data) do
     schema = registry.schemas[type]
 

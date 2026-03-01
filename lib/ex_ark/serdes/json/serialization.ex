@@ -8,7 +8,7 @@ defmodule ExArk.Serdes.Json.Serialization do
   alias ExArk.Serdes.Json.Object
   alias ExArk.Serdes.Json.Writer.Result
 
-  @spec write_object_to_json(Registry.t(), Schema.t(), any()) :: {:ok, any()} | {:error, any()}
+  @spec write_object_to_json(Registry.t(), Schema.t(), any()) :: {:ok, String.t()} | {:error, any()}
   def write_object_to_json(%Registry{} = registry, schema, data) do
     case Object.serialize(schema, data, registry) do
       {:ok, %Result{encoded: encoded}} ->
