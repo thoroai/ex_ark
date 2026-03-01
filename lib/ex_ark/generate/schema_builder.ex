@@ -73,6 +73,28 @@ defmodule ExArk.Generate.SchemaBuilder do
         @spec __ark_schema_name() :: String.t()
         def __ark_schema_name, do: @ark_schema_name
 
+        # Suppress dialyzer warnings for the public API functions.
+        # The generated implementation is correct at runtime, but dialyzer's
+        # inter-procedural analysis of the registry lookups inside ExArk can
+        # infer an overly-narrow success typing that conflicts with the declared
+        # specs (invalid_contract) and may cascade to a no_return inference.
+        # Suppressing both here keeps the warnings contained to the library
+        # rather than surfacing them in every consumer project.
+        @dialyzer {:no_contracts,
+                   [
+                     serialize_to_binary: 1,
+                     serialize_to_json: 1,
+                     deserialize_from_binary: 1,
+                     deserialize_from_json: 1
+                   ]}
+        @dialyzer {:no_return,
+                   [
+                     serialize_to_binary: 1,
+                     serialize_to_json: 1,
+                     deserialize_from_binary: 1,
+                     deserialize_from_json: 1
+                   ]}
+
         @doc "Serializes this struct to Ark binary format."
         @spec serialize_to_binary(t()) :: {:ok, binary()} | {:error, any()}
         def serialize_to_binary(%__MODULE__{} = data) do
