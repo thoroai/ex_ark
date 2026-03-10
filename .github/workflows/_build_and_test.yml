@@ -45,7 +45,7 @@ jobs:
 
     steps:
       - name: Set up Elixir
-        uses: erlef/setup-beam@3580539ceec3dc05b0ed51e9e10b08eb7a7c2bb4 # v1.21.0
+        uses: erlef/setup-beam@9d5b75ddfda22fb979d2270283237aef8aa68d6b # v1.22.0
         with:
           otp-version: ${{ env.otp-version }}
           elixir-version: ${{ env.elixir-version }}
