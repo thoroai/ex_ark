@@ -203,6 +203,7 @@ defmodule ExArk.Generate do
       end)
 
     quote do
+      @external_resource unquote(registry_path)
       unquote_splicing(enum_asts)
       unquote_splicing(schema_asts)
     end
