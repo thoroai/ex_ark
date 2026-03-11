@@ -41,6 +41,7 @@ defmodule ExArk.Generate.SchemaBuilder do
     to_map_body = build_to_map_body(all_fields, registry, namespace)
     from_map_body = build_from_map_body(all_fields, registry, namespace)
     variant_defps = build_variant_defps(all_fields, registry, namespace)
+    index_of_defs = build_index_of(all_fields, module_name)
 
     quote do
       defmodule unquote(module_name) do
@@ -138,6 +139,7 @@ defmodule ExArk.Generate.SchemaBuilder do
         end
 
         unquote_splicing(variant_defps)
+        unquote_splicing(index_of_defs)
       end
     end
   end
@@ -449,4 +451,66 @@ defmodule ExArk.Generate.SchemaBuilder do
 
   defp to_variant_fn(field_name), do: :"__to_variant_#{field_name}__"
   defp from_variant_fn(field_name), do: :"__from_variant_#{field_name}__"
+
+  # ---------------------------------------------------------------------------
+  # index_of/2 public helper
+  # ---------------------------------------------------------------------------
+
+  # Generates a public `index_of/2` function when the schema has at least one
+  # variant field. The lookup table is a compile-time literal map embedded in
+  # the function body so there is no runtime registry access.
+  #
+  # Example generated code for AutonomyStatusCode:
+  #
+  #   def index_of(field_name, value) do
+  #     ark_name = value.__struct__.__ark_schema_name()
+  #     %{error: %{"crl::knight::NoAutonomyStatusCode" => 0, ...}}
+  #     |> Map.fetch!(field_name)
+  #     |> Map.fetch!(ark_name)
+  #   end
+  #
+  defp build_index_of(fields_with_nullable, module_name) do
+    variant_fields =
+      Enum.filter(fields_with_nullable, fn {field, _} -> field.type == "variant" end)
+
+    if Enum.empty?(variant_fields) do
+      []
+    else
+      indices_map = Map.new(variant_fields, &build_variant_index_entry/1)
+
+      escaped = Macro.escape(indices_map)
+
+      [
+        quote do
+          @doc """
+          Returns the variant index for the given field name and concrete struct value.
+
+          The index corresponds to the integer assigned in the Ark schema definition.
+          Raises `KeyError` if `field_name` is not a variant field or if the struct
+          type is not a known arm of that variant.
+
+          ## Example
+
+              iex> #{unquote(module_name)}.index_of(:my_field, %SomeVariantStruct{})
+              0
+
+          """
+          @spec index_of(atom(), struct()) :: non_neg_integer()
+          def index_of(field_name, value) do
+            ark_name = value.__struct__.__ark_schema_name()
+
+            unquote(escaped)
+            |> Map.fetch!(field_name)
+            |> Map.fetch!(ark_name)
+          end
+        end
+      ]
+    end
+  end
+
+  defp build_variant_index_entry({field, _}) do
+    field_atom = String.to_atom(field.name)
+    type_to_index = Map.new(field.variant_types, fn v -> {v.object_type, v.index} end)
+    {field_atom, type_to_index}
+  end
 end
