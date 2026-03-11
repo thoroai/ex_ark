@@ -303,6 +303,33 @@ defmodule ExArk.GenerateTest do
   end
 
   # ---------------------------------------------------------------------------
+  # index_of/2 — variant index lookup
+  # ---------------------------------------------------------------------------
+
+  describe "index_of/2" do
+    test "returns correct index for each variant arm" do
+      assert T.WithVariant.index_of(:payload, %T.VariantA{x: 0}) == 1
+      assert T.WithVariant.index_of(:payload, %T.VariantB{y: "hi"}) == 2
+    end
+
+    test "works on optional variant field" do
+      assert T.WithOptionalVariant.index_of(:payload, %T.VariantA{x: 0}) == 1
+      assert T.WithOptionalVariant.index_of(:payload, %T.VariantB{y: "hi"}) == 2
+    end
+
+    test "raises KeyError for unknown field name" do
+      assert_raise KeyError, fn ->
+        T.WithVariant.index_of(:no_such_field, %T.VariantA{x: 0})
+      end
+    end
+
+    test "non-variant schemas do not expose index_of/2" do
+      refute function_exported?(T.Primitives, :index_of, 2)
+      refute function_exported?(T.WithObject, :index_of, 2)
+    end
+  end
+
+  # ---------------------------------------------------------------------------
   # Compile-time error cases — tested by checking raises in a string-eval
   # ---------------------------------------------------------------------------
 
