@@ -52,7 +52,7 @@ defmodule ExArk.Generate.EnumBuilderTest do
     end
   end
 
-  describe "build/2 — values/0" do
+  describe "build/2 — names/0" do
     test "returns atoms in declaration order (sorted by integer value)" do
       enum = %ArkEnum{
         name: "Mode",
@@ -64,7 +64,7 @@ defmodule ExArk.Generate.EnumBuilderTest do
 
       mod = eval_enum(enum, TestEnumNs)
 
-      assert mod.values() == [:Uninitialized, :Manual, :Autonomous]
+      assert mod.names() == [:Uninitialized, :Manual, :Autonomous]
     end
 
     test "single-value enum" do
@@ -78,7 +78,58 @@ defmodule ExArk.Generate.EnumBuilderTest do
 
       mod = eval_enum(enum, TestEnumNs2)
 
-      assert mod.values() == [:OnlyValue]
+      assert mod.names() == [:OnlyValue]
+    end
+  end
+
+  describe "build/2 — values/0" do
+    test "returns integer discriminants in declaration order" do
+      enum = %ArkEnum{
+        name: "ModeInts",
+        object_namespace: "test",
+        enum_class: :uint8,
+        enum_type: :value,
+        values: %{Autonomous: 2, Manual: 1, Uninitialized: 0}
+      }
+
+      mod = eval_enum(enum, TestEnumIntNs)
+
+      assert mod.values() == [0, 1, 2]
+    end
+  end
+
+  describe "build/2 — value_for_name/1 and name_for_value/1" do
+    setup do
+      enum = %ArkEnum{
+        name: "StatusCode",
+        object_namespace: "test::lookup",
+        enum_class: :uint8,
+        enum_type: :value,
+        values: %{PathComplete: 0, ManualCancel: 1, PathBlocked: 2}
+      }
+
+      mod = eval_enum(enum, TestLookupNs)
+      {:ok, mod: mod}
+    end
+
+    test "value_for_name/1 returns the integer for a known name", %{mod: mod} do
+      assert mod.value_for_name(:PathComplete) == 0
+      assert mod.value_for_name(:ManualCancel) == 1
+      assert mod.value_for_name(:PathBlocked) == 2
+    end
+
+    test "value_for_name/1 returns nil for an unknown name", %{mod: mod} do
+      assert mod.value_for_name(:Unknown) == nil
+    end
+
+    test "name_for_value/1 returns the atom for a known integer", %{mod: mod} do
+      assert mod.name_for_value(0) == :PathComplete
+      assert mod.name_for_value(1) == :ManualCancel
+      assert mod.name_for_value(2) == :PathBlocked
+    end
+
+    test "name_for_value/1 returns nil for an unknown integer", %{mod: mod} do
+      assert mod.name_for_value(99) == nil
     end
   end
 

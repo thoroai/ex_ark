@@ -88,8 +88,12 @@ defmodule ExArk.GenerateTest do
   # ---------------------------------------------------------------------------
 
   describe "enum module" do
-    test "values/0 returns atoms in declaration order" do
-      assert T.Mode.values() == [:Off, :On, :Auto]
+    test "names/0 returns atoms in declaration order" do
+      assert T.Mode.names() == [:Off, :On, :Auto]
+    end
+
+    test "values/0 returns integer discriminants in declaration order" do
+      assert T.Mode.values() == [0, 1, 2]
     end
   end
 
