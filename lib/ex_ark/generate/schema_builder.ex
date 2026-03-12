@@ -30,10 +30,12 @@ defmodule ExArk.Generate.SchemaBuilder do
   as a compile-time constant and parsed once at module-load time.
   """
   @spec build(Schema.t(), Registry.t(), module(), String.t()) :: Macro.t()
+  # credo:disable-for-next-line Credo.Check.Refactor.CyclomaticComplexity
   def build(%Schema{} = schema, %Registry{} = registry, namespace, sub_registry_json) do
     module_name = Naming.schema_module(schema, namespace)
     ark_name = Schema.object_name(schema)
     moduledoc = DocBuilder.schema_moduledoc(schema, registry, namespace)
+    registry_term = sub_registry_json |> Registry.build!() |> :erlang.term_to_binary()
 
     all_fields = active_fields(schema)
 
@@ -52,7 +54,8 @@ defmodule ExArk.Generate.SchemaBuilder do
         alias ExArk.Registry
 
         @ark_registry_json unquote(sub_registry_json)
-        @ark_registry Registry.build!(@ark_registry_json)
+        @ark_registry_term unquote(registry_term)
+        @ark_registry_key {__MODULE__, :ark_registry}
         @ark_schema_name unquote(ark_name)
 
         @typedoc "Struct representation of `#{unquote(ark_name)}`."
@@ -73,6 +76,19 @@ defmodule ExArk.Generate.SchemaBuilder do
         """
         @spec __ark_schema_name() :: String.t()
         def __ark_schema_name, do: @ark_schema_name
+
+        @spec ark_registry() :: Registry.t()
+        defp ark_registry do
+          case :persistent_term.get(@ark_registry_key, :undefined) do
+            %Registry{} = registry ->
+              registry
+
+            :undefined ->
+              registry = :erlang.binary_to_term(@ark_registry_term)
+              :persistent_term.put(@ark_registry_key, registry)
+              registry
+          end
+        end
 
         # Suppress dialyzer warnings for the public API functions.
         # The generated implementation is correct at runtime, but dialyzer's
@@ -99,20 +115,20 @@ defmodule ExArk.Generate.SchemaBuilder do
         @doc "Serializes this struct to Ark binary format."
         @spec serialize_to_binary(t()) :: {:ok, binary()} | {:error, any()}
         def serialize_to_binary(%__MODULE__{} = data) do
-          ExArk.write_object_to_bytes(@ark_registry, @ark_schema_name, to_map(data))
+          ExArk.write_object_to_bytes(ark_registry(), @ark_schema_name, to_map(data))
         end
 
         @doc "Serializes this struct to Ark JSON format."
         @spec serialize_to_json(t()) :: {:ok, String.t()} | {:error, any()}
         def serialize_to_json(%__MODULE__{} = data) do
-          ExArk.write_object_to_json(@ark_registry, @ark_schema_name, to_map(data))
+          ExArk.write_object_to_json(ark_registry(), @ark_schema_name, to_map(data))
         end
 
         @doc "Deserializes an Ark binary payload into this struct."
         @spec deserialize_from_binary(binary()) :: {:ok, t()} | {:error, any()}
         def deserialize_from_binary(bytes) do
           with {:ok, map} <-
-                 ExArk.read_object_from_bytes(@ark_registry, @ark_schema_name, bytes) do
+                 ExArk.read_object_from_bytes(ark_registry(), @ark_schema_name, bytes) do
             {:ok, from_map(map)}
           end
         end
@@ -121,7 +137,7 @@ defmodule ExArk.Generate.SchemaBuilder do
         @spec deserialize_from_json(String.t()) :: {:ok, t()} | {:error, any()}
         def deserialize_from_json(json) do
           with {:ok, map} <-
-                 ExArk.read_object_from_json(@ark_registry, @ark_schema_name, json) do
+                 ExArk.read_object_from_json(ark_registry(), @ark_schema_name, json) do
             {:ok, from_map(map)}
           end
         end
