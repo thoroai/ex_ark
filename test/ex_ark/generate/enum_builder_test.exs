@@ -11,9 +11,15 @@ defmodule ExArk.Generate.EnumBuilderTest do
 
   # Evaluates the generated AST and returns the resulting module atom.
   defp eval_enum(enum, namespace) do
-    ast = EnumBuilder.build(enum, namespace)
-    Code.eval_quoted(ast)
-    Naming.enum_module(enum, namespace)
+    mod = Naming.enum_module(enum, namespace)
+
+    if Code.ensure_loaded?(mod) do
+      mod
+    else
+      ast = EnumBuilder.build(enum, namespace)
+      Code.eval_quoted(ast)
+      mod
+    end
   end
 
   # ---------------------------------------------------------------------------

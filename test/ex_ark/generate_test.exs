@@ -1,5 +1,6 @@
 defmodule ExArk.GenerateTest do
   use ExUnit.Case, async: true
+  import ExUnit.CaptureIO
 
   alias ExArk.GenerateTest.Ns.ExArk.Gen.Test, as: T
 
@@ -360,17 +361,18 @@ defmodule ExArk.GenerateTest do
     end
 
     test "all-schemas mode (no schemas: key) emits a warning" do
-      # We can't easily capture compile warnings, so just verify it compiles
-      # without raising and that modules are defined.
-      # The warning is emitted to stderr during compilation.
-      Code.eval_string("""
-      defmodule ExArk.GenerateTest.AllSchemas do
-        use ExArk.Generate,
-          registry: "test/fixtures/ir/generate.ir",
-          namespace: ExArk.GenerateTest.AllNs
-      end
-      """)
+      warning =
+        capture_io(:stderr, fn ->
+          Code.eval_string("""
+          defmodule ExArk.GenerateTest.AllSchemas do
+            use ExArk.Generate,
+              registry: "test/fixtures/ir/generate.ir",
+              namespace: ExArk.GenerateTest.AllNs
+          end
+          """)
+        end)
 
+      assert warning =~ "called without a `schemas:` filter"
       assert Code.ensure_loaded?(ExArk.GenerateTest.AllNs.ExArk.Gen.Test.Child)
     end
   end
