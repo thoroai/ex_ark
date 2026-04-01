@@ -43,6 +43,7 @@ defmodule ExArk.Generate.SchemaBuilder do
     to_map_body = build_to_map_body(all_fields, registry, namespace)
     from_map_body = build_from_map_body(all_fields, registry, namespace)
     variant_defps = build_variant_defps(all_fields, registry, namespace)
+    variant_types_defs = build_variant_types(all_fields, namespace, module_name)
     index_of_defs = build_index_of(all_fields, module_name)
 
     quote do
@@ -155,6 +156,7 @@ defmodule ExArk.Generate.SchemaBuilder do
         end
 
         unquote_splicing(variant_defps)
+        unquote_splicing(variant_types_defs)
         unquote_splicing(index_of_defs)
       end
     end
@@ -467,6 +469,50 @@ defmodule ExArk.Generate.SchemaBuilder do
 
   defp to_variant_fn(field_name), do: :"__to_variant_#{field_name}__"
   defp from_variant_fn(field_name), do: :"__from_variant_#{field_name}__"
+
+  # ---------------------------------------------------------------------------
+  # variant_types/1 public helper
+  # ---------------------------------------------------------------------------
+
+  defp build_variant_types(fields_with_nullable, namespace, module_name) do
+    variant_fields = Enum.filter(fields_with_nullable, fn {field, _optional?} -> field.type == "variant" end)
+
+    if Enum.empty?(variant_fields) do
+      []
+    else
+      variant_types_map =
+        Map.new(variant_fields, fn {field, _optional?} ->
+          field_atom = String.to_atom(field.name)
+          modules = Enum.map(field.variant_types, &Naming.ark_name_to_module(&1.object_type, namespace))
+
+          {field_atom, modules}
+        end)
+
+      escaped = Macro.escape(variant_types_map)
+
+      [
+        quote do
+          @doc """
+          Returns the allowed concrete variant types for `field_name`.
+
+          For generated schemas, this returns module names for known variant arms.
+          Raises `KeyError` if `field_name` is not a variant field.
+
+          ## Example
+
+              iex> #{unquote(module_name)}.variant_types!(:my_field)
+              [Some.Namespace.VariantA, Some.Namespace.VariantB]
+
+          """
+          @spec variant_types!(atom()) :: [module()]
+          def variant_types!(field_name) do
+            unquote(escaped)
+            |> Map.fetch!(field_name)
+          end
+        end
+      ]
+    end
+  end
 
   # ---------------------------------------------------------------------------
   # index_of/2 public helper

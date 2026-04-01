@@ -331,6 +331,31 @@ defmodule ExArk.GenerateTest do
   end
 
   # ---------------------------------------------------------------------------
+  # variant_types/1 — variant arm type lookup
+  # ---------------------------------------------------------------------------
+
+  describe "variant_types!/1" do
+    test "returns concrete module types for variant field" do
+      assert T.WithVariant.variant_types!(:payload) == [T.VariantA, T.VariantB]
+    end
+
+    test "works on optional variant field" do
+      assert T.WithOptionalVariant.variant_types!(:payload) == [T.VariantA, T.VariantB]
+    end
+
+    test "raises KeyError for unknown field name" do
+      assert_raise KeyError, fn ->
+        T.WithVariant.variant_types!(:no_such_field)
+      end
+    end
+
+    test "non-variant schemas do not expose variant_types!/1" do
+      refute function_exported?(T.Primitives, :variant_types!, 1)
+      refute function_exported?(T.WithObject, :variant_types!, 1)
+    end
+  end
+
+  # ---------------------------------------------------------------------------
   # Compile-time error cases — tested by checking raises in a string-eval
   # ---------------------------------------------------------------------------
 
