@@ -20,7 +20,7 @@ defmodule ExArk.Serdes.Json.ObjectTest do
 
     test "optional groups - deserializing old data without group fields", %{registry: registry} do
       # Simulate old schema data that doesn't have the group fields
-      old_json = Jason.encode!(%{"id" => "test-id", "value" => 42})
+      old_json = JSON.encode!(%{"id" => "test-id", "value" => 42})
       type = "ex_ark::test::ObjectWithOptionalGroup"
 
       # Should succeed - missing group should be treated as optional
@@ -36,7 +36,7 @@ defmodule ExArk.Serdes.Json.ObjectTest do
     test "optional groups - deserializing new data with group fields", %{registry: registry} do
       # New schema data that includes the group fields
       new_json =
-        Jason.encode!(%{
+        JSON.encode!(%{
           "id" => "test-id",
           "value" => 42,
           "group_field_1" => "group-value",
@@ -72,7 +72,7 @@ defmodule ExArk.Serdes.Json.ObjectTest do
 
     test "optional fields - missing optional fields", %{registry: registry} do
       # JSON with only required fields, no optional fields
-      json = Jason.encode!(%{"required_field" => "test", "another_required_field" => 42})
+      json = JSON.encode!(%{"required_field" => "test", "another_required_field" => 42})
       type = "ex_ark::test::ObjectWithOptionalFields"
 
       {:ok, deserialized} = ExArk.read_object_from_json(registry, type, json)
@@ -86,7 +86,7 @@ defmodule ExArk.Serdes.Json.ObjectTest do
 
     test "optional fields - present optional fields", %{registry: registry} do
       json =
-        Jason.encode!(%{
+        JSON.encode!(%{
           "required_field" => "test",
           "optional_string" => "optional-value",
           "optional_int" => 99,
@@ -107,7 +107,7 @@ defmodule ExArk.Serdes.Json.ObjectTest do
     test "optional fields - partial optional fields", %{registry: registry} do
       # Only one of the optional fields is present
       json =
-        Jason.encode!(%{
+        JSON.encode!(%{
           "required_field" => "test",
           "optional_string" => "optional-value",
           "another_required_field" => 42
