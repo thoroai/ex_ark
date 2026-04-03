@@ -7,6 +7,7 @@ defmodule ExArk.Generate.DependencyResolver do
   `ArgumentError` is raised at call time (i.e. at compile time of the module
   that invokes `use ExArk.Generate`).
   """
+  import ExArk.FieldConstants
 
   alias ExArk.Ir.ArkEnum
   alias ExArk.Ir.Field
@@ -68,7 +69,7 @@ defmodule ExArk.Generate.DependencyResolver do
   end
 
   defp walk_field(
-         %Field{type: "variant", variant_types: variant_types} = field,
+         %Field{type: variant(), variant_types: variant_types} = field,
          parent,
          registry,
          acc

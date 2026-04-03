@@ -8,6 +8,7 @@ defmodule ExArk.Generate.TypeSpec do
   Raises `ArgumentError` at call time (i.e. compile time of the module using
   `ExArk.Generate`) if a referenced schema or enum is absent from the registry.
   """
+  import ExArk.FieldConstants
 
   alias ExArk.Generate.Naming
   alias ExArk.Ir.Field
@@ -95,7 +96,7 @@ defmodule ExArk.Generate.TypeSpec do
   end
 
   defp base_type(
-         %Field{type: "variant", variant_types: variants} = field,
+         %Field{type: variant(), variant_types: variants} = field,
          registry,
          namespace
        ) do
