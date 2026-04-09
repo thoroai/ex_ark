@@ -1,5 +1,6 @@
 defmodule ExArk.Serdes do
   @moduledoc false
+  import ExArk.FieldConstants
 
   alias ExArk.Ir.Field
   alias ExArk.Registry
@@ -36,7 +37,7 @@ defmodule ExArk.Serdes do
     default_object(field.object_type, registry)
   end
 
-  defp default_complex(%Field{type: "variant"} = field, registry) do
+  defp default_complex(%Field{type: variant()} = field, registry) do
     object_type = hd(field.variant_types).object_type
     default_object(object_type, registry)
   end

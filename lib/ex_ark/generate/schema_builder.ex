@@ -14,6 +14,7 @@ defmodule ExArk.Generate.SchemaBuilder do
   Variant fields are handled by generated private functions named
   `__to_variant_FIELD__/1` and `__from_variant_FIELD__/1`.
   """
+  import ExArk.FieldConstants
 
   alias ExArk.Generate.DocBuilder
   alias ExArk.Generate.Naming
@@ -244,7 +245,7 @@ defmodule ExArk.Generate.SchemaBuilder do
     end
   end
 
-  defp to_map_convert(%Field{type: "variant"} = field, _registry, _namespace, val_ast) do
+  defp to_map_convert(%Field{type: variant()} = field, _registry, _namespace, val_ast) do
     fn_name = to_variant_fn(field.name)
     quote do: unquote(fn_name)(unquote(val_ast))
   end
@@ -315,7 +316,7 @@ defmodule ExArk.Generate.SchemaBuilder do
     end
   end
 
-  defp from_map_convert(%Field{type: "variant"} = field, _registry, _namespace, name_atom, nullable) do
+  defp from_map_convert(%Field{type: variant()} = field, _registry, _namespace, name_atom, nullable) do
     fn_name = from_variant_fn(field.name)
 
     if nullable do
@@ -419,7 +420,7 @@ defmodule ExArk.Generate.SchemaBuilder do
 
   defp build_variant_defps(fields_with_nullable, registry, namespace) do
     fields_with_nullable
-    |> Enum.filter(fn {field, _} -> field.type == "variant" end)
+    |> Enum.filter(fn {field, _} -> field.type == variant() end)
     |> Enum.flat_map(fn {field, _} -> variant_defp_pair(field, registry, namespace) end)
   end
 
@@ -475,7 +476,7 @@ defmodule ExArk.Generate.SchemaBuilder do
   # ---------------------------------------------------------------------------
 
   defp build_variant_types(fields_with_nullable, namespace, module_name) do
-    variant_fields = Enum.filter(fields_with_nullable, fn {field, _optional?} -> field.type == "variant" end)
+    variant_fields = Enum.filter(fields_with_nullable, fn {field, _optional?} -> field.type == variant() end)
 
     if Enum.empty?(variant_fields) do
       []
@@ -533,7 +534,7 @@ defmodule ExArk.Generate.SchemaBuilder do
   #
   defp build_index_of(fields_with_nullable, module_name) do
     variant_fields =
-      Enum.filter(fields_with_nullable, fn {field, _} -> field.type == "variant" end)
+      Enum.filter(fields_with_nullable, fn {field, _} -> field.type == variant() end)
 
     if Enum.empty?(variant_fields) do
       []

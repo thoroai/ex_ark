@@ -6,6 +6,7 @@ defmodule ExArk.Generate.DocBuilder do
   plain strings that are embedded as compile-time constants in the generated
   code, so `h/1` in IEx and ExDoc both pick them up automatically.
   """
+  import ExArk.FieldConstants
 
   alias ExArk.Generate.Naming
   alias ExArk.Ir.ArkEnum
@@ -115,7 +116,7 @@ defmodule ExArk.Generate.DocBuilder do
 
   # Variant types are listed in a dedicated sub-section so the Type column
   # stays narrow regardless of how many variant types a field has.
-  defp table_type_cell(%Field{type: "variant"}, _registry, _namespace), do: "variant"
+  defp table_type_cell(%Field{type: variant()}, _registry, _namespace), do: variant()
   defp table_type_cell(field, registry, namespace), do: field_type_string_inner(field, registry, namespace)
 
   defp field_notes(true, suffix), do: "optional#{suffix}"
@@ -138,7 +139,7 @@ defmodule ExArk.Generate.DocBuilder do
   end
 
   # Returns a detail block for a field, or nil if none is needed.
-  defp field_detail_block(%Field{type: "variant"} = field, registry, namespace) do
+  defp field_detail_block(%Field{type: variant()} = field, registry, namespace) do
     items =
       Enum.map(field.variant_types, fn v ->
         if Map.has_key?(registry.schemas, v.object_type) do
@@ -232,7 +233,7 @@ defmodule ExArk.Generate.DocBuilder do
   end
 
   defp field_type_string_inner(
-         %Field{type: "variant", variant_types: variants},
+         %Field{type: variant(), variant_types: variants},
          registry,
          namespace
        ) do
