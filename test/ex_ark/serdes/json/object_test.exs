@@ -154,6 +154,27 @@ defmodule ExArk.Serdes.Json.ObjectTest do
       assert deserialized == data
     end
 
+    test "removed fields - serialization skips missing removed field", %{registry: registry} do
+      data = %{required_field: "test"}
+      type = "ex_ark::test::ObjectWithRemovedField"
+
+      {:ok, serialized} = ExArk.write_object_to_json(registry, type, data)
+      decoded = JSON.decode!(serialized)
+
+      assert decoded["required_field"] == "test"
+      refute Map.has_key?(decoded, "removed_field")
+    end
+
+    test "removed fields - deserialization ignores removed field", %{registry: registry} do
+      json = JSON.encode!(%{"required_field" => "test", "removed_field" => 42})
+      type = "ex_ark::test::ObjectWithRemovedField"
+
+      {:ok, deserialized} = ExArk.read_object_from_json(registry, type, json)
+
+      assert deserialized.required_field == "test"
+      refute Map.has_key?(deserialized, :removed_field)
+    end
+
     test "final roundtrip", %{registry: registry} do
       data = %{field: %{"key1" => 42, "key2" => 74}}
       type_final = "ex_ark::test::FinalObject"

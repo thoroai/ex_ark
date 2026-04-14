@@ -172,6 +172,28 @@
         "filename": "test/ex_ark/fixtures/objects.ir",
         "line_number": 1
       }
+    },
+    {
+      "name": "ObjectWithRemovedField",
+      "object_namespace": "ex_ark::test",
+      "fields": [
+        {
+          "name": "required_field",
+          "type": "string"
+        },
+        {
+          "name": "removed_field",
+          "type": "int32",
+          "attributes": {
+            "removed": true
+          }
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "test/ex_ark/fixtures/objects.ir",
+        "line_number": 1
+      }
     }
   ],
   "enums": []

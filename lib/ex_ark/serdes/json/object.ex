@@ -117,7 +117,7 @@ defmodule ExArk.Serdes.Json.Object do
   end
 
   defp maybe_serialize_field(nil, acc, field, registry) do
-    if Field.optional?(field) do
+    if Field.optional?(field) || Field.removed?(field) do
       {:ok, acc}
     else
       default = Serdes.default_value(field, registry)
