@@ -38,13 +38,13 @@ defmodule ExArk.Serdes.Json.Object do
     present = Map.has_key?(reader.decoded, field.name)
 
     cond do
+      removed && !present ->
+        {:ok, %ReaderResult{reified: reified}}
+
       !optional && !present ->
         {:error, :missing_field, {field}, %ReaderResult{}}
 
       optional && !present ->
-        {:ok, %ReaderResult{reified: reified}}
-
-      removed ->
         {:ok, %ReaderResult{reified: reified}}
 
       true ->

@@ -165,8 +165,18 @@ defmodule ExArk.Serdes.Json.ObjectTest do
       refute Map.has_key?(decoded, "removed_field")
     end
 
-    test "removed fields - deserialization ignores removed field", %{registry: registry} do
+    test "removed fields - deserialization keeps removed field when present", %{registry: registry} do
       json = JSON.encode!(%{"required_field" => "test", "removed_field" => 42})
+      type = "ex_ark::test::ObjectWithRemovedField"
+
+      {:ok, deserialized} = ExArk.read_object_from_json(registry, type, json)
+
+      assert deserialized.required_field == "test"
+      assert deserialized.removed_field == 42
+    end
+
+    test "removed fields - deserialization succeeds when removed field is missing", %{registry: registry} do
+      json = JSON.encode!(%{"required_field" => "test"})
       type = "ex_ark::test::ObjectWithRemovedField"
 
       {:ok, deserialized} = ExArk.read_object_from_json(registry, type, json)
