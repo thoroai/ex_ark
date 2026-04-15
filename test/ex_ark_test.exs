@@ -1,8 +1,5 @@
 defmodule ExArkTest do
-  use ExUnit.Case
-  doctest ExArk
+  use ExUnit.Case, async: true
 
-  test "placeholder" do
-    assert true
-  end
+  doctest ExArk
 end
