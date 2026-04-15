@@ -4,7 +4,7 @@ defmodule ExArk.MixProject do
   def project do
     [
       app: :ex_ark,
-      version: "0.5.1",
+      version: version!(),
       elixir: "~> 1.19",
       start_permanent: Mix.env() == :prod,
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -80,5 +80,15 @@ defmodule ExArk.MixProject do
         "dialyzer"
       ]
     ]
+  end
+
+  defp version! do
+    with {version, _exit_status} <- System.cmd("git", ~w[describe --tags --abbrev=0], stderr_to_stdout: true),
+         {:ok, version} <- version |> String.trim_trailing("\n") |> Version.parse() do
+      to_string(version)
+    else
+      _ ->
+        raise "Could not determine version."
+    end
   end
 end
