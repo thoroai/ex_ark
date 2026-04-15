@@ -38,7 +38,7 @@ defmodule ExArk.Serdes.Json.Object do
     present = Map.has_key?(reader.decoded, field.name)
 
     cond do
-      removed && !present ->
+      removed ->
         {:ok, %ReaderResult{reified: reified}}
 
       !optional && !present ->
