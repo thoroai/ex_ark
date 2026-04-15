@@ -38,13 +38,13 @@ defmodule ExArk.Serdes.Json.Object do
     present = Map.has_key?(reader.decoded, field.name)
 
     cond do
+      removed && !present ->
+        {:ok, %ReaderResult{reified: reified}}
+
       !optional && !present ->
         {:error, :missing_field, {field}, %ReaderResult{}}
 
       optional && !present ->
-        {:ok, %ReaderResult{reified: reified}}
-
-      removed ->
         {:ok, %ReaderResult{reified: reified}}
 
       true ->
@@ -117,7 +117,7 @@ defmodule ExArk.Serdes.Json.Object do
   end
 
   defp maybe_serialize_field(nil, acc, field, registry) do
-    if Field.optional?(field) do
+    if Field.optional?(field) || Field.removed?(field) do
       {:ok, acc}
     else
       default = Serdes.default_value(field, registry)
