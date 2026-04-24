@@ -5,6 +5,8 @@ defmodule ExArk.Generate.SchemaBuilder do
   Each generated schema module provides:
 
   - A `TypedStruct`-backed struct with correctly-typed fields
+  - `@derive Jason.Encoder` so structs can be passed to `Jason.encode/1` (e.g. Phoenix
+    or API layers); nested generated structs derive the protocol the same way
   - `serialize_to_binary/1`, `serialize_to_json/1`
   - `deserialize_from_binary/1`, `deserialize_from_json/1`
   - `__ark_schema_name/0` — returns the fully-qualified Ark schema name
@@ -54,6 +56,8 @@ defmodule ExArk.Generate.SchemaBuilder do
         use TypedStruct
 
         alias ExArk.Registry
+
+        @derive Jason.Encoder
 
         @ark_registry_json unquote(sub_registry_json)
         @ark_registry_term unquote(registry_term)

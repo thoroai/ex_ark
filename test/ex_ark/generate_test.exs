@@ -4,27 +4,8 @@ defmodule ExArk.GenerateTest do
 
   alias ExArk.GenerateTest.Ns.ExArk.Gen.Test, as: T
 
-  # ---------------------------------------------------------------------------
-  # Compile-time module generation
-  # We define test modules at module-evaluation time (not inside test blocks)
-  # so that the generated struct modules are available for the tests.
-  # ---------------------------------------------------------------------------
-
-  defmodule Generated do
-    use ExArk.Generate,
-      registry: "test/fixtures/ir/generate.ir",
-      namespace: ExArk.GenerateTest.Ns,
-      schemas: [
-        "ex_ark::gen::test::Primitives",
-        "ex_ark::gen::test::WithObject",
-        "ex_ark::gen::test::WithOptionals",
-        "ex_ark::gen::test::WithGroups",
-        "ex_ark::gen::test::WithVariant",
-        "ex_ark::gen::test::WithOptionalVariant",
-        "ex_ark::gen::test::WithCollections",
-        "ex_ark::gen::test::WithEnum"
-      ]
-  end
+  # Generated schema modules: see `test/support/ex_ark_generate_test_fixtures.ex`
+  # (must compile from test/support so Jason.Encoder @derive runs before consolidation).
 
   # ---------------------------------------------------------------------------
   # Module existence
@@ -81,6 +62,16 @@ defmodule ExArk.GenerateTest do
     test "__ark_schema_name/0 returns correct ark name" do
       assert T.Primitives.__ark_schema_name() == "ex_ark::gen::test::Primitives"
       assert T.Child.__ark_schema_name() == "ex_ark::gen::test::Child"
+    end
+
+    test "generated structs implement Jason.Encoder (including nested structs)" do
+      child = struct!(T.Child, value: 42, label: "c")
+      s = struct!(T.WithObject, id: "root", child: child)
+
+      assert {:ok, json} = Jason.encode(s)
+      map = Jason.decode!(json)
+      assert map["id"] == "root"
+      assert map["child"] == %{"value" => 42, "label" => "c"}
     end
   end
 

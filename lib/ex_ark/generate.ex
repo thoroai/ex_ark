@@ -38,7 +38,8 @@ defmodule ExArk.Generate do
   For each schema a module is defined with:
 
   - A struct with typed fields (required fields are enforced; optional and
-    group fields default to `nil`)
+    group fields default to `nil`), with `Jason.Encoder` derived for all fields
+    so `Jason.encode/1` works on values and nested generated structs
   - `serialize_to_binary/1` -> `{:ok, binary()} | {:error, any()}`
   - `serialize_to_json/1` -> `{:ok, String.t()} | {:error, any()}`
   - `deserialize_from_binary/1` -> `{:ok, t()} | {:error, any()}`
