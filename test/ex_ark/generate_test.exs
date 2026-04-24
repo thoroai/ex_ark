@@ -5,28 +5,6 @@ defmodule ExArk.GenerateTest do
   alias ExArk.GenerateTest.Ns.ExArk.Gen.Test, as: T
 
   # ---------------------------------------------------------------------------
-  # Compile-time module generation
-  # We define test modules at module-evaluation time (not inside test blocks)
-  # so that the generated struct modules are available for the tests.
-  # ---------------------------------------------------------------------------
-
-  defmodule Generated do
-    use ExArk.Generate,
-      registry: "test/fixtures/ir/generate.ir",
-      namespace: ExArk.GenerateTest.Ns,
-      schemas: [
-        "ex_ark::gen::test::Primitives",
-        "ex_ark::gen::test::WithObject",
-        "ex_ark::gen::test::WithOptionals",
-        "ex_ark::gen::test::WithGroups",
-        "ex_ark::gen::test::WithVariant",
-        "ex_ark::gen::test::WithOptionalVariant",
-        "ex_ark::gen::test::WithCollections",
-        "ex_ark::gen::test::WithEnum"
-      ]
-  end
-
-  # ---------------------------------------------------------------------------
   # Module existence
   # ---------------------------------------------------------------------------
 
@@ -282,6 +260,17 @@ defmodule ExArk.GenerateTest do
       assert {:ok, result} = T.WithObject.deserialize_from_json(json)
       assert result.id == "json-test"
       assert %T.Child{value: 3, label: "three"} = result.child
+    end
+  end
+
+  describe "standard JSON encoding" do
+    test "generated structs derive JSON.Encoder" do
+      s = %T.WithObject{id: "encode-test", child: %T.Child{value: 3, label: "three"}}
+
+      assert %{
+               "id" => "encode-test",
+               "child" => %{"value" => 3, "label" => "three"}
+             } = s |> JSON.encode!() |> JSON.decode!()
     end
   end
 

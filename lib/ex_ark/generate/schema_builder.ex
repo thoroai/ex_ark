@@ -39,6 +39,7 @@ defmodule ExArk.Generate.SchemaBuilder do
     registry_term = sub_registry_json |> Registry.build!() |> :erlang.term_to_binary()
 
     all_fields = active_fields(schema)
+    field_names = Enum.map(all_fields, fn {field, _nullable} -> String.to_atom(field.name) end)
 
     field_defs = build_field_defs(all_fields, registry, namespace)
     to_map_body = build_to_map_body(all_fields, registry, namespace)
@@ -60,6 +61,7 @@ defmodule ExArk.Generate.SchemaBuilder do
         @ark_registry_key {__MODULE__, :ark_registry}
         @ark_schema_name unquote(ark_name)
 
+        @derive {JSON.Encoder, only: unquote(field_names)}
         @typedoc "Struct representation of `#{unquote(ark_name)}`."
         typedstruct do
           (unquote_splicing(field_defs))
