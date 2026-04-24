@@ -50,6 +50,7 @@ defmodule ExArk.MixProject do
   defp deps do
     [
       {:typedstruct, "~> 0.5"},
+      {:jason, "~> 1.4"},
       {:ecto, "~> 3.13"},
       {:cldr_utils, "~> 2.0"},
       # Testing and Development Tools
