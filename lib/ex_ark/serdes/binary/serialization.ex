@@ -41,7 +41,7 @@ defmodule ExArk.Serdes.Binary.Serialization do
 
     with {:ok, object_registry} <- Registry.build_from(registry, schema),
          {:ok, stream} <- Primitives.write(:string, Schema.object_name(schema), stream),
-         {:ok, json_registry} <- Registry.to_json(object_registry),
+         {:ok, json_registry} <- Registry.to_minimal_json(object_registry),
          {:ok, stream} <- Primitives.write(:string, json_registry, stream),
          trailer <- FileTrailer.write(content_end, stream.offset - content_end) do
       {:ok, OutputStream.append(stream, trailer)}

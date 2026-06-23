@@ -168,6 +168,39 @@ defmodule ExArk.Registry do
       {:error, :bad_registry}
   end
 
+  @doc """
+  Serialize a registry to the minimal JSON needed to reconstruct embedded
+  generic object schemas.
+
+  This strips source metadata and comments while preserving the schema, enum,
+  group, field, and attribute information required for deserialization.
+  """
+  @spec to_minimal_json(t()) :: {:ok, binary()} | {:error, any()}
+  def to_minimal_json(%__MODULE__{} = registry) do
+    schemas =
+      registry.schemas
+      |> Map.values()
+      |> Enum.sort_by(&Schema.object_name/1)
+      |> Enum.map(&Schema.to_map/1)
+      |> Enum.map(&strip_ir_metadata/1)
+
+    enums =
+      registry.enums
+      |> Map.values()
+      |> Enum.sort_by(&ArkEnum.object_name/1)
+      |> Enum.map(&ArkEnum.to_map/1)
+      |> Enum.map(&strip_ir_metadata/1)
+
+    result =
+      %{"schemas" => schemas, "enums" => enums}
+      |> JSON.encode!()
+
+    {:ok, result}
+  rescue
+    _error ->
+      {:error, :bad_registry}
+  end
+
   defp merge(registry, new) do
     cond do
       duplicate?(registry.schemas, new.schemas) ->
@@ -265,4 +298,16 @@ defmodule ExArk.Registry do
       :error -> raise ArgumentError, "missing enum dependency: #{inspect(name)}"
     end
   end
+
+  defp strip_ir_metadata(%{} = map) do
+    map
+    |> Map.delete("comments")
+    |> Map.delete("source_location")
+    |> Map.new(fn {key, value} -> {key, strip_ir_metadata(value)} end)
+  end
+
+  defp strip_ir_metadata([_head | _] = list) when is_list(list),
+    do: Enum.map(list, &strip_ir_metadata/1)
+
+  defp strip_ir_metadata(other), do: other
 end
