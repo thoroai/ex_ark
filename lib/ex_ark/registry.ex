@@ -83,12 +83,25 @@ defmodule ExArk.Registry do
   object via `ExArk.write_generic_object_to_bytes/3`.
   """
   @spec build_from(t(), Schema.t()) :: {:ok, any()} | {:error, any()}
-  def build_from(%__MODULE__{} = registry, %Schema{} = _schema) do
-    # TODO: re-build the registry to include _only_ the needed transitive
-    # dependencies, including the top level schema itself. For now, just
-    # return the whole registry (which is correct, but potentially terribly
-    # inefficient if we loaded all known schemas into it).
-    {:ok, registry}
+  def build_from(%__MODULE__{} = registry, %Schema{} = schema) do
+    try do
+      with {:ok, schema_names, enum_names} <- dependency_closure(registry, [Schema.object_name(schema)]) do
+        schemas =
+          schema_names
+          |> Enum.map(&fetch_schema!(registry, &1))
+          |> Map.new(&{Schema.object_name(&1), &1})
+
+        enums =
+          enum_names
+          |> Enum.map(&fetch_enum!(registry, &1))
+          |> Map.new(&{ArkEnum.object_name(&1), &1})
+
+        {:ok, %__MODULE__{schemas: schemas, enums: enums}}
+      end
+    rescue
+      e in ArgumentError ->
+        {:error, e.message}
+    end
   end
 
   @doc """
@@ -133,8 +146,17 @@ defmodule ExArk.Registry do
   """
   @spec to_json(t()) :: {:ok, binary()} | {:error, any()}
   def to_json(%__MODULE__{} = registry) do
-    schemas = registry.schemas |> Map.values() |> Enum.map(&Schema.to_map/1)
-    enums = registry.enums |> Map.values() |> Enum.map(&ArkEnum.to_map/1)
+    schemas =
+      registry.schemas
+      |> Map.values()
+      |> Enum.sort_by(&Schema.object_name/1)
+      |> Enum.map(&Schema.to_map/1)
+
+    enums =
+      registry.enums
+      |> Map.values()
+      |> Enum.sort_by(&ArkEnum.object_name/1)
+      |> Enum.map(&ArkEnum.to_map/1)
 
     result =
       %{"schemas" => schemas, "enums" => enums}
@@ -165,4 +187,82 @@ defmodule ExArk.Registry do
   end
 
   defp duplicate?(a, b), do: !Enum.empty?(Map.intersect(a, b))
+
+  defp dependency_closure(%__MODULE__{} = registry, root_schema_names) do
+    walk_queue(root_schema_names, registry, MapSet.new(), MapSet.new(), MapSet.new())
+  end
+
+  defp walk_queue([], _registry, _seen_schemas, seen_enums, order_schemas) do
+    {:ok, MapSet.to_list(order_schemas), MapSet.to_list(seen_enums)}
+  end
+
+  defp walk_queue([schema_name | rest], registry, seen_schemas, seen_enums, order_schemas) do
+    cond do
+      MapSet.member?(seen_schemas, schema_name) ->
+        walk_queue(rest, registry, seen_schemas, seen_enums, order_schemas)
+
+      true ->
+        schema = fetch_schema!(registry, schema_name)
+        {schema_deps, enum_deps} = schema_dependencies(schema)
+
+        seen_schemas = MapSet.put(seen_schemas, schema_name)
+        order_schemas = MapSet.put(order_schemas, schema_name)
+        seen_enums = Enum.reduce(enum_deps, seen_enums, &MapSet.put(&2, &1))
+        queue = Enum.reduce(schema_deps, rest, fn dep, acc -> [dep | acc] end)
+
+        walk_queue(queue, registry, seen_schemas, seen_enums, order_schemas)
+    end
+  end
+
+  defp schema_dependencies(%Schema{} = schema) do
+    schema.fields
+    |> Kernel.++(Enum.flat_map(schema.groups, & &1.fields))
+    |> Enum.reduce({MapSet.new(), MapSet.new()}, fn field, {schemas, enums} ->
+      collect_field_dependencies(field, schemas, enums)
+    end)
+    |> then(fn {schemas, enums} -> {MapSet.to_list(schemas), MapSet.to_list(enums)} end)
+  end
+
+  defp collect_field_dependencies(%ExArk.Ir.Field{type: "object", object_type: object_type}, schemas, enums) do
+    {MapSet.put(schemas, object_type), enums}
+  end
+
+  defp collect_field_dependencies(%ExArk.Ir.Field{type: "enum", object_type: object_type}, schemas, enums) do
+    {schemas, MapSet.put(enums, object_type)}
+  end
+
+  defp collect_field_dependencies(%ExArk.Ir.Field{type: "variant", variant_types: variants}, schemas, enums) do
+    Enum.reduce(variants, {schemas, enums}, fn variant, {schemas, enums} ->
+      {MapSet.put(schemas, variant.object_type), enums}
+    end)
+  end
+
+  defp collect_field_dependencies(%ExArk.Ir.Field{type: "array", ctr_value_type: ctr_value_type}, schemas, enums) do
+    collect_field_dependencies(ctr_value_type, schemas, enums)
+  end
+
+  defp collect_field_dependencies(%ExArk.Ir.Field{type: "arraylist", ctr_value_type: ctr_value_type}, schemas, enums) do
+    collect_field_dependencies(ctr_value_type, schemas, enums)
+  end
+
+  defp collect_field_dependencies(%ExArk.Ir.Field{type: "dictionary", ctr_key_type: ctr_key_type, ctr_value_type: ctr_value_type}, schemas, enums) do
+    {schemas, enums} = collect_field_dependencies(ctr_key_type, schemas, enums)
+    collect_field_dependencies(ctr_value_type, schemas, enums)
+  end
+
+  defp collect_field_dependencies(%ExArk.Ir.Field{}, schemas, enums), do: {schemas, enums}
+
+  defp fetch_schema!(%__MODULE__{} = registry, name) do
+    case Map.fetch(registry.schemas, name) do
+      {:ok, schema} -> schema
+      :error -> raise ArgumentError, "missing schema dependency: #{inspect(name)}"
+    end
+  end
+
+  defp fetch_enum!(%__MODULE__{} = registry, name) do
+    case Map.fetch(registry.enums, name) do
+      {:ok, enum} -> enum
+      :error -> raise ArgumentError, "missing enum dependency: #{inspect(name)}"
+    end
+  end
 end
