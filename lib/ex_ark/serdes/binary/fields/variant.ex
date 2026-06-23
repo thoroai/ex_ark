@@ -92,12 +92,14 @@ defmodule ExArk.Serdes.Binary.Fields.Variant do
 
   defp update_length(%OutputStream{} = stream, start_offset) do
     length = stream.offset - start_offset
-    <<prefix::binary-size(start_offset - 4), _old::little-unsigned-integer-size(32), rest::binary>> = stream.bytes
+    prefix_size = start_offset - 4
+
+    <<prefix::binary-size(^prefix_size), _old::little-unsigned-integer-size(32), rest::binary>> = stream.bytes
 
     {:ok,
      %OutputStream{
        stream
-       | bytes: <<prefix::binary-size(start_offset - 4), length::little-unsigned-integer-size(32), rest::binary>>
+       | bytes: <<prefix::binary-size(prefix_size), length::little-unsigned-integer-size(32), rest::binary>>
      }}
   end
 end

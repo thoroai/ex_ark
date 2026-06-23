@@ -27,7 +27,7 @@ defmodule ExArk.Serdes.Binary.InputStream do
 
   @spec advance(t(), non_neg_integer()) :: t()
   def advance(%__MODULE__{} = stream, count) do
-    <<_drop::binary-size(count), rest::binary>> = stream.bytes
+    <<_drop::binary-size(^count), rest::binary>> = stream.bytes
     %__MODULE__{stream | bytes: rest, offset: stream.offset + count}
   end
 end

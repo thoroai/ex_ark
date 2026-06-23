@@ -39,7 +39,9 @@ defmodule ExArk.Serdes do
 
   defp default_complex(%Field{type: variant()} = field, registry) do
     object_type = hd(field.variant_types).object_type
+
     default_object(object_type, registry)
+    |> Types.add_type(object_type)
   end
 
   defp default_complex(%Field{type: "enum"} = field, registry) do
