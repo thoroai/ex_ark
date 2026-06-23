@@ -59,10 +59,14 @@ defmodule ExArk.Serdes do
   defp default_object(object_type, %Registry{} = registry) do
     schema = registry.schemas[object_type]
 
-    schema.fields
+    schema_fields(schema)
     |> Enum.map(fn field -> {String.to_atom(field.name), default_value(field, registry)} end)
     |> Map.new()
     |> Types.add_type(schema)
+  end
+
+  defp schema_fields(%{fields: fields, groups: groups}) do
+    fields ++ Enum.flat_map(groups, & &1.fields)
   end
 
   defp get_default_enum_value([] = _values), do: 0
