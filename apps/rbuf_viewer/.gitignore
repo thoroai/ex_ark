@@ -1,0 +1,62 @@
+# Ignore build artifacts
+/_build/
+
+# Ignore test coverage reports
+/cover/
+
+# Ignore dependencies directory
+/deps/
+
+# Ignore generated documentation
+/doc/
+
+# Ignore .fetch files in case you like to edit your project deps locally
+/.fetch
+
+# Ignore Erlang crash dumps
+erl_crash.dump
+
+# Ignore Elixir archive files
+*.ez
+
+# Ignore compiled beam files
+*.beam
+
+# Ignore Lexical internal files
+.lexical/
+
+# Ignore ElixirLS internal files
+.elixir_ls/
+
+# Ignore direnv environment file
+.envrc
+
+# Ignore local environment variable files, e.g., for Docker
+.env
+
+# Ignore Node.js dependencies
+/assets/node_modules/
+
+/docs/node_modules/
+
+# Ignore custom CSS file (generated file is localted in priv/static/assets/app.css)
+/assets/css/custom.css
+
+# Ignore css map
+/assets/css/custom.css.map
+
+# Ignore all files in the static assets directory
+/priv/static/assets/*
+
+# Ignore Jetbrains Environment
+.idea
+
+# Ignore PLT for dialyzer
+/priv/plts/*.plt
+/priv/plts/*.plt.hash
+
+# Ignore tzdata
+/priv/tzdata*
+
+# Ignore Localize locale cache (downloaded at build time via `mix localize.download_locales`)
+/priv/localize/
