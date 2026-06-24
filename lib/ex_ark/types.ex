@@ -98,6 +98,7 @@ defmodule ExArk.Types do
            ],
       do: 0
 
+  def default_value(:bool), do: false
   def default_value(:byte_buffer), do: <<>>
   def default_value(:guid), do: "00000000-0000-0000-0000-000000000000"
   def default_value(:string), do: ""

@@ -26,4 +26,8 @@ defmodule ExArk.SerdesTest do
 
     assert Serdes.default_value(field, registry) == 1
   end
+
+  test "default_value for a bool is false" do
+    assert ExArk.Types.default_value(:bool) == false
+  end
 end
