@@ -5,7 +5,7 @@ defmodule ExArk.SerdesTest do
   alias ExArk.Serdes
 
   setup do
-    registry = ExArk.load_schemas!("test/fixtures/ir/objects.ir")
+    registry = ExArk.load_schemas!(["test/fixtures/ir/objects.ir", "test/fixtures/ir/enums.ir"])
     {:ok, %{registry: registry}}
   end
 
@@ -19,5 +19,11 @@ defmodule ExArk.SerdesTest do
              group_field_1: "",
              group_field_2: 0
            } = Serdes.default_value(field, registry)
+  end
+
+  test "default_value for an enum uses the lowest discriminant", %{registry: registry} do
+    field = %Field{type: "enum", object_type: "ex_ark::test::ValueEnum"}
+
+    assert Serdes.default_value(field, registry) == 1
   end
 end

@@ -71,8 +71,8 @@ defmodule ExArk.Serdes do
 
   defp get_default_enum_value([] = _values), do: 0
 
-  defp get_default_enum_value(values) do
-    [{_key, value} | _rest] = values
-    value
-  end
+  defp get_default_enum_value(values) when is_map(values),
+    do: values |> Map.values() |> get_default_enum_value()
+
+  defp get_default_enum_value(values) when is_list(values), do: Enum.min(values)
 end
