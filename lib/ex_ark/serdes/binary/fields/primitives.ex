@@ -268,7 +268,7 @@ defmodule ExArk.Serdes.Binary.Fields.Primitives do
   defp encode_double(:positive_infinity), do: <<0 <<< 63 ||| 0x7FF <<< 52::little-unsigned-size(64)>>
   defp encode_double(:negative_infinity), do: <<1 <<< 63 ||| 0x7FF <<< 52::little-unsigned-size(64)>>
   defp encode_double(:nan), do: <<0 <<< 63 ||| 0x7FF <<< 52 ||| 1 <<< 51::little-unsigned-size(64)>>
-  defp encode_double(value) when is_float(value), do: <<value::little-float-size(64)>>
+  defp encode_double(value) when is_number(value), do: <<value * 1.0::little-float-size(64)>>
 
   defp decode_float(0, 0xFF, 0, _bytes), do: :positive_infinity
   defp decode_float(1, 0xFF, 0, _bytes), do: :negative_infinity
@@ -278,5 +278,5 @@ defmodule ExArk.Serdes.Binary.Fields.Primitives do
   defp encode_float(:positive_infinity), do: <<0 <<< 31 ||| 0xFF <<< 23::little-unsigned-size(32)>>
   defp encode_float(:negative_infinity), do: <<1 <<< 31 ||| 0xFF <<< 23::little-unsigned-size(32)>>
   defp encode_float(:nan), do: <<0 <<< 31 ||| 0xFF <<< 23 ||| 1 <<< 22::little-unsigned-size(32)>>
-  defp encode_float(value) when is_float(value), do: <<value::little-float-size(32)>>
+  defp encode_float(value) when is_number(value), do: <<value * 1.0::little-float-size(32)>>
 end

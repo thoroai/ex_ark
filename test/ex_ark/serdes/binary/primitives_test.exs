@@ -132,6 +132,11 @@ defmodule ExArk.Serdes.Binary.Fields.PrimitivesTest do
       {:ok, %OutputStream{bytes: bytes}} = Primitives.write(:double, -3.141592653589793, %OutputStream{})
       assert bytes == <<24, 45, 68, 84, 251, 33, 9, 192>>
     end
+
+    test "write/3 double with integer zero sets proper bytes" do
+      {:ok, %OutputStream{bytes: bytes}} = Primitives.write(:double, 0, %OutputStream{})
+      assert bytes == <<0, 0, 0, 0, 0, 0, 0, 0>>
+    end
   end
 
   describe "deserialize unsigned integers" do
