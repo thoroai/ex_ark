@@ -29,6 +29,26 @@ defmodule RbufViewer.Editor.DocumentTest do
              document.object.task_instructions
   end
 
+  test "update_value accepts steady_time_point fields as integers" do
+    registry = %Registry{
+      schemas: %{
+        "Example" => %Schema{
+          name: "Example",
+          object_namespace: nil,
+          fields: [%Field{name: "timestamp", type: "steady_time_point"}],
+          groups: [],
+          attributes: []
+        }
+      }
+    }
+
+    document = Document.from_schema(registry, "Example")
+
+    {:ok, document} = Document.update_value(document, [{:field, "timestamp"}], "123456")
+
+    assert document.object.timestamp == 123_456
+  end
+
   defp registry do
     %Registry{
       schemas: %{

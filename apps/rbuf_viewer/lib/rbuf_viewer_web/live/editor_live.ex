@@ -220,10 +220,6 @@ defmodule RbufViewerWeb.EditorLive do
   defp field_hint(%{type: "enum", object_type: object_type}) when is_binary(object_type),
     do: "enum → #{object_type}"
 
-  defp field_hint(%{type: "variant", variant_types: variants}) when is_list(variants) do
-    "variant → #{Enum.map_join(variants, ", ", & &1.object_type)}"
-  end
-
   defp field_hint(%{type: "array", ctr_value_type: ctr_value_type}),
     do: "array of #{field_label(ctr_value_type)}"
 
@@ -345,7 +341,7 @@ defmodule RbufViewerWeb.EditorLive do
         <%= if field_hint(@field) do %>
           <div class="field-hint"><%= field_hint(@field) %></div>
         <% end %>
-        <%= if primitive_type?(@field.type) do %>
+        <%= if inline_editable_type?(@field.type) do %>
           <.primitive_editor document={@document} field={@field} value={@value} path={@path} />
         <% else %>
           <div class="field-summary"><%= @summary %></div>
@@ -407,7 +403,7 @@ defmodule RbufViewerWeb.EditorLive do
   defp primitive_editor_value(%{type: "bool"}, value), do: if(value, do: "true", else: "false")
 
   defp primitive_editor_value(%{type: t}, value)
-       when t in ~w(uint8 uint16 uint32 uint64 int8 int16 int32 int64 float double string guid),
+       when t in ~w(uint8 uint16 uint32 uint64 int8 int16 int32 int64 float double steady_time_point system_time_point string guid),
        do: to_string(value || "")
 
   defp primitive_editor_value(%{type: "enum"}, value) when is_list(value),
@@ -485,16 +481,9 @@ defmodule RbufViewerWeb.EditorLive do
     selected = Map.get(assigns.value || %{}, :__ark_schema)
     options = variant_options(assigns.field, assigns.document.registry)
 
-    selected_label =
-      case Enum.find(options, fn {value, _label} -> value == selected end) do
-        {_, label} -> label
-        nil -> "unset"
-      end
-
     assigns =
       assign(assigns,
         selected: selected,
-        selected_label: selected_label,
         options: options
       )
 
@@ -502,7 +491,6 @@ defmodule RbufViewerWeb.EditorLive do
       <div class="schema-scope">
         <div class="scope-pill">Variant</div>
         <div class="scope-title"><%= field_label(@field) %></div>
-        <div class="scope-meta"><%= @selected_label %></div>
       </div>
 
       <div class="variant-picker">
@@ -701,11 +689,11 @@ defmodule RbufViewerWeb.EditorLive do
     """
   end
 
-  defp primitive_type?(type),
-    do:
-      type in ~w(bool uint8 uint16 uint32 uint64 int8 int16 int32 int64 float double string guid byte_buffer)
+  defp complex_type?(type), do: type in ~w(array arraylist dictionary object variant)
 
-  defp complex_type?(type), do: type in ~w(array arraylist dictionary object variant enum)
+  defp inline_editable_type?(type),
+    do:
+      type in ~w(bool uint8 uint16 uint32 uint64 int8 int16 int32 int64 float double steady_time_point system_time_point string guid byte_buffer enum)
 
   defp save_button_class(true), do: "mode-button active"
   defp save_button_class(false), do: "mode-button"
@@ -899,7 +887,8 @@ defmodule RbufViewerWeb.EditorLive do
         case socket.assigns.registry do
           %ExArk.Registry{} = registry ->
             schema_name =
-              document_schema_name(socket.assigns.document) || Map.keys(registry.schemas) |> List.first()
+              document_schema_name(socket.assigns.document) ||
+                Map.keys(registry.schemas) |> List.first()
 
             case Ark.load_typed_bytes(registry, schema_name, bytes) do
               {:ok, payload} ->

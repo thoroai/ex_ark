@@ -400,7 +400,18 @@ defmodule RbufViewer.Editor.Document do
   end
 
   defp coerce_value(%Field{type: t}, raw, _registry)
-       when t in ["uint8", "uint16", "uint32", "uint64", "int8", "int16", "int32", "int64"] do
+       when t in [
+              "uint8",
+              "uint16",
+              "uint32",
+              "uint64",
+              "int8",
+              "int16",
+              "int32",
+              "int64",
+              "steady_time_point",
+              "system_time_point"
+            ] do
     case Integer.parse(raw) do
       {int, ""} -> {:ok, int}
       _ -> {:error, :bad_integer}
