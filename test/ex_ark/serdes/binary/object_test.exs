@@ -74,6 +74,33 @@ defmodule ExArk.Serdes.Binary.ObjectTest do
       assert deserialized == data
     end
 
+    test "unknown group - skips a group the reader's schema does not have", %{registry: registry} do
+      # Simulate schema skew: the writer's schema has an extra optional group (identifier 1)
+      # that the reader's schema does not know about. Deserializing must skip the unknown
+      # group's bytes and preserve the fields it does understand, rather than crashing with a
+      # BadMapError from Map.merge/2 on a nil accumulator.
+      data = %{
+        id: "test-id",
+        value: 42,
+        group_field_1: "group-value",
+        group_field_2: 99,
+        extra_field: 7
+      }
+
+      {:ok, serialized} =
+        ExArk.write_object_to_bytes(registry, "ex_ark::test::ObjectWithExtraGroup", data)
+
+      {:ok, deserialized} =
+        ExArk.read_object_from_bytes(registry, "ex_ark::test::ObjectWithOptionalGroup", serialized)
+
+      # Known base fields and known group (identifier 0) survive; the unknown group is dropped.
+      assert deserialized.id == "test-id"
+      assert deserialized.value == 42
+      assert deserialized.group_field_1 == "group-value"
+      assert deserialized.group_field_2 == 99
+      refute Map.has_key?(deserialized, :extra_field)
+    end
+
     test "optional fields - missing optional fields", %{registry: registry} do
       # Data with only required fields, no optional fields
       data = %{required_field: "test", another_required_field: 42}
