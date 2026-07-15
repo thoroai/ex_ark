@@ -113,7 +113,7 @@ defmodule ExArk.Serdes.Binary.Object do
       if group != nil do
         deserialize_fields(stream, group.fields, registry, reified)
       else
-        {:ok, %Result{stream: InputStream.advance(stream, header.group_size)}}
+        {:ok, %Result{stream: InputStream.advance(stream, header.group_size), reified: reified}}
       end
     end
   end

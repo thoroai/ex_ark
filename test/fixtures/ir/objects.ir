@@ -141,6 +141,48 @@
       }
     },
     {
+      "name": "ObjectWithExtraGroup",
+      "object_namespace": "ex_ark::test",
+      "fields": [
+        {
+          "name": "id",
+          "type": "string"
+        },
+        {
+          "name": "value",
+          "type": "int32"
+        }
+      ],
+      "groups": [
+        {
+          "identifier": 0,
+          "fields": [
+            {
+              "name": "group_field_1",
+              "type": "string"
+            },
+            {
+              "name": "group_field_2",
+              "type": "int32"
+            }
+          ]
+        },
+        {
+          "identifier": 1,
+          "fields": [
+            {
+              "name": "extra_field",
+              "type": "int32"
+            }
+          ]
+        }
+      ],
+      "source_location": {
+        "filename": "test/ex_ark/fixtures/objects.ir",
+        "line_number": 1
+      }
+    },
+    {
       "name": "ObjectWithOptionalFields",
       "object_namespace": "ex_ark::test",
       "fields": [
