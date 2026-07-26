@@ -3,6 +3,8 @@ defmodule ExArk.Utilities do
   Internal utility functions shared across ExArk modules.
   """
 
+  @mix_env Mix.env()
+
   @doc """
   Convert a string to an atom, guarding against atom-table exhaustion in
   production.
@@ -14,7 +16,7 @@ defmodule ExArk.Utilities do
   """
   @spec ensure_existing_atom(binary()) :: atom()
   def ensure_existing_atom(identifier) when is_binary(identifier) do
-    if Mix.env() == :test do
+    if @mix_env == :test do
       String.to_atom(identifier)
     else
       String.to_existing_atom(identifier)
