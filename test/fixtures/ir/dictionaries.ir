@@ -47,7 +47,103 @@
         "filename": "test/ex_ark/fixtures/dictionaries.ir",
         "line_number": 1
       }
+    },
+    {
+      "name": "IntegerKeyDictionary",
+      "object_namespace": "ex_ark::test",
+      "fields": [
+        {
+          "name": "integer_key_dictionary",
+          "type": "dictionary",
+          "ctr_key_type": {
+            "type": "int32"
+          },
+          "ctr_value_type": {
+            "type": "string"
+          }
+        }
+      ],
+      "groups": []
+    },
+    {
+      "name": "GuidKeyDictionary",
+      "object_namespace": "ex_ark::test",
+      "fields": [
+        {
+          "name": "guid_key_dictionary",
+          "type": "dictionary",
+          "ctr_key_type": {
+            "type": "guid"
+          },
+          "ctr_value_type": {
+            "type": "int32"
+          }
+        }
+      ],
+      "groups": []
+    },
+    {
+      "name": "EnumKeyDictionary",
+      "object_namespace": "ex_ark::test",
+      "fields": [
+        {
+          "name": "enum_key_dictionary",
+          "type": "dictionary",
+          "ctr_key_type": {
+            "type": "enum",
+            "object_type": "ex_ark::test::DictionaryKey"
+          },
+          "ctr_value_type": {
+            "type": "int32"
+          }
+        }
+      ],
+      "groups": []
+    },
+    {
+      "name": "DictionaryValue",
+      "object_namespace": "ex_ark::test",
+      "fields": [
+        {
+          "name": "label",
+          "type": "string"
+        },
+        {
+          "name": "count",
+          "type": "int32"
+        }
+      ],
+      "groups": []
+    },
+    {
+      "name": "StringToObjectDictionary",
+      "object_namespace": "ex_ark::test",
+      "fields": [
+        {
+          "name": "object_dictionary",
+          "type": "dictionary",
+          "ctr_key_type": {
+            "type": "string"
+          },
+          "ctr_value_type": {
+            "type": "object",
+            "object_type": "ex_ark::test::DictionaryValue"
+          }
+        }
+      ],
+      "groups": []
     }
   ],
-  "enums": []
+  "enums": [
+    {
+      "name": "DictionaryKey",
+      "object_namespace": "ex_ark::test",
+      "enum_class": "int32",
+      "enum_type": "value",
+      "values": {
+        "ONE": 1,
+        "TWO": 2
+      }
+    }
+  ]
 }
