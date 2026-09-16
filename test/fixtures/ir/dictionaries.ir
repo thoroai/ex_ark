@@ -47,7 +47,139 @@
         "filename": "test/ex_ark/fixtures/dictionaries.ir",
         "line_number": 1
       }
+    },
+    {
+      "name": "CloudManagedConfig",
+      "object_namespace": "ex_ark::test",
+      "fields": [
+        {
+          "name": "upload_immediate",
+          "type": "bool"
+        },
+        {
+          "name": "priority",
+          "type": "int64"
+        },
+        {
+          "name": "max_space_in_blocks",
+          "type": "int64"
+        },
+        {
+          "name": "min_free_space_in_blocks",
+          "type": "int64"
+        },
+        {
+          "name": "min_age_in_days",
+          "type": "int64"
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "test/ex_ark/fixtures/dictionaries.ir",
+        "line_number": 1
+      }
+    },
+    {
+      "name": "ProductConfig",
+      "object_namespace": "ex_ark::test",
+      "fields": [
+        {
+          "name": "categories",
+          "type": "dictionary",
+          "ctr_key_type": {
+            "type": "string"
+          },
+          "ctr_value_type": {
+            "type": "object",
+            "object_type": "ex_ark::test::CloudManagedConfig"
+          }
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "test/ex_ark/fixtures/dictionaries.ir",
+        "line_number": 1
+      }
+    },
+    {
+      "name": "IntToIntDictionary",
+      "object_namespace": "ex_ark::test",
+      "fields": [
+        {
+          "name": "dictionary",
+          "type": "dictionary",
+          "ctr_key_type": {
+            "type": "int32"
+          },
+          "ctr_value_type": {
+            "type": "int32"
+          }
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "test/ex_ark/fixtures/dictionaries.ir",
+        "line_number": 1
+      }
+    },
+    {
+      "name": "GuidToIntDictionary",
+      "object_namespace": "ex_ark::test",
+      "fields": [
+        {
+          "name": "dictionary",
+          "type": "dictionary",
+          "ctr_key_type": {
+            "type": "guid"
+          },
+          "ctr_value_type": {
+            "type": "int32"
+          }
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "test/ex_ark/fixtures/dictionaries.ir",
+        "line_number": 1
+      }
+    },
+    {
+      "name": "EnumToIntDictionary",
+      "object_namespace": "ex_ark::test",
+      "fields": [
+        {
+          "name": "dictionary",
+          "type": "dictionary",
+          "ctr_key_type": {
+            "type": "enum",
+            "object_type": "ex_ark::test::Color"
+          },
+          "ctr_value_type": {
+            "type": "int32"
+          }
+        }
+      ],
+      "groups": [],
+      "source_location": {
+        "filename": "test/ex_ark/fixtures/dictionaries.ir",
+        "line_number": 1
+      }
     }
   ],
-  "enums": []
+  "enums": [
+    {
+      "name": "Color",
+      "object_namespace": "ex_ark::test",
+      "enum_class": "int32",
+      "enum_type": "value",
+      "values": {
+        "Red": 0,
+        "Green": 1
+      },
+      "source_location": {
+        "filename": "test/ex_ark/fixtures/dictionaries.ir",
+        "line_number": 1
+      }
+    }
+  ]
 }
