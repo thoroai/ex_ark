@@ -49,7 +49,7 @@ defmodule ExArk.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:typedstruct, "~> 0.5", runtime: false},
+      {:typedstruct, "~> 0.6", runtime: false},
       {:jason, "~> 1.4"},
       {:ecto, "~> 3.13"},
       {:cldr_utils, "~> 2.0"},
